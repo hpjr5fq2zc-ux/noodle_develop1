@@ -179,6 +179,12 @@ class Component extends DCLogic {
     }
     this._pk = null; this.setState(upd);
   }
+  cardSwipe(dir) {
+    const p = (this.state.mCard || 0) + dir;
+    if (p < 0 || p > 2) return false;
+    this.setState({ mCard: p, mDir: dir > 0 ? 'swl' : 'swr' });
+    return true;
+  }
   youSwipe(dir) {
     const p = (this.state.yPanel || 0) + dir;
     if (p < 0 || p > 3) return false;
@@ -823,9 +829,9 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
+    const key = JSON.stringify([this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
     if (this._pk === key) return this._pc;
-    const R = this.recipe(), target = s0.time * 60, extra = R.map(() => 0);
+    const R = this.recipe(), target = this.sessTime() * 60, extra = R.map(() => 0);
     const order = [];
     R.forEach((b, i) => { for (let w = 0; w < (b.grow || 0); w++) order.push(i); });
     if (!order.length) order.push(0);
@@ -852,9 +858,31 @@ class Component extends DCLogic {
     this._pk = key; this._pc = out;
     return out;
   }
+  moment() {
+    if (this.state.moment) return this.state.moment;
+    const h = new Date().getHours();
+    return h >= 5 && h < 10 ? 'morning' : h >= 21 || h < 5 ? 'evening' : 'main';
+  }
+  sessTime() { const m = this.moment(); return m === 'morning' ? 8 : m === 'midday' ? 6 : m === 'evening' ? 12 : this.state.time; }
   recipe() {
+    const mo = this.moment();
+    if (mo === 'morning') return [
+      { key: 'wake', name: 'Wake up', kind: 'mobility', n: 2, grow: 1 },
+      { key: 'move', name: 'Get the blood moving', kind: 'warm', n: 1, grow: 1 },
+      { key: 'reach', name: 'Big morning stretch', kind: 'yogaStand', n: 1, grow: 1 }
+    ];
+    if (mo === 'midday') return [
+      { key: 'desk', name: 'Unstick', kind: 'deskMob', n: 2, grow: 1 },
+      { key: 'open', name: 'Open up', kind: 'deskStretch', n: 1, grow: 1 },
+      { key: 'legs', name: 'Wake the legs', kind: 'quickLegs', n: 1, grow: 0 }
+    ];
+    if (mo === 'evening') return [
+      { key: 'slow', name: 'Slow down', kind: 'gentle', n: 2, grow: 1 },
+      { key: 'floor', name: 'Floor stretch', kind: 'yogaFloor', n: 2, grow: 2 },
+      { key: 'rest', name: 'Rest', kind: 'restPose', n: 1, grow: 0 }
+    ];
     // Each mood is its own kind of session. grow = how eagerly a block gets extra moves when there's more time.
-    const s = this.state, t = s.time, tier = t <= 10 ? 0 : t <= 20 ? 1 : t <= 35 ? 2 : 3, e = s.energy;
+    const s = this.state, t = this.sessTime(), tier = t <= 10 ? 0 : t <= 20 ? 1 : t <= 35 ? 2 : 3, e = s.energy;
     const fin = (min) => (e >= min ? [{ key: 'finish', name: 'Finisher', kind: 'finish', count: [1, 1, 1, 1], grow: 0 }] : []);
     const R = {
       Surprise: [
@@ -940,6 +968,10 @@ class Component extends DCLogic {
         case 'yogaBalance': return choose(BK.filter((m) => (m.fam === 'balance' && ['singleleg', 'tree'].indexOf(m.anim) >= 0) || m.anim === 'tree' || m.anim === 'dancer').filter((m) => m.lvl <= lv(m.fam) + 1), k);
         case 'yogaFloor': return choose(upTo('stretch').filter((m) => STAND.indexOf(m.anim) < 0).concat(U.splits ? upTo('splits') : []), k, true);
         case 'gentle': return choose(BK.filter((m) => m.fam === 'stretch' && m.lvl <= Math.min(1, lv('stretch'))), k, true);
+        case 'deskMob': return choose(BK.filter((m) => m.fam === 'mobility' && m.lvl <= 1 && ['jointcircles', 'twistlie', 'catcow', 'wave', 'hipcircle'].indexOf(m.anim) >= 0), k);
+        case 'deskStretch': return choose(BK.filter((m) => m.fam === 'stretch' && m.lvl <= 1 && ['armstretch', 'quad', 'calfwall', 'fold', 'lowlunge'].indexOf(m.anim) >= 0), k);
+        case 'quickLegs': return choose(BK.filter((m) => (m.fam === 'legs' || m.fam === 'balance') && m.lvl === 0), k);
+        case 'restPose': return choose(BK.filter((m) => ['childpose', 'twistlie', 'happybaby'].indexOf(m.anim) >= 0 && m.lvl <= 1), k);
         case 'finish': return choose(BK.filter((m) => m.fam === 'cond' && m.role === 'f' && m.lvl <= Math.round((lv('push') + lv('pull') + lv('legs') + lv('core')) / 4)), k);
       }
       return null;
@@ -1005,7 +1037,17 @@ class Component extends DCLogic {
     const DONE = ['That was a good wiggle.', 'My tail has not stopped.', 'You moved. That is the whole point.', 'Hydrate, human.', 'Same time never? Whenever works.', 'I would give you a treat but I ate it.', 'Your body says thanks. So do I.', 'Ten out of ten wiggles.'];
     let note = learned.length ? 'I learned a new trick: ' + learned[learned.length - 1][0] + '! Tap me on You to see it.' : MS[sessions] || (ups > 0 ? 'You leveled up ' + (ups === 1 ? 'once' : ups + ' times') + ' today. Look at you go.' : DONE[sessions % DONE.length]);
     const face = learned.length || MS[sessions] ? 'grin' : ups > 0 ? 'smirk' : 'smile';
-    this.setState({ sessions, doneNote: note, doneFace: face });
+    const fl = this.flat(), nw = fl.filter((m) => !(this.state.triedAtStart || {})[m.n]).length;
+    this.setState({ sessions, doneNote: note, doneFace: face, doneVals: [Math.max(1, Math.round(this.planSecs(this.plan()) / 60)), fl.length, nw, Math.max(0, ups)], doneTick: this.state.calm ? 99 : 0 });
+    clearInterval(this.ct);
+    if (!this.state.calm) {
+      this.ct = setInterval(() => {
+        const t = (this.state.doneTick || 0) + 1;
+        if ([16, 22, 28, 34].indexOf(t) >= 0) this.sfx('pop');
+        this.setState({ doneTick: t });
+        if (t >= 40) clearInterval(this.ct);
+      }, 60);
+    }
     this.sfx('finish');
     this.transitionTo('done', '#FFC20E');
   }
@@ -1024,7 +1066,7 @@ class Component extends DCLogic {
     if (msg.indexOf('Nice') === 0) this.sfx('level');
     this.setState({ levels, fb: s.fb + 1, askFb: false, fbMsg: msg });
   }
-  openMove(name, from) { this.setState({ moveOpen: name, moveFrom: from }); this.transitionTo('move', '#FFFFFF'); }
+  openMove(name, from) { this.setState({ moveOpen: name, moveFrom: from, mCard: 0, mDir: '' }); this.transitionTo('move', '#FFFFFF'); }
   renderVals() {
     const s = this.state;
     const PHRASES = [
@@ -1035,7 +1077,7 @@ class Component extends DCLogic {
     ];
     const ph = PHRASES[s.phrase % PHRASES.length];
     const longest = Math.max.apply(null, ph.map((l) => l.length));
-    const phSize = Math.min(70, Math.floor(300 / (longest * 0.56)), ph.length > 3 ? 56 : 70);
+    const phSize = Math.min(62, Math.floor(300 / (longest * 0.56)), ph.length > 3 ? 56 : 70);
     const tp = (s.time - 5) / 55 * 100;
     const ep = s.energy;
     const tCol = s.time <= 15 ? '#0E8178' : s.time <= 35 ? '#1556C2' : '#E5282E';
@@ -1129,6 +1171,20 @@ class Component extends DCLogic {
       dot: 'position:relative;flex:none;width:36px;height:36px;box-sizing:border-box;border-radius:50%;' + (i < plv ? 'background:' + pf.color : i === plv ? 'background:#FFFFFF;border:6px solid ' + pf.color : 'background:#FFFFFF;border:3px solid #E4E4E4'),
       text: 'font-size:17px;font-weight:' + (i === plv ? 900 : 600) + ';color:' + (i > plv ? '#8A8A8A' : '#161616')
     }));
+    const TX = [30, 64, 36, 66, 40], TY = [90, 70, 50, 30, 10], LV5 = ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'];
+    const curve = (k) => { let d = 'M' + TX[0] + ' ' + TY[0]; for (let i = 1; i <= k; i++) { const my = (TY[i - 1] + TY[i]) / 2; d += ' C' + TX[i - 1] + ' ' + my + ' ' + TX[i] + ' ' + my + ' ' + TX[i] + ' ' + TY[i]; } return d; };
+    const trail = pf.steps.map((n, i) => {
+      const done = i < plv, here = i === plv, right = TX[i] < 50;
+      return {
+        n, here, lvl: LV5[i], aria: LV5[i] + ': ' + n,
+        open: () => this.openMove(n, 'paths'),
+        box: 'position:absolute;left:' + TX[i] + '%;top:' + TY[i] + '%;width:0;height:0;border:0;padding:0;background:transparent;cursor:pointer',
+        shape: 'position:absolute;left:-' + (here ? 26 : 20) + 'px;top:-' + (here ? 26 : 20) + 'px;width:' + (here ? 52 : 40) + 'px;height:' + (here ? 52 : 40) + 'px;box-sizing:border-box;border-radius:' + (pf.shape === 'square' || pf.shape === 'diamond' ? '6px' : '50%') + ';' + (done ? 'background:' + pf.color : here ? 'background:' + pf.color + ';box-shadow:0 0 0 5px #FFFFFF,0 0 0 8px ' + pf.color : 'background:#FFFFFF;border:3px solid #D0D0D0') + (here ? ';animation:breathe 2.4s ease-in-out infinite' : ''),
+        label: 'position:absolute;top:-17px;' + (right ? 'left:' + (here ? 38 : 30) + 'px;text-align:left' : 'right:' + (here ? 38 : 30) + 'px;text-align:right') + ';width:150px;display:flex;flex-direction:column;font:' + (here ? 900 : 700) + ' 15px Inter Tight,sans-serif;line-height:1.1;color:' + (i > plv ? '#9A9A9A' : '#161616'),
+        sub: 'font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;color:' + (here ? pf.color === '#FFC20E' ? '#8A6A00' : pf.color : '#9A9A9A'),
+        dog: 'position:absolute;left:-17px;top:-48px;' + this.face('grin', 34).replace('display:block;', 'display:block;')
+      };
+    });
     const mvName = s.moveOpen || 'Push-up';
     const mi = MI[mvName] || { fam: 'mobility', lvl: 0, role: 'v', cues: ['Move slowly and with control.', 'Breathe out on the effort.'], f: [], b: [] };
     const mf = F[mi.fam];
@@ -1252,14 +1308,19 @@ class Component extends DCLogic {
       pfg: this.figure(cur.n, s.calm),
       hasEasier: !!mvEasier && mvEasier !== mvName, hasHarder: !!mvHarder && mvHarder !== mvName,
       mvEasier, mvHarder,
-      openEasier: () => this.setState({ moveOpen: mvEasier }),
-      openHarder: () => this.setState({ moveOpen: mvHarder }),
+      openEasier: () => this.setState({ moveOpen: mvEasier, mCard: 0, mDir: 'swr' }),
+      openHarder: () => this.setState({ moveOpen: mvHarder, mCard: 0, mDir: 'swl' }),
       startAll: () => { this.ensureAudio(); this.sfx('start'); this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }); },
       rootClass: s.calm ? 'calm' : '',
       chatter: s.chatter,
       restLine: restLines[(s.idx + s.seed) % restLines.length],
       sessLine: sessLines[(s.seed + (s.sessions || 0)) % sessLines.length],
       petLine: petLines[(s.homePets || 0) % petLines.length],
+      doneStats: [['Minutes', '#E5282E', '#FFFFFF'], ['Moves', '#1556C2', '#FFFFFF'], ['New', '#FFC20E', '#161616'], ['Level-ups', '#FFFFFF', '#161616']].map((d, i) => {
+        const val = (s.doneVals || [0, 0, 0, 0])[i], start = 10 + i * 6, p = Math.max(0, Math.min(1, ((s.doneTick || 0) - start) / 6));
+        const shown = p > 0;
+        return { l: d[0], v: Math.round(val * p), box: 'display:flex;flex-direction:column;align-items:center;justify-content:center;height:74px;margin:0 ' + (i < 3 ? 3 : 0) + 'px 0 0;background:' + d[1] + ';color:' + d[2] + ';transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s;opacity:' + (shown ? 1 : 0.15) + ';transform:scale(' + (p >= 1 ? 1 : shown ? 1.12 : 0.85) + ')' };
+      }),
       doneNote: s.doneNote || 'That was a good wiggle.', doneFaceSt: this.face(s.doneFace || 'grin', 44),
       showUpNext: !s.askFb && !s.fbMsg,
       askFb: s.askFb, hasFbMsg: !!s.fbMsg && !s.askFb, fbMsg: s.fbMsg,
@@ -1284,7 +1345,7 @@ class Component extends DCLogic {
       pd: { name: pf.name, lvlName: LVL[plv] + ' · step ' + (plv + 1) + ' of 5' },
       pdHead: 'position:relative;height:220px;flex:none;overflow:hidden;background:' + pf.color + ';color:' + pf.ink,
       pdBigShape: 'position:absolute;right:-30px;bottom:-30px;opacity:.25;' + this.shp(pf.shape, pf.ink, 170),
-      pdSteps,
+      pdSteps, trail, trailPath: curve(4), trailDone: curve(plv), trailColor: pf.color,
       celebrate: s.celebrate,
       pdNextLabel: plv < 4 ? 'Nailed it! Next step' : 'Mastered!',
       pdNext: () => { if (plv >= 4) return; const lv = Object.assign({}, s.levels); lv[pk] = plv + 1; clearTimeout(this.ct); this.setState({ levels: lv, celebrate: true }); this.ct = setTimeout(() => this.setState({ celebrate: false }), 1600); },
@@ -1321,6 +1382,9 @@ class Component extends DCLogic {
       regionGo: go('session', '#1556C2', { focus: region, mood: 'Surprise', time: 15, energy: 50, swaps: {}, idx: 0, visited: true }),
       yTabs: [['Noodle', 'circle', '#E5282E'], ['Month', 'square', '#1556C2'], ['Body', 'peak', '#F26A0F'], ['Moves', 'diamond', '#6B3FA0']].map((t, i) => { const on = (s.yPanel || 0) === i; return { t: t[0], on: on ? 'true' : 'false', shape: this.shp(t[1], on ? t[2] : '#C8C8C8', 12), go: () => { if (!on) this.setState({ yPanel: i, yDir: i > (s.yPanel || 0) ? 'swl' : 'swr' }); }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:6px;font:800 12px Inter Tight,sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:color .3s;color:' + (on ? '#161616' : '#8A8A8A') }; }),
       yBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + ((s.yPanel || 0) * 25) + '%',
+      mTabs: ['How', 'Works', 'Level'].map((t, i) => { const on = (s.mCard || 0) === i; return { t, on: on ? 'true' : 'false', go: () => { if (!on) this.setState({ mCard: i, mDir: i > (s.mCard || 0) ? 'swl' : 'swr' }); }, box: 'height:40px;border:0;background:transparent;padding:0;font:800 12px Inter Tight,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      mBar: 'position:absolute;bottom:-3px;height:3px;width:33.34%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + ((s.mCard || 0) * 33.33) + '%',
+      mc0: (s.mCard || 0) === 0, mc1: s.mCard === 1, mc2: s.mCard === 2, mSlide: s.mDir || 'a-up',
       yp0: (s.yPanel || 0) === 0, yp1: s.yPanel === 1, yp2: s.yPanel === 2, yp3: s.yPanel === 3,
       ySlide: s.yDir || 'a-up',
       sheetBody: s.sheet === 'body', sheetMoves: s.sheet === 'moves',
@@ -1388,6 +1452,15 @@ class Component extends DCLogic {
       phraseStyle: 'border:0;background:transparent;padding:0;text-align:left;cursor:pointer;color:#161616;font-family:Inter Tight,sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:-.035em;line-height:.86;font-size:' + phSize + 'px',
       isCheckin: s.screen === 'checkin', isSession: s.screen === 'session', isPlayer: s.screen === 'player', isDone: s.screen === 'done',
       moods, time: s.time, energy: s.energy, energyLabel,
+      sessMins: this.sessTime(),
+      isMain: this.moment() === 'main', notMain: this.moment() !== 'main',
+      moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: 'display:none', go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:36px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:4px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      moBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + (['morning', 'midday', 'main', 'evening'].indexOf(this.moment()) * 25) + '%',
+      moCard: (() => {
+        const M = { morning: ['Morning wake-up', 'Gentle joints, a little blood flow, one big stretch.', '#FFC20E', '#161616'], midday: ['Midday reset', 'Unstick from the desk. Neck, back, hips, legs.', '#F26A0F', '#161616'], evening: ['Evening wind-down', 'Slow floor stretches to help you sleep.', '#1556C2', '#FFFFFF'] }[this.moment()] || ['', '', '#FFFFFF', '#161616'];
+        const fl = this.flat();
+        return { title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], box: 'background:' + M[2] + ';color:' + M[3], moves: fl.slice(0, 5).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, M[3], 10) })) };
+      })(),
       onTime: (e) => this.setState({ time: Number(e.target.value) }),
       onEnergy: (e) => this.setState({ energy: Number(e.target.value) }),
       timeDot: 'display:block;border-radius:50%;background:' + tCol + ';transition:width .15s,height .15s,background .3s;width:' + dot + 'px;height:' + dot + 'px',
@@ -1411,7 +1484,7 @@ class Component extends DCLogic {
       petStyle: s.pets ? 'animation:' + (s.pets % 2 ? 'hop' : 'hopB') + ' .7s cubic-bezier(.3,.7,.4,1) both' : '',
       home: () => this.transitionTo('checkin', '#FFFFFF', { idx: 0 }),
       shuffle: () => this.setState({ seed: s.seed + 1, swaps: {} }),
-      summary: (s.focus ? pretty[s.focus] + ' focus' : s.mood === 'Chill' ? 'Chill day' : energyLabel + ' energy') + ' · ' + flat.length + ' moves' + (s.focus ? '' : ' · ' + (s.mood === 'Surprise' ? 'surprise' : s.mood.toLowerCase())),
+      summary: (this.moment() !== 'main' ? { morning: 'Morning wake-up', midday: 'Midday reset', evening: 'Evening wind-down' }[this.moment()] : s.focus ? pretty[s.focus] + ' focus' : s.mood === 'Chill' ? 'Chill day' : energyLabel + ' energy') + ' · ' + flat.length + ' moves' + (s.focus ? '' : ' · ' + (s.mood === 'Surprise' ? 'surprise' : s.mood.toLowerCase())),
       blocks,
       start: () => { this.ensureAudio(); this.sfx('start'); }, startGo: () => this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }),
       stage: 'position:relative;height:500px;flex:none;overflow:hidden;color:' + (s.resting ? '#161616' : cur.ink) + ';background:' + (s.resting ? '#EDEDED' : cur.color) + ';transition:background .5s,color .5s',
