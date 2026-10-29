@@ -2,17 +2,17 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     const unlock = () => { this.ensureAudio(); };
     ['pointerdown', 'touchend', 'keydown'].forEach((ev) => document.addEventListener(ev, unlock, { passive: true }));
     this.timer = setInterval(() => this.tick(), 1000);
-    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -192,7 +192,7 @@ class Component extends DCLogic {
     if (fresh) {
       const liked = this.likedFams(), F = this.fams(), lv = Object.assign({}, s.levels);
       Object.keys(lv).forEach((k) => { if (F[k] && !F[k].hidden) lv[k] = Math.min(3, base + (liked[k] && pr.active >= 2 ? 1 : 0)); });
-      upd.levels = lv;
+      upd.levels = lv; upd.stones = {};
       upd.profile.base = Object.keys(lv).reduce((x, k) => x + (lv[k] || 0), 0);
       const first = this.likesMap().find((r) => pr.likes[r[0]]);
       if (first) upd.mood = first[3];
@@ -280,6 +280,13 @@ class Component extends DCLogic {
       'Tuck L-sit on chairs': ['Lifting yourself off the seat between two chairs.', 'Hands on two sturdy chairs, arms straight.', 'Push down so your bottom lifts.', 'Tuck your knees up and hold.'],
       'L-sit': ['Making an L shape, held up by your hands.', 'Hands on the floor or two chairs beside your hips.', 'Press down and lift your bottom.', 'Hold your legs straight out in front.'],
       'Dragon flag negative': ['A slow-motion plank falling back down from your shoulders.', 'Lie on your back, hold the bed frame behind your head.', 'Lift your body straight up so only your shoulders touch.', 'Lower as one piece, slowly.'],
+      'Push-up negative': ['The lowering half of a push-up, done slowly.', 'Start at the top of a push-up, body in one straight line.', 'Lower your chest for a slow count of 3.', 'At the bottom, drop your knees and push back up to start again.'],
+      'Incline one-arm push-up': ['A one-arm push-up with your hand up on the bed.', 'One hand on the edge of the bed, feet wide apart for balance.', 'Put your free hand behind your back or on your hip.', 'Lower slowly, keeping your hips level, then press back up.'],
+      'One-leg L-sit on chairs': ['An L-sit with one knee still tucked in.', 'Hands on two sturdy chairs, push down to lift your bottom off the seat.', 'Keep one knee tucked to your chest.', 'Straighten the other leg out in front and hold it level.'],
+      'Frog stand, toes down': ['The frog stand with your toes still touching the floor.', 'Squat down, hands flat on the floor shoulder-width apart.', 'Rest your knees on the backs of your elbows.', 'Lean forward until your toes feel light, without lifting them yet.'],
+      'Heel pulls off the wall': ['Learning to balance away from the wall, one heel at a time.', 'Get into your wall handstand with your hands a little closer to the wall.', 'Squeeze your legs and gently pull one heel off the wall.', 'When that feels steady, try both heels for a second, then touch back.'],
+      'Baby freeze, toes down': ['A baby freeze with both feet still touching the floor.', 'Crouch, hands on the floor, one elbow tucked into your side.', 'Rest the other knee against your other elbow.', 'Lean until your head lightly touches the floor and your feet feel light.'],
+      'Tripod knee rest': ['The first half of a tripod headstand.', 'Make a triangle with your head and hands on something soft.', 'Walk your feet in close, toes on the floor.', 'Rest one knee on an elbow, then the other, and hold.'],
       'Frog stand': ['Balancing like a frog on your hands.', 'Squat down, hands flat on the floor.', 'Rest your knees on the backs of your elbows.', 'Lean forward until your feet lift.'],
       'Crow pose': ['A tighter frog stand, knees high on your arms.', 'Squat, hands down, knees high on your upper arms.', 'Look forward and lean in.', 'Lift one foot, then both.'],
       'Side crow': ['Crow pose, but twisted to the side.', 'Squat and twist so both knees face one side.', 'Plant your hands and rest your knees on one arm.', 'Lean in until your feet float.'],
@@ -382,7 +389,7 @@ class Component extends DCLogic {
   }
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
-    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
+    ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -397,7 +404,7 @@ class Component extends DCLogic {
       r.onload = () => {
         try {
           const o = JSON.parse(r.result); if (!o || o.app !== 'noodle') throw new Error('x');
-          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
+          const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
           if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels);
           keep.setMsg = 'Welcome back! Your progress is restored.'; this._pk = null; this.setState(keep);
         } catch (e) { this.setState({ setMsg: "That file isn't a Noodle backup." }); }
@@ -415,6 +422,13 @@ class Component extends DCLogic {
   }
   bankRows() {
     return [
+      ['Push-up negative', 'push', 1, 'v', '3 × 5', 'pushup', 'Start at the top of a push-up.', 'Lower for 3 slow seconds, then drop your knees to come back up.', ['chest', 'shoulders', 'arms', 'core'], ['arms']],
+      ['Incline one-arm push-up', 'push', 3, 'v', '3 × 5 each side', 'incline', 'One hand on the edge of the bed, feet wide.', 'Lower slowly and keep your hips square.', ['chest', 'shoulders', 'arms', 'core'], ['arms']],
+      ['One-leg L-sit on chairs', 'core', 3, 'v', '5 × 10 s', 'lsit', 'Hands on two sturdy chairs, one knee tucked.', 'Straighten the other leg and hold it level.', ['core', 'hips', 'arms'], []],
+      ['Frog stand, toes down', 'balance', 1, 'v', '5 × 10 s', 'frogstand', 'Knees on the backs of your elbows, toes still on the floor.', 'Lean forward until your toes feel light.', ['shoulders', 'arms', 'core'], ['shoulders']],
+      ['Heel pulls off the wall', 'balance', 3, 'v', '5 tries', 'handstand', 'In your wall handstand, hands a little closer to the wall.', 'Ease one heel off the wall, then both, for a second.', ['shoulders', 'arms', 'core'], ['shoulders']],
+      ['Baby freeze, toes down', 'dance', 3, 'v', '5 × 5 s', 'freeze', 'Baby freeze setup, both toes stay on the floor.', 'Lean onto your head and arm until your feet feel light.', ['shoulders', 'arms', 'core'], []],
+      ['Tripod knee rest', 'freezes', 0, 'v', '5 × 10 s', 'headstand', 'Head and hands make a triangle on something soft, toes on the floor.', 'Walk in and rest one knee, then both, on your elbows.', ['shoulders', 'core'], ['shoulders']],
       ['Wall push-up', 'push', 0, 'm', '3 × 12', 'wallpush', 'Hands on the wall at shoulder height.', 'Chest to the wall, then push away.'],
       ['Wide wall push-up', 'push', 0, 'v', '3 × 12', 'wallpush', 'Hands wider than your shoulders.', 'Keep your body in one straight line.'],
       ['Close-hand wall push-up', 'push', 0, 'v', '3 × 10', 'wallpush', 'Hands close together under your chest.', 'Elbows brush your ribs as you lower.'],
@@ -837,10 +851,40 @@ class Component extends DCLogic {
       crawls: { name: 'Crawls & travel', color: '#6E7B1E', ink: '#FFFFFF', shape: 'peak', hidden: true, parents: ['core', 'legs'], f: ['shoulders', 'core', 'legs'], b: ['glutes'] },
       flow: { name: 'Flow footwork', color: '#3FA7E0', ink: '#161616', shape: 'dot', hidden: true, parents: ['strikes', 'dance'], f: ['legs', 'core'], b: ['glutes'] }
     };
+    const LAD = {
+      push: ['Wall push-up', 'Wide wall push-up', 'Close-hand wall push-up', 'Bed-height incline push-up', 'Incline push-up', 'Knee push-up', 'Push-up negative', 'Push-up', 'Wide push-up', 'Hand-release push-up', 'Diamond push-up', 'Decline push-up', 'Pike push-up', 'Archer push-up', 'Incline one-arm push-up', 'One-arm push-up'],
+      pull: ['Prone Y-T-W raises', 'Superman hold', 'Towel pull-apart', 'Towel isometric pull', 'Reverse snow angel', 'Prone swimmers', 'Doorframe row', 'Under-desk row, knees bent', 'Under-desk row, legs straight', 'Paused desk row', 'Slow-negative desk row', 'Feet-up desk row', 'Archer desk row', 'One-arm row negative', 'One-arm desk row'],
+      legs: ['Glute bridge', 'Calf raise', 'Chair squat', 'Wall sit', 'Bodyweight squat', 'Reverse lunge', 'Split squat', 'Single-leg glute bridge', 'Lateral lunge', 'Bulgarian split squat', 'Cossack squat', 'Pistol squat to the bed', 'Assisted shrimp squat', 'Pistol squat', 'Shrimp squat'],
+      core: ['Dead bug', 'Bird-dog', 'Knee plank', 'Knee side plank', 'Plank', 'Tucked hollow hold', 'Bear plank shoulder taps', 'Side plank', 'Plank shoulder taps', 'Hollow hold', 'Hollow rocks', 'Tuck L-sit on chairs', 'One-leg L-sit on chairs', 'L-sit'],
+      balance: ['Single-leg stand', 'Heel-to-toe walk', 'Tiptoe balance', 'Eyes-closed single-leg stand', 'Single-leg reach', 'Wall plank walk', 'Frog stand, toes down', 'Frog stand', 'Pike hold on the bed', 'Wall walk-up', 'Wall handstand', 'Wall shoulder taps', 'Wall handstand, 60 s', 'Heel pulls off the wall', 'Kick-up practice', 'Freestanding handstand'],
+      dance: ['Bounce and rock', 'Two-step', 'Shoulder isolations', 'Body roll', 'Indian step', 'Cross step', 'Low-impact running man', 'Shuffle running man', 'Controlled go-down', 'Three-step', 'Six-step', 'Kick-outs', 'Baby freeze, toes down', 'Baby freeze', 'Footwork into baby freeze', 'Chair freeze'],
+      strikes: ['Stance and jab', 'Guard bounce', 'Jab-cross', 'Hooks and uppercuts', 'Slip and roll', 'Teep push kick', 'Knee strikes', 'Front and round kick', 'Side kick', 'Elbow strikes', 'Kick-punch combo', 'Combos with slips', 'Low switch kick', 'Switch kick combo', 'Full 3-minute rounds'],
+      mobility: ['Joint circles', 'Arm circles', 'Hip circles', 'Pelvic tilts', 'Cat-cow', 'Open book', '90/90 hip switches', 'Towel pass-through', "World's greatest stretch", 'Deep squat sit', 'Spine waves', 'Deep squat with rotations', 'Cossack flow', 'Wall walk-down', 'Bridge', 'Bridge rotations'],
+      stretch: ['Toe reach', 'Standing fold', 'Butterfly', "Child's pose", 'Low lunge', 'Downward dog', 'Seated forward fold', 'Happy baby', 'Lizard', 'Frog stretch', 'Pigeon pose', 'Wide-leg forward fold', 'Half splits', 'King pigeon prep', 'Pancake', 'Wheel pose'],
+      freezes: ['Tripod knee rest', 'Tripod headstand', 'Tuck to tripod', 'Elbow freeze', 'Turtle freeze', 'Turtle shuffle', 'Headstand freeze', 'Air chair prep', 'Freeze chains'],
+      splits: ['Lizard hold, 60 s', 'Half split rocks', 'Frog rocks', 'Front-split slide', 'Front split, hands on books', 'Pigeon to split slide', 'Side-split prep', 'Full front split'],
+      crawls: ['Bear hold', 'Inchworm walk', 'Cat crawl', 'Bear crawl', 'Crab reach', 'Crab walk', 'Frog jumps', 'Gorilla shuffle', 'Lateral bear crawl', 'Crocodile crawl', 'Crawl flow'],
+      flow: ['Bouncing stance', 'Pendulum step', 'Bob and weave', 'Switch stance drill', 'Angle steps', 'Slip-slip-cross', 'Footwork with combos', '3-minute flow round']
+    };
     const B = this.bank();
+    Object.keys(F).forEach((k) => { const l = (LAD[k] || []).map((n) => B.find((x) => x.n === n)).filter((x) => x); F[k].ladder = l.map((x) => x.n); F[k].lvls = l.map((x) => x.lvl); });
     Object.keys(F).forEach((k) => { F[k].steps = [0, 1, 2, 3, 4].map((l) => { const m = B.find((x) => x.fam === k && x.lvl === l && x.role === 'm'); return m ? m.n : ''; }); });
     this._F = F;
     return F;
+  }
+  stone(k, st) {
+    const s = st || this.state, F = this.fams()[k];
+    if (!F || !F.ladder.length) return 0;
+    const v = (s.stones || {})[k];
+    if (v !== undefined && v !== null) return Math.max(0, Math.min(F.ladder.length - 1, v));
+    const L = (s.levels || {})[k] || 0, i = F.lvls.findIndex((x) => x >= L);
+    return i < 0 ? F.ladder.length - 1 : i;
+  }
+  moveStone(k, d) {
+    const s = this.state, F = this.fams()[k], cur = this.stone(k), nx = Math.max(0, Math.min(F.ladder.length - 1, cur + d));
+    const stones = Object.assign({}, s.stones); stones[k] = nx;
+    const levels = Object.assign({}, s.levels); levels[k] = F.lvls[nx];
+    return { stones, levels, moved: nx !== cur, lvChanged: levels[k] !== s.levels[k], top: nx === F.ladder.length - 1 };
   }
   bank() {
     if (this._B) return this._B;
@@ -973,7 +1017,7 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
+    const key = JSON.stringify([this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.stones, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
     if (this._pk === key) return this._pc;
     const R = this.recipe(), target = this.sessTime() * 60, extra = R.map(() => 0);
     const order = [];
@@ -1082,7 +1126,8 @@ class Component extends DCLogic {
       used[m.n] = (used[m.n] || 0) + 1;
       return m;
     };
-    const atLevel = (fam) => { const L = lv(fam); let c = BK.filter((m) => m.fam === fam && m.lvl === L); if (!c.length) c = BK.filter((m) => m.fam === fam && m.lvl <= L); return c; };
+    const onLadder = (fam, ahead) => { const Fm = F[fam]; if (!Fm.ladder || !Fm.ladder.length) return null; const st = Math.max(0, this.stone(fam) - ease * 2); const lo = ahead ? st : Math.max(0, st - 1), hi = Math.min(Fm.ladder.length - 1, ahead ? st + 1 : st); const c = []; for (let i = lo; i <= hi; i++) { const m = BK.find((x) => x.n === Fm.ladder[i]); if (m) c.push(m); } return c.length ? c : null; };
+    const atLevel = (fam, ahead) => { const lad = onLadder(fam, ahead); if (lad) return lad; const L = lv(fam); let c = BK.filter((m) => m.fam === fam && m.lvl === L); if (!c.length) c = BK.filter((m) => m.fam === fam && m.lvl <= L); return c; };
     const upTo = (fam) => BK.filter((m) => m.fam === fam && m.lvl <= lv(fam));
     const withAnim = (pool, anims, fallback) => { const p = pool.filter((m) => anims.indexOf(m.anim) >= 0); return p.length ? p : fallback || pool; };
     const off = (s.seed + new Date().getDate()) % 4;
@@ -1098,7 +1143,7 @@ class Component extends DCLogic {
         case 'strength': return choose(atLevel(rot(['push', 'legs', 'pull', 'core', 'balance'].concat(U.crawls ? ['crawls'] : []))), k);
         case 'upper': return choose(atLevel(rot(['push', 'pull'])), k);
         case 'lower': return choose(atLevel(rot(['legs', 'core', 'legs', 'balance'].concat(U.crawls ? ['crawls'] : []))), k);
-        case 'surprise': { const fam = surpriseFams[(s.seed + i) % surpriseFams.length]; return choose(atLevel(fam), k); }
+        case 'surprise': { const fam = surpriseFams[(s.seed + i) % surpriseFams.length]; return choose(atLevel(fam, true), k); }
         case 'cool': return choose(upTo('stretch').concat(U.splits ? atLevel('splits') : []), k);
         case 'danceWarm': return choose(BK.filter((m) => (m.fam === 'mobility' && m.lvl <= Math.min(1, lv('mobility'))) || (m.fam === 'cond' && m.role === 'w')), k);
         case 'toprock': return choose(withAnim(upTo('dance'), TOP), k, true);
@@ -1199,17 +1244,21 @@ class Component extends DCLogic {
     const s = this.state, f = this.flat();
     const m = f[s.idx]; const mi = m && this.moveInfo()[m.n];
     if (!mi) return;
-    const levels = Object.assign({}, s.levels);
-    const fam = this.fams()[mi.fam];
-    let msg = 'Got it. Same level next time.';
-    if (kind === 'easy' && levels[mi.fam] < 4) { levels[mi.fam] += 1; msg = 'Nice! ' + fam.name + ' moves up a step.'; }
-    if (kind === 'hard' && levels[mi.fam] > 0) { levels[mi.fam] -= 1; msg = 'No worries, ' + fam.name + ' eases back a step.'; }
-    if (kind === 'easy' && msg.indexOf('Nice') < 0) msg = 'You are at the top of ' + fam.name + '!';
+    const fam = this.fams()[mi.fam], LV = ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'];
+    let levels = s.levels, stones = s.stones || {};
+    let msg = 'Got it. Same spot next time.';
+    if (fam.ladder.length && (kind === 'easy' || kind === 'hard')) {
+      const r = this.moveStone(mi.fam, kind === 'easy' ? 1 : -1);
+      if (r.moved) { levels = r.levels; stones = r.stones; }
+      if (kind === 'easy') msg = !r.moved ? 'You are at the top of ' + fam.name + '!' : r.lvChanged ? 'Nice! ' + fam.name + ' reaches ' + LV[levels[mi.fam]] + '.' : 'Nice! One stone further on ' + fam.name + '.';
+      else msg = r.moved ? 'No worries, ' + fam.name + ' eases back one stone.' : 'Got it. We will keep it gentle.';
+    }
     const was = this.unlocked(s.levels), now = this.unlocked(levels);
     if (Object.keys(now).some((k) => !was[k])) msg += ' A hidden path just unlocked!';
     if (msg.indexOf('Nice') === 0) this.sfx('level');
-    this.setState({ levels, fb: s.fb + 1, askFb: false, fbMsg: msg });
+    this.setState({ levels, stones, fb: s.fb + 1, askFb: false, fbMsg: msg });
   }
+  scrollStone() { setTimeout(() => { try { const el = document.querySelector('.pd-trail .hopper'); if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }, 60); }
   openMove(name, from) { this.setState({ moveOpen: name, moveFrom: from, mCard: 0, mDir: '' }); this.transitionTo('move', '#FFFFFF'); }
   renderVals() {
     const s = this.state;
@@ -1295,41 +1344,39 @@ class Component extends DCLogic {
     const cells = LAYOUT.map(([k, x, y, w, h]) => {
       const box = 'position:absolute;left:' + (x + 3) + 'px;top:' + (y + 3) + 'px;width:' + (w - 6) + 'px;height:' + (h - 6) + 'px;background:#FFFFFF;border:0;padding:0;overflow:hidden;text-align:left;cursor:pointer;font-family:Inter Tight,sans-serif';
       if (F[k].hidden && !U[k]) return { open: () => this.setState({ hint: 'Hidden path! Reach Intermediate in ' + F[F[k].parents[0]].name + ' and ' + F[F[k].parents[1]].name + ' to find out.' }), aria: 'Locked hidden path', box, fill: 'display:none', shape: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6', name: '', label: 'display:none', lvl: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#D0D0D0', lvlName: '?' };
-      const fm = F[k], lv = s.levels[k], full = lv >= 4;
+      const fm = F[k], lv = s.levels[k], frac = fm.ladder.length ? (this.stone(k) + 1) / fm.ladder.length : (lv + 1) / 5, full = frac >= 1;
       return {
-        open: () => { const seen = Object.assign({}, s.seen); seen[k] = true; this.setState({ pathOpen: k, seen, hint: '' }); },
+        open: () => { const seen = Object.assign({}, s.seen); seen[k] = true; this.setState({ pathOpen: k, seen, hint: '' }); this.scrollStone(); },
         aria: fm.name + ' path, ' + LVL[lv],
         box: box + (fm.hidden && !s.seen[k] ? ';animation:flipIn .7s cubic-bezier(.2,.9,.3,1.2) both' : ''),
-        fill: 'position:absolute;left:0;right:0;bottom:0;height:' + ((lv + 1) * 20) + '%;background:' + fm.color + ';transition:height .7s cubic-bezier(.3,1.4,.5,1)',
+        fill: 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(frac * 100) + '%;background:' + fm.color + ';transition:height .7s cubic-bezier(.3,1.4,.5,1)',
         shape: 'position:absolute;left:9px;top:9px;' + this.shp(fm.shape, full ? fm.ink : fm.color, 18),
         name: fm.name,
         label: 'position:absolute;left:34px;right:6px;top:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.1;color:' + (full ? fm.ink : '#161616'),
-        lvl: 'position:absolute;left:9px;bottom:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:' + (((lv + 1) * 0.2 * h) >= 26 ? fm.ink : '#161616') + ';opacity:' + (h > 70 ? 1 : 0),
+        lvl: 'position:absolute;left:9px;bottom:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:' + ((frac * h) >= 26 ? fm.ink : '#161616') + ';opacity:' + (h > 70 ? 1 : 0),
         lvlName: LVL[lv]
       };
     });
     const pk = s.pathOpen && F[s.pathOpen] ? s.pathOpen : 'push';
     const pf = F[pk], plv = s.levels[pk];
-    const pdSteps = pf.steps.map((n, i) => ({
-      n, here: i === plv,
-      line: 'position:absolute;left:16px;top:' + (i === 0 ? 33 : 0) + 'px;bottom:' + (i === 4 ? 33 : 0) + 'px;width:4px;background:' + (i <= plv ? pf.color : '#E4E4E4'),
-      dot: 'position:relative;flex:none;width:36px;height:36px;box-sizing:border-box;border-radius:50%;' + (i < plv ? 'background:' + pf.color : i === plv ? 'background:#FFFFFF;border:6px solid ' + pf.color : 'background:#FFFFFF;border:3px solid #E4E4E4'),
-      text: 'font-size:17px;font-weight:' + (i === plv ? 900 : 600) + ';color:' + (i > plv ? '#8A8A8A' : '#161616')
-    }));
-    const TX = [30, 64, 36, 66, 40], TY = [90, 70, 50, 30, 10], LV5 = ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'];
-    const curve = (k) => { let d = 'M' + TX[0] + ' ' + TY[0]; for (let i = 1; i <= k; i++) { const my = (TY[i - 1] + TY[i]) / 2; d += ' C' + TX[i - 1] + ' ' + my + ' ' + TX[i] + ' ' + my + ' ' + TX[i] + ' ' + TY[i]; } return d; };
-    const trail = pf.steps.map((n, i) => {
-      const done = i < plv, here = i === plv, right = TX[i] < 50;
+    const pst = this.stone(pk), LV5 = ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'];
+    const TXp = [26, 58, 74, 42], ROW = 66, TOP0 = 34, nS = pf.ladder.length;
+    const sx = (i) => TXp[i % 4], sy = (i) => TOP0 + i * ROW;
+    const curve = (k) => { let d = 'M' + sx(0) + ' ' + sy(0); for (let i = 1; i <= k; i++) { const my = (sy(i - 1) + sy(i)) / 2; d += ' C' + sx(i - 1) + ' ' + my + ' ' + sx(i) + ' ' + my + ' ' + sx(i) + ' ' + sy(i); } return d; };
+    const trail = pf.ladder.map((n, i) => {
+      const done = i < pst, here = i === pst, right = sx(i) < 50, lvl = pf.lvls[i], first = i === 0 || pf.lvls[i - 1] !== lvl;
+      const sz = here ? 50 : first ? 36 : 28;
       return {
-        n, here, lvl: LV5[i], aria: LV5[i] + ': ' + n,
+        n, here, lvl: first || here ? (here ? 'You are here · ' : '') + LV5[lvl] : '', aria: LV5[lvl] + ': ' + n,
         open: () => this.openMove(n, 'paths'),
-        box: 'position:absolute;left:' + TX[i] + '%;top:' + TY[i] + '%;width:0;height:0;border:0;padding:0;background:transparent;cursor:pointer',
-        shape: 'position:absolute;left:-' + (here ? 26 : 20) + 'px;top:-' + (here ? 26 : 20) + 'px;width:' + (here ? 52 : 40) + 'px;height:' + (here ? 52 : 40) + 'px;box-sizing:border-box;border-radius:' + (pf.shape === 'square' || pf.shape === 'diamond' ? '6px' : '50%') + ';' + (done ? 'background:' + pf.color : here ? 'background:' + pf.color + ';box-shadow:0 0 0 5px #FFFFFF,0 0 0 8px ' + pf.color : 'background:#FFFFFF;border:3px solid #D0D0D0') + (here ? ';animation:breathe 2.4s ease-in-out infinite' : ''),
-        label: 'position:absolute;top:-17px;' + (right ? 'left:' + (here ? 38 : 30) + 'px;text-align:left' : 'right:' + (here ? 38 : 30) + 'px;text-align:right') + ';width:150px;display:flex;flex-direction:column;font:' + (here ? 900 : 700) + ' 15px Inter Tight,sans-serif;line-height:1.1;color:' + (i > plv ? '#9A9A9A' : '#161616'),
+        box: 'position:absolute;left:' + sx(i) + '%;top:' + sy(i) + 'px;width:0;height:0;border:0;padding:0;background:transparent;cursor:pointer',
+        shape: 'position:absolute;left:-' + sz / 2 + 'px;top:-' + sz / 2 + 'px;width:' + sz + 'px;height:' + sz + 'px;box-sizing:border-box;border-radius:' + (pf.shape === 'square' || pf.shape === 'diamond' ? '6px' : '50%') + ';' + (done ? 'background:' + pf.color : here ? 'background:' + pf.color + ';box-shadow:0 0 0 5px #FFFFFF,0 0 0 8px ' + pf.color : 'background:#FFFFFF;border:3px solid ' + (first ? '#BDBDBD' : '#E4E4E4')),
+        label: 'position:absolute;top:-' + (first || here ? 17 : 9) + 'px;' + (right ? 'left:' + (sz / 2 + 12) + 'px;text-align:left' : 'right:' + (sz / 2 + 12) + 'px;text-align:right') + ';width:160px;display:flex;flex-direction:column;font:' + (here ? 900 : first ? 800 : 600) + ' ' + (here ? 15 : 14) + 'px Inter Tight,sans-serif;line-height:1.1;color:' + (i > pst ? '#8A8A8A' : '#161616'),
         sub: 'font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;color:' + (here ? pf.color === '#FFC20E' ? '#8A6A00' : pf.color : '#9A9A9A'),
-        dog: 'position:absolute;left:-17px;top:-48px;' + this.face('grin', 34).replace('display:block;', 'display:block;')
+        dog: 'position:absolute;left:-17px;top:-48px;' + this.face('grin', 34)
       };
     });
+    const trailH = TOP0 * 2 + (nS - 1) * ROW;
     const mvName = s.moveOpen || 'Push-up';
     const mi = MI[mvName] || { fam: 'mobility', lvl: 0, role: 'v', cues: ['Move slowly and with control.', 'Breathe out on the effort.'], f: [], b: [] };
     const mf = F[mi.fam];
@@ -1341,8 +1388,9 @@ class Component extends DCLogic {
     const mvFig = this.figure(mvName, s.calm, s.slowMo);
     const CL = this.clarify(), mcl = CL[mvName];
     const mvSteps = F[mi.fam].steps;
-    const mvEasier = mi.lvl > 0 ? mvSteps[mi.lvl - 1] : '';
-    const mvHarder = mi.lvl < 4 ? (mi.role === 'm' ? mvSteps[mi.lvl + 1] : mvSteps[mi.lvl]) : '';
+    const mLad = F[mi.fam].ladder || [], mIdx = mLad.indexOf(mvName);
+    const mvEasier = mIdx > 0 ? mLad[mIdx - 1] : mIdx < 0 && mi.lvl > 0 ? mvSteps[mi.lvl - 1] : '';
+    const mvHarder = mIdx >= 0 ? mLad[mIdx + 1] || '' : mi.lvl < 4 ? (mi.role === 'm' ? mvSteps[mi.lvl + 1] : mvSteps[mi.lvl]) : '';
     const allMoves = Object.keys(MI);
     const q = s.query.trim().toLowerCase();
     const results = q ? allMoves.filter((n) => { const m = MI[n]; return n.toLowerCase().indexOf(q) >= 0 || F[m.fam].name.toLowerCase().indexOf(q) >= 0 || m.f.concat(m.b).some((r) => pretty[r].indexOf(q) >= 0); }).slice(0, 8) : [];
@@ -1490,14 +1538,14 @@ class Component extends DCLogic {
       nudgeText: s.hint ? s.hint : s.fb < 3 ? 'Not sure where you stand? No quiz needed. Just move and I will figure it out.' : 'Looking good! Tap a block to see what is next.',
       pathIsOpen: !!s.pathOpen,
       closePath: () => this.setState({ pathOpen: null, celebrate: false }),
-      pd: { name: pf.name, lvlName: LVL[plv] + ' · step ' + (plv + 1) + ' of 5' },
+      pd: { name: pf.name, lvlName: LVL[plv] + ' · stone ' + (pst + 1) + ' of ' + nS },
       pdHead: 'position:relative;height:220px;flex:none;overflow:hidden;background:' + pf.color + ';color:' + pf.ink,
       pdBigShape: 'position:absolute;right:-30px;bottom:-30px;opacity:.25;' + this.shp(pf.shape, pf.ink, 170),
-      pdSteps, trail, trailPath: curve(4), trailDone: curve(plv), trailColor: pf.color,
+      trail, trailPath: curve(nS - 1), trailDone: curve(pst), trailColor: pf.color, trailH: 'position:relative;height:' + trailH + 'px', trailView: '0 0 100 ' + trailH, trailCount: 'Stone ' + (pst + 1) + ' of ' + nS,
       celebrate: s.celebrate,
-      pdNextLabel: plv < 4 ? 'Nailed it! Next step' : 'Mastered!',
-      pdNext: () => { if (plv >= 4) return; const lv = Object.assign({}, s.levels); lv[pk] = plv + 1; clearTimeout(this.ct); this.setState({ levels: lv, celebrate: true }); this.ct = setTimeout(() => this.setState({ celebrate: false }), 1600); },
-      pdEasier: () => { if (plv <= 0) return; const lv = Object.assign({}, s.levels); lv[pk] = plv - 1; this.setState({ levels: lv, celebrate: false }); },
+      pdNextLabel: pst < nS - 1 ? 'Got it! Next stone' : 'Mastered!',
+      pdNext: () => { const r = this.moveStone(pk, 1); if (!r.moved) return; clearTimeout(this.ct); if (r.lvChanged) this.sfx('level'); this.setState({ levels: r.levels, stones: r.stones, celebrate: r.lvChanged ? 'LEVEL UP!' : 'NICE!' }); this.ct = setTimeout(() => this.setState({ celebrate: false }), 1600); this.scrollStone(); },
+      pdEasier: () => { const r = this.moveStone(pk, -1); if (!r.moved) return; this.setState({ levels: r.levels, stones: r.stones, celebrate: false }); this.scrollStone(); },
       mvName, mvFam: { name: mf.name },
       mvStage: 'position:relative;height:340px;flex:none;overflow:hidden;background:' + mf.color + ';color:' + mf.ink,
       
@@ -1561,7 +1609,7 @@ class Component extends DCLogic {
       resetAll: () => {
         if (!s.resetArm) { this.setState({ resetArm: true }); clearTimeout(this.rt); this.rt = setTimeout(() => this.setState({ resetArm: false }), 4000); return; }
         const lv = {}; Object.keys(s.levels).forEach((k) => { lv[k] = 0; });
-        this._pk = null; this.setState({ levels: lv, history: {}, log: {}, tried: {}, seen: {}, seenTricks: {}, fb: 0, resetArm: false, selDay: null, setMsg: 'Fresh start. Noodle is ready when you are.' });
+        this._pk = null; this.setState({ levels: lv, stones: {}, history: {}, log: {}, tried: {}, seen: {}, seenTricks: {}, fb: 0, resetArm: false, selDay: null, setMsg: 'Fresh start. Noodle is ready when you are.' });
       },
       setMsg: s.setMsg,
       noodleArt: (() => { const n = this.noodleSvg(s.sessions); const w = Math.round(104 * n.w / 230); return 'display:block;width:' + w + 'px;height:' + Math.round(w * 144 / n.w) + 'px;background:url("' + n.uri + '") center/contain no-repeat'; })(),
