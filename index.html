@@ -201,6 +201,7 @@ body.wide .pcn{padding:10px 12px!important}
 body.wide .dn-hop{right:auto!important;width:422px;top:60px!important}
 body.wide .dn-h1{left:430px!important;top:36px!important}
 body.wide .dn-stats{left:440px!important;right:20px!important;top:186px!important}
+body.wide .dn-friend{left:440px!important;right:20px!important;top:367px!important}
 body.wide .dn-note{left:440px!important;right:20px!important;top:290px!important}
 body.wide .dn-home{left:61px!important}
 body.wide .confetti{translate:0 -330px}
@@ -523,6 +524,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
   </div>
   <h1 class="a-up d2 dn-h1" style="position: absolute; left: 20px; right: 20px; top: 380px; margin: 0; text-align: center; font-size: 72px; font-weight: 900; line-height: .86; letter-spacing: -.04em; text-transform: uppercase">Nice<br>work!</h1>
   <div class="a-up d6 dn-note" style="position: absolute; left: 20px; right: 20px; top: 596px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 3px solid #161616; background: #FFFFFF"><span style="{{doneFaceSt}}"></span><p style="margin: 0; font-size: 15px; font-weight: 800; line-height: 1.3; flex: 1">{{doneNote}}</p><button onClick="{{shareSession}}" aria-label="Share this session" style="flex: none; width: 44px; height: 44px; border: 3px solid #161616; background: #FFC20E; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#161616" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M6 9l6-6 6 6M5 14v6h14v-6"/></svg></button></div>
+  <button class="a-up d6 dn-friend" onClick="{{friendGo}}" style="position: absolute; left: 20px; right: 20px; top: 673px; height: 20px; border: 0; background: transparent; padding: 0; font: 800 13px Inter Tight, sans-serif; color: #161616; text-decoration: underline; text-underline-offset: 3px">{{shareMsg}}</button>
   <div class="dn-stats" style="position: absolute; left: 20px; right: 20px; top: 500px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 3px solid #161616; background: #161616">
     <sc-for list="{{doneStats}}" as="ds" hint-placeholder-count="4"><div style="{{ds.box}}"><span style="font-size: 34px; font-weight: 900; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums">{{ds.v}}</span><span style="font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin-top: 4px">{{ds.l}}</span></div></sc-for>
   </div>
@@ -551,7 +553,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <div class="a-up d2 pa-ch" style="order: 4; margin-top: 12px; border: 3px solid #161616; padding: 10px 12px; display: flex; gap: 10px; align-items: center">
       <sc-if value="{{ch.todo}}" hint-placeholder-val="{{ true }}"><span style="{{chFace}}"></span></sc-if><sc-if value="{{ch.done}}" hint-placeholder-val="{{ false }}"><span style="{{chFaceDone}}"></span></sc-if>
       <div style="flex: 1; min-width: 0">
-        <p style="margin: 0; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: #595959">This week · just for fun</p>
+        <p style="margin: 0; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: #595959">This week</p>
         <p style="margin: 2px 0 6px; font-size: 14px; font-weight: 800; line-height: 1.2">{{ch.t}}</p>
         <div style="display: flex; gap: 3px; align-items: center"><sc-for list="{{ch.segs}}" as="cs" hint-placeholder-count="3"><span style="{{cs.s}}"></span></sc-for><span style="margin-left: 6px; font-size: 11px; font-weight: 800; white-space: nowrap">{{ch.count}}</span></div>
       </div>
@@ -729,7 +731,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
           <p style="margin: 2px 0 0; font-size: 30px; font-weight: 900; line-height: .95; letter-spacing: -.03em">{{regionName}}</p>
           <p style="margin: 6px 0 0; font-size: 14px; font-weight: 600; line-height: 1.35">{{regionLine}}</p>
           <button onClick="{{regionGo}}" style="margin-top: 10px; width: 100%; min-height: 48px; border: 0; background: #161616; color: #FFFFFF; font: 800 14px Inter Tight, sans-serif; padding: 6px 10px; text-align: left; display: flex; align-items: center; gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFC20E" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>{{regionGoLabel}}</button>
-          <p style="margin: 8px 0 0; font-size: 12px; color: #595959">Tap any part of the body. Darker means more love this week.</p>
+          <p style="margin: 8px 0 0; font-size: 12px; color: #595959">Darker means worked more this week.</p>
         </div>
       </div>
     </section>
@@ -805,7 +807,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <button onClick="{{editProfile}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 56px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Your interests<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{profileSummary}}</span></span><span aria-hidden="true">→</span></button>
     <button onClick="{{replayGuide}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; height: 50px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left">How Noodle works<span aria-hidden="true">→</span></button>
     <button onClick="{{openSafety}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 56px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Safety check<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{safetySummary}}</span></span><span aria-hidden="true">→</span></button>
-    <p style="margin: 6px 0 0; font-size: 12px; color: #595959; line-height: 1.4">Noodle is for general fitness and fun, not medical advice. Stop if anything hurts or makes you dizzy.</p>
+    <p style="margin: 6px 0 0; font-size: 12px; color: #595959; line-height: 1.4">Noodle is for general fitness and fun, not medical advice. A little soreness the next day is normal. Stop if anything hurts, feels sharp, or makes you dizzy.</p>
     <a href="gallery.html" style="margin-top: 14px; display: flex; align-items: center; justify-content: space-between; height: 50px; border-top: 3px solid #161616; font: 800 15px Inter Tight, sans-serif; color: #161616; text-decoration: none">Check all animations<span aria-hidden="true">→</span></a>
   </div>
   </sc-if>
@@ -816,7 +818,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
   <div class="a-right wl intro" style="position: absolute; inset: 0; z-index: 29; background: #FFFFFF; overflow-y: auto; overflow-x: hidden; padding: 28px 22px 30px; box-sizing: border-box">
     <div aria-hidden="true" style="position: absolute; left: -50px; top: -60px; width: 160px; height: 160px; border-radius: 50%; background: #1556C2"></div>
     <h1 style="position: relative; margin: 70px 0 0; font-size: 44px; font-weight: 900; line-height: .9; letter-spacing: -.045em">What are<br>you into?</h1>
-    <p style="margin: 10px 0 0; font-size: 15px; line-height: 1.4">Pick any. I'll lean your sessions that way, and still sneak in surprises.</p>
+    <p style="margin: 10px 0 0; font-size: 15px; line-height: 1.4">Pick any. Or none!</p>
     <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px">
       <sc-for list="{{likeChips}}" as="lc" hint-placeholder-count="7"><button onClick="{{lc.pick}}" aria-pressed="{{lc.on}}" style="{{lc.box}}"><span style="{{lc.shape}}"></span>{{lc.t}}</button></sc-for>
     </div>
@@ -824,7 +826,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px">
       <sc-for list="{{activeOpts}}" as="ao" hint-placeholder-count="4"><button onClick="{{ao.pick}}" aria-pressed="{{ao.on}}" style="{{ao.box}}"><span style="font-size: 15px; font-weight: 900">{{ao.t}}</span><span style="font-size: 11px; font-weight: 600; opacity: .75; line-height: 1.25; margin-top: 2px">{{ao.d}}</span></button></sc-for>
     </div>
-    <p style="margin: 10px 0 0; font-size: 12px; color: #595959; line-height: 1.4">This just sets where you start. I keep adjusting from how moves feel to you.</p>
+    <p style="margin: 10px 0 0; font-size: 12px; color: #595959; line-height: 1.4">You can change this later.</p>
     <button onClick="{{profileGo}}" style="{{profileBtn}}">Sounds good</button>
   </div>
 </sc-if>
@@ -844,7 +846,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
           <div class="gd-go" style="position: absolute; left: 50%; bottom: 0; width: 170px; height: 85px; margin-left: -85px; border-radius: 85px 85px 0 0; background: #1556C2; color: #FFFFFF; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px; box-sizing: border-box; font-size: 34px; font-weight: 900">GO</div>
         </div>
         <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tell me how<br>you feel.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Slide your time and energy, pick a mood, tap GO. I build a fresh mix every time: strength, dance, kicks, stretches.</p>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Slide, pick a mood, press GO. I pick the moves!</p>
       </div>
     </sc-if>
     <sc-if value="{{g1}}" hint-placeholder-val="{{ false }}">
@@ -859,7 +861,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
           <p class="gd-up" style="margin: 0; font-size: 14px; font-weight: 800; color: #0B7A3E">▲ Push moves up a step</p>
         </div>
         <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tap, and I<br>level you up.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">After a move, tell me how it felt. Easy moves you up, Hard eases you back. No tests, no streaks, no guilt.</p>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">After a move, tell me how it felt. I remember.</p>
       </div>
     </sc-if>
     <sc-if value="{{g2}}" hint-placeholder-val="{{ false }}">
@@ -869,7 +871,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
           <span style="{{gGrin}}"></span>
         </div>
         <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Paths, secrets<br>and tricks.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Paths shows how far you've come, and some are hidden until you mix skills. Level up and I learn new tricks. Find them on You.</p>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Paths are where moves get harder, one stone at a time. Some are hidden! And when you level up, I learn tricks.</p>
       </div>
     </sc-if>
     </div>
@@ -882,7 +884,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <div aria-hidden="true" style="position: absolute; right: -60px; top: -70px; width: 200px; height: 200px; border-radius: 50%; background: #FFC20E"></div>
     <svg width="96" height="62" viewBox="0 0 100 64" aria-hidden="true" style="position: relative; display: block; overflow: visible"><ellipse cx="27" cy="34" rx="8" ry="16" fill="#161616"/><ellipse cx="73" cy="34" rx="8" ry="16" fill="#161616"/><circle cx="50" cy="30" r="24" fill="#E5282E"/><circle cx="33" cy="36" r="4" fill="#F6A5A9"/><circle cx="67" cy="36" r="4" fill="#F6A5A9"/><ellipse cx="50" cy="42" rx="12" ry="9" fill="#FFC20E"/><circle cx="50" cy="37" r="4.5" fill="#161616"/><circle cx="41" cy="25" r="3.5" fill="#161616"/><circle cx="59" cy="25" r="3.5" fill="#161616"/></svg>
     <h1 style="position: relative; margin: 14px 0 0; font-size: 48px; font-weight: 900; line-height: .9; letter-spacing: -.045em">Hi, I'm<br>Noodle.</h1>
-    <p style="position: relative; margin: 12px 0 0; font-size: 15px; line-height: 1.4">Before we wiggle, one quick check so I only suggest moves that suit you.</p>
+    <p style="position: relative; margin: 12px 0 0; font-size: 15px; line-height: 1.4">Hi! Anything I should know before we wiggle?</p>
     <h2 style="margin: 22px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Anything sore or injured right now?</h2>
     <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px">
       <sc-for list="{{safeAreas}}" as="sa" hint-placeholder-count="4"><button onClick="{{sa.pick}}" aria-pressed="{{sa.on}}" style="{{sa.box}}">{{sa.t}}</button></sc-for>
@@ -905,8 +907,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=52"></script>
-<script src="app.js?v=52"></script>
+<script src="runtime.js?v=53"></script>
+<script src="app.js?v=53"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
