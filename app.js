@@ -2,15 +2,15 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     this.timer = setInterval(() => this.tick(), 1000);
-    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -18,6 +18,26 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   ensureAudio() { try { if (!this.ac) this.ac = new (window.AudioContext || window.webkitAudioContext)(); if (this.ac.state === 'suspended') this.ac.resume(); } catch (e) {} }
+  tone(f, t, d, type, vol, f2) {
+    const ac = this.ac, o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + d + 0.03);
+  }
+  sfx(name) {
+    if (!this.state.sound || !this.ac) return;
+    try {
+      const t = this.ac.currentTime + 0.01, T = (f, dt, d, ty, v, f2) => this.tone(f, t + dt, d, ty, v, f2);
+      if (name === 'tick') T(1250, 0, 0.06, 'triangle', 0.16);
+      if (name === 'start') { T(523, 0, 0.16, 'triangle', 0.2); T(659, 0.09, 0.16, 'triangle', 0.2); T(784, 0.18, 0.3, 'triangle', 0.22); }
+      if (name === 'done') { T(660, 0, 0.14, 'sine', 0.22); T(990, 0.1, 0.3, 'sine', 0.2); }
+      if (name === 'go') { T(880, 0, 0.1, 'triangle', 0.2); T(1320, 0.08, 0.22, 'triangle', 0.2); }
+      if (name === 'level') { [523, 659, 784, 1047].forEach((f, i) => T(f, i * 0.07, 0.22, 'square', 0.07)); T(1568, 0.3, 0.4, 'sine', 0.15); }
+      if (name === 'finish') { [523, 659, 784].forEach((f, i) => T(f, i * 0.11, 0.2, 'triangle', 0.2)); T(1047, 0.33, 0.6, 'triangle', 0.24); T(523, 0.33, 0.6, 'sine', 0.12); }
+      if (name === 'bark') { T(620, 0, 0.09, 'sawtooth', 0.08, 300); T(700, 0.15, 0.1, 'sawtooth', 0.08, 320); }
+      if (name === 'pop') T(900, 0, 0.08, 'sine', 0.14, 1400);
+    } catch (e) {}
+  }
   beep(freq, dur) {
     if (!this.state.sound || !this.ac) return;
     try { const o = this.ac.createOscillator(), g = this.ac.createGain(), t0 = this.ac.currentTime; o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g); g.connect(this.ac.destination); o.start(t0); o.stop(t0 + dur + 0.05); } catch (e) {}
@@ -68,8 +88,9 @@ class Component extends DCLogic {
     if (sf.care && (INVERT.indexOf(an) >= 0 || mi.role === 'f' || mi.fam === 'freezes' || mi.lvl >= 3)) return false;
     return true;
   }
+  lvSum() { const L = this.state.levels; return Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0); }
   tricks() {
-    return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%']];
+    return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%'], ['Play dead', 30, 'trDead', 1.8, '50% 60%'], ['Zoomies', 34, 'trZoom', 1.4], ['Sneeze', 38, 'trSneeze', 0.9]];
   }
   doTrick(name) {
     const s = this.state, T = this.tricks();
@@ -78,6 +99,7 @@ class Component extends DCLogic {
     const t = name ? T.find((x) => x[0] === name) : open[(s.trickN * 7 + 3) % open.length];
     if (!t || lv < t[1]) return;
     const seenTricks = Object.assign({}, s.seenTricks); seenTricks[t[0]] = true;
+    this.sfx(t[0] === 'Sneeze' ? 'pop' : 'bark');
     this.setState({ trickN: s.trickN + 1, trickName: t[0], seenTricks });
   }
   savePoster() {
@@ -118,7 +140,7 @@ class Component extends DCLogic {
   }
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
-    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
+    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -133,7 +155,7 @@ class Component extends DCLogic {
       r.onload = () => {
         try {
           const o = JSON.parse(r.result); if (!o || o.app !== 'noodle') throw new Error('x');
-          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
+          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
           if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels);
           keep.setMsg = 'Welcome back! Your progress is restored.'; this._pk = null; this.setState(keep);
         } catch (e) { this.setState({ setMsg: "That file isn't a Noodle backup." }); }
@@ -676,8 +698,8 @@ class Component extends DCLogic {
   tick() {
     const s = this.state;
     if (s.screen !== 'player' || s.paused) return;
-    if (s.remaining > 1) { if (s.remaining <= 4) this.beep(660, 0.12); this.setState({ remaining: s.remaining - 1 }); return; }
-    this.beep(s.resting ? 990 : 880, 0.35);
+    if (s.remaining > 1) { if (s.remaining <= 4) this.sfx('tick'); this.setState({ remaining: s.remaining - 1 }); return; }
+    this.sfx(s.resting ? 'go' : 'done');
     if (s.resting) this.endRest(); else this.finishMove();
   }
   isStrengthMove(m) {
@@ -704,6 +726,15 @@ class Component extends DCLogic {
     const history = Object.assign({}, this.state.history); const nd = new Date(); history[nd.getFullYear() + '-' + (nd.getMonth() + 1) + '-' + nd.getDate()] = F[famKey] ? famKey : 'push';
     this.setState({ tried: tried || this.state.tried, history, resting: false, askFb: false });
     this.logSession(this.flat());
+    const sessions = (this.state.sessions || 0) + 1, lv = this.lvSum(), T = this.tricks();
+    const learned = T.filter((t) => t[1] > (this.state.lvAtStart || 0) && t[1] <= lv);
+    const ups = lv - (this.state.lvAtStart || 0);
+    const MS = { 1: "First session! I'm officially your dog now.", 3: 'Three sessions. I think this is a habit.', 5: "Five sessions. You're getting bendy.", 10: 'Ten sessions! Double digits, double wiggles.', 25: 'Twenty-five sessions. I am telling all the other dogs.', 50: 'Fifty sessions. Legend behavior.', 100: 'One hundred sessions. I need a bigger tail to wag.' };
+    const DONE = ['That was a good wiggle.', 'My tail has not stopped.', 'You moved. That is the whole point.', 'Hydrate, human.', 'Same time never? Whenever works.', 'I would give you a treat but I ate it.', 'Your body says thanks. So do I.', 'Ten out of ten wiggles.'];
+    let note = learned.length ? 'I learned a new trick: ' + learned[learned.length - 1][0] + '! Tap me on You to see it.' : MS[sessions] || (ups > 0 ? 'You leveled up ' + (ups === 1 ? 'once' : ups + ' times') + ' today. Look at you go.' : DONE[sessions % DONE.length]);
+    const face = learned.length || MS[sessions] ? 'grin' : ups > 0 ? 'smirk' : 'smile';
+    this.setState({ sessions, doneNote: note, doneFace: face });
+    this.sfx('finish');
     this.transitionTo('done', '#FFC20E');
   }
   feedback(kind) {
@@ -718,6 +749,7 @@ class Component extends DCLogic {
     if (kind === 'easy' && msg.indexOf('Nice') < 0) msg = 'You are at the top of ' + fam.name + '!';
     const was = this.unlocked(s.levels), now = this.unlocked(levels);
     if (Object.keys(now).some((k) => !was[k])) msg += ' A hidden path just unlocked!';
+    if (msg.indexOf('Nice') === 0) this.sfx('level');
     this.setState({ levels, fb: s.fb + 1, askFb: false, fbMsg: msg });
   }
   openMove(name, from) { this.setState({ moveOpen: name, moveFrom: from }); this.transitionTo('move', '#FFFFFF'); }
@@ -890,7 +922,8 @@ class Component extends DCLogic {
       box: 'position:absolute;left:' + p[1] + 'px;top:' + p[2] + 'px;width:' + p[3] + 'px;height:' + p[4] + 'px;border-radius:' + p[5] + 'px;border:0;padding:0;cursor:pointer;background:' + heat(p[0]) + ';' + (p[0] === region ? 'box-shadow:0 0 0 3px #161616;z-index:2' : '')
     })));
     const rn = reg[region] || 0;
-    const regionLine = rn === 0 ? 'No love here yet this week.' : rn <= 2 ? 'A little love this week (' + rn + (rn === 1 ? ' move' : ' moves') + ').' : rn <= 5 ? 'Nicely worked this week (' + rn + ' moves).' : 'Lots of love this week (' + rn + ' moves). Maybe let it rest.';
+    const anyLog = Object.keys(s.log || {}).length > 0;
+    const regionLine = !anyLog ? 'Your first session will light this up.' : rn === 0 ? 'No love here yet this week.' : rn <= 2 ? 'A little love this week (' + rn + (rn === 1 ? ' move' : ' moves') + ').' : rn <= 5 ? 'Nicely worked this week (' + rn + ' moves).' : 'Lots of love this week (' + rn + ' moves). Maybe let it rest.';
     const famOrder = Object.keys(F).filter((k) => k !== 'cond');
     const collection = [];
     famOrder.forEach((fk) => allMoves.filter((n) => MI[n].fam === fk).forEach((n) => {
@@ -921,7 +954,9 @@ class Component extends DCLogic {
         box: 'position:relative;height:26px;min-width:26px;padding:0 7px;border:0;font:800 11px Inter Tight,sans-serif;cursor:pointer;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#EFEFEF;color:#B0B0B0') };
     });
     const cT = toggleSt(s.calm, '#0E8178'), sT = toggleSt(s.sound, '#FFC20E'), chT = toggleSt(s.chatter, '#E5282E');
-    const restLines = ['Sip some water!', 'Shake it out.', 'Breathe in... out.', 'You got this!'];
+    const restLines = ['Sip some water!', 'Shake it out.', 'Breathe in... out.', 'You got this!', 'Roll your shoulders.', 'Wiggle your toes.', 'Nice one.', 'Unclench your jaw.', 'Long exhale...', 'Halfway-ish!'];
+    const sessLines = ["Let's gooo!", 'Wiggle time!', 'Ready when you are!', 'Snoot boop for luck.', 'I stretched already.', 'This one looks fun.'];
+    const petLines = ['Hehe.', 'More please.', 'Best human.', '*happy wiggle*', 'Again!', 'Ears too!'];
     return {
       hasBanner: fresh.length > 0,
       bannerText: fresh.length ? 'New path unlocked: ' + F[fresh[0]].name + '!' : '',
@@ -933,10 +968,13 @@ class Component extends DCLogic {
       mvEasier, mvHarder,
       openEasier: () => this.setState({ moveOpen: mvEasier }),
       openHarder: () => this.setState({ moveOpen: mvHarder }),
-      startAll: () => { this.ensureAudio(); this.beep(880, 0.2); this.transitionTo('player', '#161616', { triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }); },
+      startAll: () => { this.ensureAudio(); this.sfx('start'); this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }); },
       rootClass: s.calm ? 'calm' : '',
       chatter: s.chatter,
-      restLine: restLines[s.idx % restLines.length],
+      restLine: restLines[(s.idx + s.seed) % restLines.length],
+      sessLine: sessLines[(s.seed + (s.sessions || 0)) % sessLines.length],
+      petLine: petLines[(s.homePets || 0) % petLines.length],
+      doneNote: s.doneNote || 'That was a good wiggle.', doneFaceSt: this.face(s.doneFace || 'grin', 44),
       showUpNext: !s.askFb && !s.fbMsg,
       askFb: s.askFb, hasFbMsg: !!s.fbMsg && !s.askFb, fbMsg: s.fbMsg,
       lastMove: cur.n,
@@ -999,7 +1037,7 @@ class Component extends DCLogic {
       foundBar: 'display:block;height:100%;background:#161616;width:' + Math.round(foundN / Math.max(1, collection.length) * 100) + '%',
       collectHint: 'Every move you try fills in a bar. Tap a family to see what you found.',
       tricks, trickCount: openT.length + ' of ' + TR.length,
-      trickLine: nextT ? 'Tap Noodle! Level up ' + (nextT[1] - lvSum) + ' more ' + (nextT[1] - lvSum === 1 ? 'time' : 'times') + ' to teach ' + nextT[0].toLowerCase() + '.' : 'Noodle knows every trick. Show-off.',
+      trickLine: !(s.sessions || Object.keys(s.log || {}).length) ? "Do your first session and I'll start learning tricks." : nextT ? 'Tap Noodle! Level up ' + (nextT[1] - lvSum) + ' more ' + (nextT[1] - lvSum === 1 ? 'time' : 'times') + ' to teach ' + nextT[0].toLowerCase() + '.' : 'Noodle knows every trick. Show-off.',
       doTrick: () => this.doTrick(),
       trickAnim: 'display:block;transform-origin:' + ((curT && curT[4]) || '50% 90%') + ';' + (curT && !s.calm ? 'animation:' + curT[2] + (s.trickN % 2 ? '' : '2') + ' ' + curT[3] + 's cubic-bezier(.3,.7,.4,1) both' : ''),
       settingsOpen: s.settingsOpen, openSettings: () => this.setState({ settingsOpen: true, setMsg: '', resetArm: false }), closeSettings: () => this.setState({ settingsOpen: false }),
@@ -1017,6 +1055,14 @@ class Component extends DCLogic {
       },
       setMsg: s.setMsg,
       showWelcome: !(s.safe && s.safe.done),
+      showGuide: !!(s.safe && s.safe.done) && !s.guideDone,
+      g0: (s.guideStep || 0) === 0, g1: s.guideStep === 1, g2: s.guideStep === 2,
+      guideDots: [0, 1, 2].map((i) => ({ s: 'display:block;width:' + (i === (s.guideStep || 0) ? 22 : 8) + 'px;height:8px;border-radius:4px;transition:width .3s;background:' + (i === (s.guideStep || 0) ? '#161616' : '#D0D0D0') })),
+      guideNext: () => { if ((s.guideStep || 0) >= 2) this.setState({ guideDone: true, guideStep: 0 }); else this.setState({ guideStep: (s.guideStep || 0) + 1 }); },
+      guideNextLabel: (s.guideStep || 0) >= 2 ? "Let's go!" : 'Next',
+      guideSkip: () => this.setState({ guideDone: true, guideStep: 0 }),
+      replayGuide: () => this.setState({ guideDone: false, guideStep: 0, settingsOpen: false }),
+      gEasy: this.face('smirk', 30), gRight: this.face('smile', 30), gHard: this.face('oof', 30), gGrin: this.face('grin', 40),
       safeAreas: ['wrists', 'shoulders', 'back', 'knees'].map((k) => { const on = !!(s.safe.areas || {})[k]; return { t: k.replace(/^./, (c) => c.toUpperCase()), on: on ? 'true' : 'false', pick: () => { const areas = Object.assign({}, s.safe.areas); if (on) delete areas[k]; else areas[k] = true; this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { areas }) }); }, box: 'height:44px;padding:0 14px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       careYes: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: true }) }); },
       careNo: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: false }) }); },
@@ -1041,7 +1087,7 @@ class Component extends DCLogic {
       energyTri: 'display:block;clip-path:polygon(50% 0,100% 100%,0 100%);transition:width .15s,height .15s,background .3s;background:' + eCol + ';height:' + triH + 'px;width:' + Math.round(triH * 1.1) + 'px',
       energyTrack: track(ep, eCol),
       go: () => this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null }),
-      petHome: () => { clearTimeout(this.pt); this.setState({ homePets: s.homePets + 1, petting: true }); this.pt = setTimeout(() => this.setState({ petting: false }), 1300); },
+      petHome: () => { this.ensureAudio(); this.sfx('bark'); clearTimeout(this.pt); this.setState({ homePets: s.homePets + 1, petting: true }); this.pt = setTimeout(() => this.setState({ petting: false }), 1300); },
       petting: s.petting,
       petWiggle: 'display:block;transform-origin:50% 100%;' + (s.homePets ? 'animation:' + (s.homePets % 2 ? 'wiggleA' : 'wiggleB') + ' .7s cubic-bezier(.3,.7,.4,1) both' : ''),
       openEyes: 'transition:opacity .15s;opacity:' + (s.petting ? 0 : 1),
@@ -1057,7 +1103,7 @@ class Component extends DCLogic {
       shuffle: () => this.setState({ seed: s.seed + 1, swaps: {} }),
       summary: (s.focus ? pretty[s.focus] + ' focus' : s.mood === 'Chill' ? 'Chill day' : energyLabel + ' energy') + ' · ' + flat.length + ' moves' + (s.focus ? '' : ' · ' + (s.mood === 'Surprise' ? 'surprise' : s.mood.toLowerCase())),
       blocks,
-      start: () => { this.ensureAudio(); this.beep(880, 0.2); }, startGo: () => this.transitionTo('player', '#161616', { triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }),
+      start: () => { this.ensureAudio(); this.sfx('start'); }, startGo: () => this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }),
       stage: 'position:relative;height:500px;flex:none;overflow:hidden;color:' + (s.resting ? '#161616' : cur.ink) + ';background:' + (s.resting ? '#EDEDED' : cur.color) + ';transition:background .5s,color .5s',
       blockLabel: 'margin:0;font-size:12px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;opacity:.85',
       cur, pEven: !s.resting && idx % 2 === 0, pOdd: !s.resting && idx % 2 === 1,
@@ -1074,7 +1120,7 @@ class Component extends DCLogic {
       upNext: idx + 1 < flat.length ? flat[idx + 1].n : 'Finish!',
       resting: s.resting,
       confetti,
-      doneSummary: s.time + ' min · ' + flat.length + ' moves · Noodle is proud',
+      doneSummary: s.time + ' min · ' + flat.length + ' moves',
       expanding: s.expanding,
       expandStyle: 'background:' + s.expandColor
     };

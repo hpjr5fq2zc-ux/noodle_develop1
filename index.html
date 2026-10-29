@@ -26,6 +26,12 @@ a{color:#1556C2}a:hover{color:#0E3F92}
 @keyframes peek{0%{opacity:0;transform:translateY(40px)}60%{opacity:1;transform:translateY(-6px)}100%{opacity:1;transform:none}}
 @keyframes tilt{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-8deg)}95%{transform:rotate(6deg)}}
 @keyframes expand{from{clip-path:circle(0% at 50% 100%)}to{clip-path:circle(150% at 50% 100%)}}
+@keyframes trDead{0%,100%{transform:none}25%{transform:translateY(-14px) rotate(90deg)}40%,80%{transform:rotate(180deg) translateY(-6px)}55%{transform:rotate(180deg) translateY(-8px)}}
+@keyframes trZoom{0%,100%{transform:none}15%{transform:translateX(34px)}25%{transform:translateX(34px) scaleX(-1)}50%{transform:translateX(-34px) scaleX(-1)}60%{transform:translateX(-34px)}80%{transform:translateX(8px) translateY(-6px)}}
+@keyframes trSneeze{0%,100%{transform:none}35%{transform:rotate(-7deg) scale(1.05)}50%{transform:rotate(9deg) translateY(2px) scale(.94,1)}62%{transform:rotate(-3deg)}}
+@keyframes trDead2{0%,100%{transform:none}25%{transform:translateY(-14px) rotate(90deg)}40%,80%{transform:rotate(180deg) translateY(-6px)}55%{transform:rotate(180deg) translateY(-8px)}}
+@keyframes trZoom2{0%,100%{transform:none}15%{transform:translateX(34px)}25%{transform:translateX(34px) scaleX(-1)}50%{transform:translateX(-34px) scaleX(-1)}60%{transform:translateX(-34px)}80%{transform:translateX(8px) translateY(-6px)}}
+@keyframes trSneeze2{0%,100%{transform:none}35%{transform:rotate(-7deg) scale(1.05)}50%{transform:rotate(9deg) translateY(2px) scale(.94,1)}62%{transform:rotate(-3deg)}}
 @keyframes trSit{0%,100%{transform:none}30%,70%{transform:scale(1.12,.78)}}
 @keyframes trWag{0%,100%{transform:none}20%{transform:rotate(-5deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(5deg)}}
 @keyframes trHop{0%,100%{transform:none}15%{transform:scale(1.1,.85)}35%{transform:translateY(-34px)}55%{transform:none}70%{transform:translateY(-16px)}85%{transform:none}}
@@ -163,7 +169,8 @@ body.wide .pcn{padding:10px 12px!important}
 /* done */
 body.wide .dn-hop{right:auto!important;width:422px;top:60px!important}
 body.wide .dn-h1{left:430px!important;top:100px!important}
-body.wide .dn-p{left:430px!important;top:250px!important}
+body.wide .dn-p{left:430px!important;top:240px!important}
+body.wide .dn-note{left:440px!important;right:20px!important;top:276px!important}
 body.wide .dn-home{left:61px!important}
 body.wide .confetti{translate:0 -330px}
 body.wide .confetti:nth-child(odd){translate:440px 0}
@@ -187,6 +194,12 @@ body.wide .yo-scroll{left:84px!important;top:86px!important;display:flex;gap:30p
 body.wide .yo-a{display:block!important;width:330px;flex:none}
 body.wide .yo-b{display:block!important;flex:1;min-width:0}
 body.wide .yo-b>section:first-child{margin-top:0!important;border-top:0!important;padding-top:0!important}
+body.wide .gd{padding:18px 28px 18px 28px!important}
+body.wide .gd-step{display:grid;grid-template-columns:330px 1fr;grid-template-rows:auto auto;column-gap:30px;align-content:center}
+body.wide .gd-step h1{align-self:end}
+body.wide .gd-step p{align-self:start}
+body.wide .gd-art{grid-row:1/3;height:250px!important}
+body.wide .gd-step h1{margin-top:0!important}
 body.wide .wl{padding:20px 28px 24px 96px!important}
 body.wide .yo-gear{right:auto!important;left:200px!important;top:24px!important}
 body.wide .yo-cal>button{height:30px!important}
@@ -289,7 +302,7 @@ body.wide .yo-a>section:first-child{padding:8px!important}
     <path d="M66 64 v-6 a8 8 0 0 1 16 0 v6 z" fill="#161616"/>
    </svg>
    </span>
-   <sc-if value="{{petting}}" hint-placeholder-val="{{ false }}"><span style="{{heartsBox}}"><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 10px; top: -6px; animation-delay: 0s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 40px; top: -6px; animation-delay: 0.15s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 70px; top: -6px; animation-delay: 0.3s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg></span></sc-if>
+   <sc-if value="{{petting}}" hint-placeholder-val="{{ false }}"><span class="a-pop" style="position: absolute; left: 86px; top: -30px; white-space: nowrap; background: #FFFFFF; color: #161616; font: 800 13px Inter Tight, sans-serif; padding: 6px 10px; box-shadow: 0 0 0 3px #161616">{{petLine}}</span></sc-if><sc-if value="{{petting}}" hint-placeholder-val="{{ false }}"><span style="{{heartsBox}}"><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 10px; top: -6px; animation-delay: 0s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 40px; top: -6px; animation-delay: 0.15s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 70px; top: -6px; animation-delay: 0.3s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg></span></sc-if>
   </button>
   <div class="a-pop d6" aria-hidden="true" style="position: absolute; left: 0; bottom: 0; width: 46px; height: 46px; background: #F26A0F; clip-path: polygon(0 0, 100% 100%, 0 100%)"></div>
   <div class="a-pop d6" aria-hidden="true" style="position: absolute; right: 0; bottom: 0; width: 46px; height: 46px; background: #F6A5A9; border-top-left-radius: 100%"></div>
@@ -329,7 +342,7 @@ body.wide .yo-a>section:first-child{padding:8px!important}
       </svg>
       </button>
     </div>
-    <sc-if value="{{chatter}}" hint-placeholder-val="{{ true }}"><span class="bubble" style="position: absolute; left: 236px; bottom: 92px; background: #FFFFFF; color: #161616; font: 800 13px Inter Tight, sans-serif; padding: 8px 12px; animation: pop .4s cubic-bezier(.2,.9,.3,1.3) 2.8s both">Let&#39;s gooo!<span aria-hidden="true" style="position: absolute; left: 18px; bottom: -8px; width: 14px; height: 10px; background: #FFFFFF; clip-path: polygon(0 0, 100% 0, 0 100%)"></span></span></sc-if>
+    <sc-if value="{{chatter}}" hint-placeholder-val="{{ true }}"><span class="bubble" style="position: absolute; left: 236px; bottom: 92px; background: #FFFFFF; color: #161616; font: 800 13px Inter Tight, sans-serif; padding: 8px 12px; animation: pop .4s cubic-bezier(.2,.9,.3,1.3) 2.8s both">{{sessLine}}<span aria-hidden="true" style="position: absolute; left: 18px; bottom: -8px; width: 14px; height: 10px; background: #FFFFFF; clip-path: polygon(0 0, 100% 0, 0 100%)"></span></span></sc-if>
   </header>
 
   <div class="scroll" style="flex: 1; overflow-y: auto; padding: 8px 0 160px; scrollbar-width: none">
@@ -457,6 +470,7 @@ body.wide .yo-a>section:first-child{padding:8px!important}
     </svg>
   </div>
   <h1 class="a-up d2 dn-h1" style="position: absolute; left: 20px; right: 20px; top: 380px; margin: 0; text-align: center; font-size: 72px; font-weight: 900; line-height: .86; letter-spacing: -.04em; text-transform: uppercase">Nice<br>work!</h1>
+  <div class="a-up d4 dn-note" style="position: absolute; left: 30px; right: 30px; top: 560px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 3px solid #161616; background: #FFFFFF"><span style="{{doneFaceSt}}"></span><p style="margin: 0; font-size: 15px; font-weight: 800; line-height: 1.3">{{doneNote}}</p></div>
   <p class="a-up d3 dn-p" style="position: absolute; left: 20px; right: 20px; top: 520px; margin: 0; text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: #595959">{{doneSummary}}</p>
   <button class="a-rise d4 half dn-home" onClick="{{home}}" style="position: absolute; left: 45px; bottom: -1px; width: 300px; height: 150px; border: 0; border-radius: 150px 150px 0 0; background: #1556C2; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 0 38px; box-sizing: border-box; font-family: Inter Tight, sans-serif">
     <span style="font-size: 40px; font-weight: 900; line-height: .9; letter-spacing: -.02em">HOME</span>
@@ -693,12 +707,61 @@ body.wide .yo-a>section:first-child{padding:8px!important}
     </div>
     <button onClick="{{resetAll}}" style="{{resetBox}}">{{resetLabel}}</button>
     <p style="margin: 10px 0 0; font-size: 13px; font-weight: 700; min-height: 18px">{{setMsg}}</p>
+    <button onClick="{{replayGuide}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; height: 50px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left">How Noodle works<span aria-hidden="true">→</span></button>
     <button onClick="{{openSafety}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 56px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Safety check<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{safetySummary}}</span></span><span aria-hidden="true">→</span></button>
     <p style="margin: 6px 0 0; font-size: 12px; color: #595959; line-height: 1.4">Noodle is for general fitness and fun, not medical advice. Stop if anything hurts or makes you dizzy.</p>
     <a href="gallery.html" style="margin-top: 14px; display: flex; align-items: center; justify-content: space-between; height: 50px; border-top: 3px solid #161616; font: 800 15px Inter Tight, sans-serif; color: #161616; text-decoration: none">Check all animations<span aria-hidden="true">→</span></a>
   </div>
   </sc-if>
 </div>
+</sc-if>
+
+<sc-if value="{{showGuide}}" hint-placeholder-val="{{ false }}">
+  <div class="a-screen gd" style="position: absolute; inset: 0; z-index: 29; background: #FFFFFF; display: flex; flex-direction: column; padding: 26px 24px 26px; box-sizing: border-box; overflow: hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; gap: 6px"><sc-for list="{{guideDots}}" as="gdd" hint-placeholder-count="3"><span style="{{gdd.s}}"></span></sc-for></div>
+      <button onClick="{{guideSkip}}" style="border: 0; background: transparent; padding: 8px 0; font: 800 14px Inter Tight, sans-serif; color: #595959">Skip</button>
+    </div>
+    <div class="gd-body" style="flex: 1; display: flex; flex-direction: column; justify-content: center">
+    <sc-if value="{{g0}}" hint-placeholder-val="{{ true }}">
+      <div class="a-right gd-step">
+        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; overflow: hidden">
+          <div style="position: absolute; left: 22px; top: 26px; right: 22px"><span style="display: block; font-size: 30px; font-weight: 900">30 <small style="font-size: 12px; color: #595959">min</small></span><span style="display: block; margin-top: 6px; height: 8px; border-radius: 4px; background: linear-gradient(to right,#E5282E 45%,#DADADA 45%)"></span></div>
+          <div style="position: absolute; left: 22px; top: 96px; display: flex; gap: 10px; align-items: flex-end"><span style="display: block; width: 30px; height: 15px; border-radius: 15px 15px 0 0; background: #1556C2"></span><span style="display: block; width: 26px; height: 26px; border-radius: 50%; background: #E5282E"></span><span style="display: block; width: 26px; height: 26px; border-top-right-radius: 100%; background: #FFC20E"></span><span style="display: block; width: 26px; height: 26px; clip-path: polygon(0 100%,100% 0,100% 100%); background: #161616"></span></div>
+          <div class="gd-go" style="position: absolute; left: 50%; bottom: 0; width: 170px; height: 85px; margin-left: -85px; border-radius: 85px 85px 0 0; background: #1556C2; color: #FFFFFF; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px; box-sizing: border-box; font-size: 34px; font-weight: 900">GO</div>
+        </div>
+        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tell me how<br>you feel.</h1>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Slide your time and energy, pick a mood, tap GO. I build a fresh mix every time: strength, dance, kicks, stretches.</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{g1}}" hint-placeholder-val="{{ false }}">
+      <div class="a-right gd-step">
+        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px">
+          <p style="margin: 0; font-size: 15px; font-weight: 800">How was Push-up?</p>
+          <div style="display: flex; gap: 8px">
+            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gEasy}}"></span>Easy</span>
+            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFC20E; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gRight}}"></span>Just right</span>
+            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gHard}}"></span>Hard</span>
+          </div>
+          <p class="gd-up" style="margin: 0; font-size: 14px; font-weight: 800; color: #0B7A3E">▲ Push moves up a step</p>
+        </div>
+        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tap, and I<br>level you up.</h1>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">After a move, tell me how it felt. Easy moves you up, Hard eases you back. No tests, no streaks, no guilt.</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{g2}}" hint-placeholder-val="{{ false }}">
+      <div class="a-right gd-step">
+        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; display: flex; align-items: center; justify-content: center; gap: 26px">
+          <div style="width: 120px; height: 150px; background: #161616; display: grid; grid-template-columns: 3fr 2fr; grid-template-rows: 1fr 1fr 1fr; gap: 4px; padding: 4px; box-sizing: border-box"><span style="background: #E5282E; grid-row: span 2"></span><span style="background: #1556C2"></span><span style="background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #C8C8C8; font-size: 20px">?</span><span style="background: #FFC20E"></span><span style="background: #F26A0F"></span></div>
+          <span style="{{gGrin}}"></span>
+        </div>
+        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Paths, secrets<br>and tricks.</h1>
+        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Paths shows how far you've come, and some are hidden until you mix skills. Level up and I learn new tricks. Find them on You.</p>
+      </div>
+    </sc-if>
+    </div>
+    <button onClick="{{guideNext}}" style="height: 58px; flex: none; border: 0; background: #161616; color: #FFFFFF; font: 900 20px Inter Tight, sans-serif">{{guideNextLabel}}</button>
+  </div>
 </sc-if>
 
 <sc-if value="{{showWelcome}}" hint-placeholder-val="{{ false }}">
@@ -729,8 +792,8 @@ body.wide .yo-a>section:first-child{padding:8px!important}
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=24"></script>
-<script src="app.js?v=24"></script>
+<script src="runtime.js?v=30"></script>
+<script src="app.js?v=30"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
