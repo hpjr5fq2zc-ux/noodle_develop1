@@ -823,10 +823,12 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, new Date().getDate()]);
+    const key = JSON.stringify([s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
     if (this._pk === key) return this._pc;
-    const target = s0.time * 60, extra = [0, 0, 0, 0];
-    const order = s0.mood === 'Chill' ? [3, 2, 0] : [1, 2, 3, 1, 0];
+    const R = this.recipe(), target = s0.time * 60, extra = R.map(() => 0);
+    const order = [];
+    R.forEach((b, i) => { for (let w = 0; w < (b.grow || 0); w++) order.push(i); });
+    if (!order.length) order.push(0);
     const count = (b) => b.reduce((x, y) => x + y.moves.length, 0);
     let out = this.planN(extra);
     for (let g = 0; g < 30 && this.planSecs(out) < target * 0.92; g++) {
@@ -835,54 +837,122 @@ class Component extends DCLogic {
       if (count(nx) > count(out)) out = nx;
       if (this.planSecs(out) > target * 1.08) break;
     }
+    // Short sessions: drop the least important moves first, then trim sets.
+    const cnt = () => out.reduce((x, b) => x + b.moves.length, 0);
+    const prio = ['finish', 'cool', 'warm', 'wake', 'loose', 'bal', 'leg', 'core', 'floor'];
+    for (let g = 0; g < 20 && this.planSecs(out) > target * 1.15 && cnt() > 2; g++) {
+      const b = prio.map((k) => out.find((x) => x.key === k && x.moves.length)).find(Boolean) || out.slice().reverse().find((x) => x.moves.length > 1);
+      if (!b) break;
+      b.moves.pop(); out = out.filter((x) => x.moves.length);
+    }
+    const over = this.planSecs(out);
+    if (over > target * 1.15) { const f = Math.max(0.55, target / over); out.forEach((b) => b.moves.forEach((m) => { m.secs = Math.max(20, Math.round(m.secs * f / 5) * 5); })); }
     const tot = this.planSecs(out);
     if (tot < target * 0.92) { const f = Math.min(1.6, target / tot); out.forEach((b) => b.moves.forEach((m) => { m.secs = Math.round(m.secs * f / 5) * 5; })); }
     this._pk = key; this._pc = out;
     return out;
   }
+  recipe() {
+    // Each mood is its own kind of session. grow = how eagerly a block gets extra moves when there's more time.
+    const s = this.state, t = s.time, tier = t <= 10 ? 0 : t <= 20 ? 1 : t <= 35 ? 2 : 3, e = s.energy;
+    const fin = (min) => (e >= min ? [{ key: 'finish', name: 'Finisher', kind: 'finish', count: [1, 1, 1, 1], grow: 0 }] : []);
+    const R = {
+      Surprise: [
+        { key: 'warm', name: 'Warm up', kind: 'warm', count: [1, 2, 2, 3], grow: 1 },
+        { key: 'str', name: 'Strength', kind: 'strength', count: [1, 2, 3, 4], grow: 2 },
+        { key: 'play', name: 'Surprise', kind: 'surprise', count: [1, 2, 3, 4], grow: 2 }
+      ].concat(fin(67)).concat([{ key: 'cool', name: 'Stretch & yoga', kind: 'cool', count: [1, 2, 2, 3], grow: 1 }]),
+      Strength: [
+        { key: 'warm', name: 'Warm up', kind: 'warm', count: [1, 2, 2, 2], grow: 1 },
+        { key: 'up', name: 'Upper body', kind: 'upper', count: [1, 2, 3, 4], grow: 3 },
+        { key: 'low', name: 'Legs & core', kind: 'lower', count: [1, 2, 3, 4], grow: 3 }
+      ].concat(fin(45)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 2, 2], grow: 1 }]),
+      Dance: [
+        { key: 'warm', name: 'Loosen up', kind: 'danceWarm', count: [1, 2, 2, 2], grow: 1 },
+        { key: 'top', name: 'Toprock', kind: 'toprock', count: [2, 2, 3, 4], grow: 3 },
+        { key: 'floor', name: 'Floor work', kind: 'floor', count: [0, 1, 2, 3], grow: 2 },
+        { key: 'leg', name: 'Dancer strength', kind: 'dancerStrength', count: [0, 1, 1, 2], grow: 1 },
+        { key: 'cool', name: 'Stretch out', kind: 'cool', count: [1, 1, 2, 2], grow: 1 }
+      ],
+      Strikes: [
+        { key: 'warm', name: 'Get loose', kind: 'fightWarm', count: [1, 2, 2, 2], grow: 1 },
+        { key: 'rounds', name: 'Rounds', kind: 'strikes', count: [2, 3, 4, 5], grow: 3 },
+        { key: 'core', name: 'Fighter core', kind: 'core', count: [0, 1, 2, 2], grow: 1 }
+      ].concat(fin(34)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 1, 2], grow: 1 }]),
+      Stretch: [
+        { key: 'wake', name: 'Wake up', kind: 'mobility', count: [1, 1, 2, 2], grow: 1 },
+        { key: 'flow', name: 'Yoga flow', kind: 'yogaStand', count: [1, 2, 3, 4], grow: 3 },
+        { key: 'bal', name: 'Balance', kind: 'yogaBalance', count: [0, 1, 1, 1], grow: 0 },
+        { key: 'deep', name: 'Deep stretch', kind: 'yogaFloor', count: [1, 2, 3, 4], grow: 3 }
+      ],
+      Chill: [
+        { key: 'loose', name: 'Breathe & loosen', kind: 'mobility', count: [2, 3, 4, 5], grow: 2 },
+        { key: 'gentle', name: 'Gentle stretch', kind: 'gentle', count: [1, 2, 3, 4], grow: 2 }
+      ]
+    };
+    return (R[s.mood] || R.Surprise).map((b) => Object.assign({}, b, { n: b.count[tier] }));
+  }
   planN(extra) {
-    const s = this.state, F = this.fams(), BK = this.bank(), U = this.unlocked(s.levels);
-    const t = s.time;
-    const n = (t <= 10 ? [1, 2, 1, 1] : t <= 20 ? [2, 3, 2, 2] : t <= 35 ? [2, 4, 2, 3] : [3, 5, 3, 3]).slice();
-    if (s.energy < 34) { n[1] = Math.max(1, n[1] - 1); n[3] += 1; }
-    if (s.energy >= 67) { n[1] += 1; }
-    if (s.mood === 'Chill') { n[1] = 0; n[3] += 1; }
-    extra.forEach((e, i) => { if (!(s.mood === 'Chill' && i === 1)) n[i] += e; });
-    const lv = (k) => s.levels[k] || 0;
+    const s = this.state, F = this.fams(), BK = this.bank(), U = this.unlocked(s.levels), MIx = this.moveInfo();
+    const R = this.recipe();
+    // Energy changes difficulty, not just length: low energy works one level easier, Chill is always easy.
+    const ease = s.mood === 'Chill' || s.energy < 34 ? 1 : 0;
+    const lv = (k) => Math.max(0, (s.levels[k] || 0) - ease);
     const used = {};
-    const MIx = this.moveInfo();
-    const choose = (cands0, k) => {
+    const choose = (cands0, k, again) => {
       let cands = cands0;
       if (s.focus) { const fz = cands0.filter((m) => { const mi = MIx[m.n]; return mi && mi.f.concat(mi.b).indexOf(s.focus) >= 0 && !used[m.n]; }); if (fz.length) cands = fz; }
-      const c = cands.filter((m) => !used[m.n] && this.safeOK(m));
+      const ok = (m) => this.safeOK(m) && !(F[m.fam].hidden && !U[m.fam]);
+      let c = cands.filter((m) => !used[m.n] && ok(m));
+      if (!c.length && again) c = cands.filter((m) => ok(m) && (used[m.n] || 0) < 2); // rounds and flows can repeat a move once
       if (!c.length) return null;
       const m = c[(this.hash(k) + s.seed * 3 + (s.swaps[k] || 0)) % c.length];
-      used[m.n] = true;
+      used[m.n] = (used[m.n] || 0) + 1;
       return m;
     };
     const atLevel = (fam) => { const L = lv(fam); let c = BK.filter((m) => m.fam === fam && m.lvl === L); if (!c.length) c = BK.filter((m) => m.fam === fam && m.lvl <= L); return c; };
-    const upTo = (fam) => BK.filter((m) => m.fam === fam && m.lvl <= lv(fam) + 1);
-    const rot = ['push', 'pull', 'legs', 'core', 'balance'].concat(U.crawls ? ['crawls'] : []);
-    const off = (s.seed + new Date().getDate()) % rot.length;
-    const PLAY = {
-      Dance: { name: 'Dance', fams: ['dance'].concat(U.freezes ? ['freezes'] : []), color: '#FFC20E', shape: 'quarter' },
-      Strikes: { name: 'Strikes', fams: ['strikes'].concat(U.flow ? ['flow'] : []), color: '#161616', shape: 'tri' },
-      Strength: { name: 'Extra strength', fams: rot.slice().reverse(), color: '#F26A0F', shape: 'square' },
-      Stretch: { name: 'Extra stretch', fams: ['stretch'].concat(U.splits ? ['splits'] : []), color: '#F6A5A9', shape: 'arch', loose: true },
-      Chill: { name: 'Easy mobility', fams: ['mobility'], color: '#0E8178', shape: 'pill', loose: true },
-      Surprise: { name: 'Surprise', fams: (() => { const lf = Object.keys(this.likedFams()).filter((k) => ['dance', 'strikes', 'balance', 'stretch', 'mobility'].indexOf(k) >= 0); return (lf.length ? lf.concat(lf) : []).concat(['dance', 'strikes']).concat(Object.keys(U)); })(), color: '#1556C2', shape: 'half' }
+    const upTo = (fam) => BK.filter((m) => m.fam === fam && m.lvl <= lv(fam));
+    const withAnim = (pool, anims, fallback) => { const p = pool.filter((m) => anims.indexOf(m.anim) >= 0); return p.length ? p : fallback || pool; };
+    const off = (s.seed + new Date().getDate()) % 4;
+    const liked = Object.keys(this.likedFams());
+    const surpriseFams = (() => { const lf = liked.filter((k) => ['dance', 'strikes', 'balance', 'stretch', 'mobility'].indexOf(k) >= 0); return (lf.length ? lf.concat(lf) : []).concat(['dance', 'strikes', 'balance']).concat(Object.keys(U)); })();
+    const TOP = ['groove', 'indianstep', 'twostep', 'bodyroll', 'shoulderiso', 'march', 'wave'];
+    const FLOOR = ['sixstep', 'freeze', 'godown', 'chairfreeze', 'turtle', 'headstand'];
+    const STAND = ['warrior', 'tree', 'chairpose', 'dancer', 'downdog', 'fold', 'lowlunge', 'quad', 'calfwall', 'armstretch'];
+    const pick = (kind, i, k) => {
+      const rot = (arr) => arr[(off + i) % arr.length];
+      switch (kind) {
+        case 'warm': return choose(upTo('mobility').concat(BK.filter((m) => m.fam === 'cond' && m.role === 'w')), k);
+        case 'strength': return choose(atLevel(rot(['push', 'legs', 'pull', 'core', 'balance'].concat(U.crawls ? ['crawls'] : []))), k);
+        case 'upper': return choose(atLevel(rot(['push', 'pull'])), k);
+        case 'lower': return choose(atLevel(rot(['legs', 'core', 'legs', 'balance'].concat(U.crawls ? ['crawls'] : []))), k);
+        case 'surprise': { const fam = surpriseFams[(s.seed + i) % surpriseFams.length]; return choose(atLevel(fam), k); }
+        case 'cool': return choose(upTo('stretch').concat(U.splits ? atLevel('splits') : []), k);
+        case 'danceWarm': return choose(BK.filter((m) => (m.fam === 'mobility' && m.lvl <= Math.min(1, lv('mobility'))) || (m.fam === 'cond' && m.role === 'w')), k);
+        case 'toprock': return choose(withAnim(upTo('dance'), TOP), k, true);
+        case 'floor': { const pool = upTo('dance').concat(U.freezes ? upTo('freezes') : []); const fl = pool.filter((m) => FLOOR.indexOf(m.anim) >= 0); return fl.length ? choose(fl, k) : null; }
+        case 'dancerStrength': return choose(atLevel(rot(['legs', 'core'])), k);
+        case 'fightWarm': return choose(BK.filter((m) => (m.fam === 'cond' && m.role === 'w') || (m.fam === 'mobility' && m.lvl === 0)), k);
+        case 'strikes': return choose(i % 3 === 2 && U.flow ? upTo('flow') : upTo('strikes'), k, true);
+        case 'core': return choose(atLevel('core'), k);
+        case 'mobility': return choose(upTo('mobility'), k, true);
+        case 'yogaStand': return choose(withAnim(upTo('stretch'), STAND), k, true);
+        case 'yogaBalance': return choose(BK.filter((m) => (m.fam === 'balance' && ['singleleg', 'tree'].indexOf(m.anim) >= 0) || m.anim === 'tree' || m.anim === 'dancer').filter((m) => m.lvl <= lv(m.fam) + 1), k);
+        case 'yogaFloor': return choose(upTo('stretch').filter((m) => STAND.indexOf(m.anim) < 0).concat(U.splits ? upTo('splits') : []), k, true);
+        case 'gentle': return choose(BK.filter((m) => m.fam === 'stretch' && m.lvl <= Math.min(1, lv('stretch'))), k, true);
+        case 'finish': return choose(BK.filter((m) => m.fam === 'cond' && m.role === 'f' && m.lvl <= Math.round((lv('push') + lv('pull') + lv('legs') + lv('core')) / 4)), k);
+      }
+      return null;
     };
-    const pl = PLAY[s.mood] || PLAY.Surprise;
     const blocks = [];
-    const mk = (key, name, color, shape, picks) => blocks.push({ key, name, color, shape, moves: picks.filter(Boolean).map((m, i) => ({ id: key + i, n: m.n, rx: m.rx, block: name, fam: m.fam, color: F[m.fam].color, ink: F[m.fam].ink, pose: 'walk', secs: this.dur(m.rx), swapCount: s.swaps[key + i] || 0 })) });
-    const warmPool = upTo('mobility').concat(BK.filter((m) => m.fam === 'cond' && m.role === 'w'));
-    mk('warm', 'Warm up', '#0E8178', 'pill', Array.from({ length: n[0] }, (_, i) => choose(warmPool, 'warm' + i)));
-    mk('strength', 'Strength', '#E5282E', 'circle', Array.from({ length: n[1] }, (_, i) => choose(atLevel(rot[(off + i) % rot.length]), 'strength' + i)));
-    mk('play', pl.name, pl.color, pl.shape, Array.from({ length: n[2] }, (_, i) => { const fam = pl.fams[(s.seed + i) % pl.fams.length]; return choose(pl.loose ? upTo(fam) : atLevel(fam), 'play' + i); }));
-    if (s.energy >= 67 && s.mood !== 'Chill') mk('finish', 'Finisher', '#C08A00', 'square', [choose(BK.filter((m) => m.fam === 'cond' && m.role === 'f' && m.lvl <= Math.round((lv('push') + lv('pull') + lv('legs') + lv('core')) / 4)), 'finish0')]);
-    const coolPool = upTo('stretch').concat(U.splits ? atLevel('splits') : []);
-    mk('cool', 'Stretch & yoga', '#F6A5A9', 'arch', Array.from({ length: n[3] }, (_, i) => choose(coolPool, 'cool' + i)));
-    return blocks.filter((b) => b.moves.length);
+    R.forEach((b, bi) => {
+      const count = b.n + (extra[bi] || 0);
+      const picks = Array.from({ length: count }, (_, i) => pick(b.kind, i, b.key + i)).filter(Boolean);
+      if (!picks.length) return;
+      const lead = F[picks[0].fam] || F.push;
+      blocks.push({ key: b.key, name: b.name, color: lead.color, shape: lead.shape, moves: picks.map((m, i) => ({ id: b.key + i, n: m.n, rx: m.rx, block: b.name, fam: m.fam, color: F[m.fam].color, ink: F[m.fam].ink, pose: 'walk', secs: this.dur(m.rx), swapCount: s.swaps[b.key + i] || 0 })) });
+    });
+    return blocks;
   }
   flat() { return this.plan().reduce((a, b) => a.concat(b.moves), []); }
   secsAt(i) { const f = this.flat(); return f[i] ? f[i].secs : 30; }
@@ -968,6 +1038,7 @@ class Component extends DCLogic {
     const phSize = Math.min(70, Math.floor(300 / (longest * 0.56)), ph.length > 3 ? 56 : 70);
     const tp = (s.time - 5) / 55 * 100;
     const ep = s.energy;
+    const tCol = s.time <= 15 ? '#0E8178' : s.time <= 35 ? '#1556C2' : '#E5282E';
     const eCol = ep < 34 ? '#FFC20E' : ep < 67 ? '#F26A0F' : '#E5282E';
     const triH = Math.round(22 + ep * 0.34);
     const dot = Math.round(18 + (s.time - 5) * 0.72);
@@ -1319,8 +1390,10 @@ class Component extends DCLogic {
       moods, time: s.time, energy: s.energy, energyLabel,
       onTime: (e) => this.setState({ time: Number(e.target.value) }),
       onEnergy: (e) => this.setState({ energy: Number(e.target.value) }),
-      timeDot: 'display:block;border-radius:50%;background:#E5282E;transition:width .15s,height .15s;width:' + dot + 'px;height:' + dot + 'px',
-      timeTrack: track(tp, '#E5282E'),
+      timeDot: 'display:block;border-radius:50%;background:' + tCol + ';transition:width .15s,height .15s,background .3s;width:' + dot + 'px;height:' + dot + 'px',
+      timeTrack: track(tp, tCol),
+      timeWrap: 'position:relative;height:44px;--th:' + tCol,
+      energyWrap: 'position:relative;height:44px;--th:' + eCol,
       energyTri: 'display:block;clip-path:polygon(50% 0,100% 100%,0 100%);transition:width .15s,height .15s,background .3s;background:' + eCol + ';height:' + triH + 'px;width:' + Math.round(triH * 1.1) + 'px',
       energyTrack: track(ep, eCol),
       go: () => this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null }),
