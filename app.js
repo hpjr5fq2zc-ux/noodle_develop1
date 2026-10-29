@@ -9,11 +9,13 @@ class Component extends DCLogic {
     const unlock = () => { this.ensureAudio(); };
     ['pointerdown', 'touchend', 'keydown'].forEach((ev) => document.addEventListener(ev, unlock, { passive: true }));
     this.timer = setInterval(() => this.tick(), 1000);
-    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { this.demo = /[?&]demo=full/.test(location.search); } catch (e) {}
+    if (this.demo) { this.setState(this.demoState()); return; }
+    try { const raw = localStorage.getItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -349,6 +351,22 @@ class Component extends DCLogic {
     return true;
   }
   lvSum() { const L = this.state.levels; return Math.max(0, Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0) - ((this.state.profile && this.state.profile.base) || 0)); }
+  demoState() {
+    const F = this.fams(), BK = this.bank(), levels = {}, stones = {}, seen = {}, tried = {}, seenTricks = {}, log = {}, history = {};
+    Object.keys(F).forEach((k) => { levels[k] = 4; stones[k] = Math.max(0, F[k].ladder.length - 1); seen[k] = true; });
+    BK.forEach((m) => { tried[m.n] = 1; });
+    this.tricks().forEach((t) => { seenTricks[t[0]] = true; });
+    const fams = ['push', 'legs', 'dance', 'stretch', 'strikes', 'core', 'balance', 'mobility', 'pull'];
+    const today = new Date();
+    for (let i = 0; i < 80; i++) {
+      const d = new Date(today); d.setDate(d.getDate() - i);
+      if (i > 6 && (i * 7) % 10 < 3) continue;
+      const fa = fams[i % fams.length], fb = fams[(i + 3) % fams.length], f = {}; f[fa] = 4; f[fb] = 2;
+      const mv = BK.filter((m) => m.fam === fa || m.fam === fb).slice(0, 6).map((m) => m.n);
+      const k = this.dayKey(d); log[k] = { m: 20, f, mv, nw: i < 7 ? mv.slice(0, 2) : [] }; history[k] = fa;
+    }
+    return { levels, stones, seen, tried, seenTricks, log, history, sessions: 120, fb: 60, safe: { done: true, areas: {}, care: false }, guideDone: true, profile: { done: true, likes: {}, active: 2, base: 0 }, chBonus: null };
+  }
   tricks() {
     return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%'], ['Play dead', 30, 'trDead', 1.8, '50% 60%'], ['Zoomies', 34, 'trZoom', 1.4], ['Sneeze', 38, 'trSneeze', 0.9]];
   }
