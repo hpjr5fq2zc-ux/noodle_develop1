@@ -5,6 +5,8 @@ class Component extends DCLogic {
     this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
+    const unlock = () => { this.ensureAudio(); };
+    ['pointerdown', 'touchend', 'keydown'].forEach((ev) => document.addEventListener(ev, unlock, { passive: true }));
     this.timer = setInterval(() => this.tick(), 1000);
     try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
@@ -17,15 +19,34 @@ class Component extends DCLogic {
       if (!want && this.lock) { this.lock.release().catch(() => {}); this.lock = null; }
     } catch (e) {}
   }
-  ensureAudio() { try { if (!this.ac) this.ac = new (window.AudioContext || window.webkitAudioContext)(); if (this.ac.state === 'suspended') this.ac.resume(); } catch (e) {} }
+  ensureAudio() {
+    try {
+      // iPhone: mix with the user's music instead of stopping it
+      if (navigator.audioSession && navigator.audioSession.type !== 'ambient') navigator.audioSession.type = 'ambient';
+      if (!this.ac) {
+        this.ac = new (window.AudioContext || window.webkitAudioContext)();
+        const comp = this.ac.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 4;
+        this.master = this.ac.createGain(); this.master.gain.value = 1;
+        this.master.connect(comp); comp.connect(this.ac.destination);
+      }
+      if (this.ac.state !== 'running') this.ac.resume();
+      if (!this.unlocked) { // iOS needs a sound started inside a tap before any later sound can play
+        const b = this.ac.createBuffer(1, 1, 22050), src = this.ac.createBufferSource(); src.buffer = b; src.connect(this.ac.destination); src.start(0);
+        this.unlocked = true;
+      }
+    } catch (e) {}
+  }
   tone(f, t, d, type, vol, f2) {
     const ac = this.ac, o = ac.createOscillator(), g = ac.createGain();
     o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + d + 0.03);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.min(0.7, (vol || 0.2) * 2.4), t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    o.connect(g); g.connect(this.master || ac.destination); o.start(t); o.stop(t + d + 0.03);
   }
   sfx(name) {
-    if (!this.state.sound || !this.ac) return;
+    if (!this.state.sound) return;
+    if (!this.ac) this.ensureAudio();
+    if (!this.ac) return;
+    if (this.ac.state !== 'running') { try { this.ac.resume(); } catch (e) {} }
     try {
       const t = this.ac.currentTime + 0.01, T = (f, dt, d, ty, v, f2) => this.tone(f, t + dt, d, ty, v, f2);
       if (name === 'tick') T(1250, 0, 0.06, 'triangle', 0.16);
@@ -1530,7 +1551,8 @@ class Component extends DCLogic {
       trickAnim: 'display:block;transform-origin:' + ((curT && curT[4]) || '50% 90%') + ';' + (curT && !s.calm ? 'animation:' + curT[2] + (s.trickN % 2 ? '' : '2') + ' ' + curT[3] + 's cubic-bezier(.3,.7,.4,1) both' : ''),
       settingsOpen: s.settingsOpen, openSettings: () => this.setState({ settingsOpen: true, setMsg: '', resetArm: false }), closeSettings: () => this.setState({ settingsOpen: false }),
       calmOn: s.calm ? 'true' : 'false', calmTrack: cT.track, calmKnob: cT.knob, toggleCalm: () => this.setState({ calm: !s.calm }),
-      soundOn: s.sound ? 'true' : 'false', soundTrack: sT.track, soundKnob: sT.knob, toggleSound: () => { this.ensureAudio(); this.setState({ sound: !s.sound }); },
+      soundOn: s.sound ? 'true' : 'false', soundTrack: sT.track, soundKnob: sT.knob, toggleSound: () => { this.ensureAudio(); const on = !s.sound; this.setState({ sound: on }); if (on) setTimeout(() => this.sfx('level'), 30); },
+      testSound: () => { this.ensureAudio(); if (!s.sound) this.setState({ sound: true }); setTimeout(() => this.sfx('finish'), 30); },
       chatterOn: s.chatter ? 'true' : 'false', chatterTrack: chT.track, chatterKnob: chT.knob, toggleChatter: () => this.setState({ chatter: !s.chatter }),
       restOpts: [10, 15, 30, 45].map((v) => ({ t: v + ' s', on: (s.rest || 15) === v ? 'true' : 'false', pick: () => this.setState({ rest: v }), box: 'flex:1;height:44px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + ((s.rest || 15) === v ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') })),
       backup: () => this.backup(), restore: () => this.restore(),

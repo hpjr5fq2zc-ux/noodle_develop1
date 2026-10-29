@@ -753,7 +753,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     </div>
     <div style="margin-top: 14px; border-top: 3px solid #161616">
       <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Calm mode (less motion)</span><button role="switch" aria-checked="{{calmOn}}" aria-label="Calm mode (less motion)" onClick="{{toggleCalm}}" style="{{calmTrack}}"><span style="{{calmKnob}}"></span></button></div>
-      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds</span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds <button onClick="{{testSound}}" style="margin-left: 8px; border: 0; background: #F4F4F4; padding: 4px 8px; font: 800 11px Inter Tight, sans-serif; color: #161616">Test</button></span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
       <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Noodle chatter</span><button role="switch" aria-checked="{{chatterOn}}" aria-label="Noodle chatter" onClick="{{toggleChatter}}" style="{{chatterTrack}}"><span style="{{chatterKnob}}"></span></button></div>
       <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
         <span style="font-size: 16px; font-weight: 700">Rest between moves</span>
@@ -873,8 +873,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=40"></script>
-<script src="app.js?v=40"></script>
+<script src="runtime.js?v=41"></script>
+<script src="app.js?v=41"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
