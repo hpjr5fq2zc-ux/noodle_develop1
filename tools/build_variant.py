@@ -2,6 +2,9 @@
 import sys,shutil,os,re
 SRC='/home/claude/noodle_develop1/'
 which,DST=sys.argv[1],sys.argv[2]
+import subprocess
+if subprocess.call(['node', SRC + 'tools/tests/check.js'], stdout=subprocess.DEVNULL) != 0:
+    sys.exit('Checks failed: run  node tools/tests/check.js  in the dev copy and fix them before building.')
 V={'personal':dict(name='Noodle',key='noodle-v1',flags='noodle-flags',cache='noodle-v',clean=r"/^noodle-v\d/.test(k)",quotes=True,gallery=True,noindex=False),
    'friends':dict(name='Noodle',key='noodle-friends-v1',flags='noodle-friends-flags',cache='noodle-friends-v',clean="k.indexOf('noodle-friends-v') === 0",quotes=False,gallery=False,noindex=True)}[which]
 ver=int(sys.argv[3])
