@@ -99,9 +99,9 @@ class Component extends DCLogic {
     const sf = this.state.safe || {}, ar = sf.areas || {}, mi = this.moveInfo()[m.n];
     if (!mi) return true;
     const an = mi.anim || 'stand', regs = mi.f.concat(mi.b);
-    const WRIST = ['wheel', 'handrelease', 'onearm', 'pseudo', 'downdog', 'pikebed', 'elevpike', 'wallwalk', 'turtle', 'chairfreeze', 'wallpush', 'incline', 'kneepush', 'pushup', 'decline', 'dip', 'pike', 'handstand', 'plank', 'sideplank', 'shouldertap', 'frogstand', 'mountain', 'burpee', 'sixstep', 'freeze', 'catcow', 'headstand', 'bear', 'crab', 'birddog', 'lsit'];
+    const WRIST = ['wheel', 'handrelease', 'onearm', 'pseudo', 'downdog', 'pikebed', 'elevpike', 'wallwalk', 'turtle', 'chairfreeze', 'wallpush', 'incline', 'kneepush', 'pushup', 'decline', 'dip', 'pike', 'handstand', 'plank', 'sideplank', 'shouldertap', 'frogstand', 'mountain', 'burpee', 'sixstep', 'freeze', 'catcow', 'headstand', 'tripodrest', 'tucktripod', 'hsfreeze', 'bear', 'crab', 'birddog', 'lsit'];
     const KNEE = ['tuckjump', 'squatjump', 'warrior', 'chairpose', 'pistol', 'bulgarian', 'lunge', 'nordic', 'cossack', 'skater', 'burpee', 'deepsquat', 'kneel', 'wallsit', 'pigeon', 'split', 'halfsplit'];
-    const INVERT = ['handstand', 'headstand', 'freeze', 'frogstand', 'plow', 'shoulderstand', 'chairfreeze', 'turtle'];
+    const INVERT = ['handstand', 'headstand', 'tripodrest', 'tucktripod', 'hsfreeze', 'freeze', 'frogstand', 'plow', 'shoulderstand', 'chairfreeze', 'turtle'];
     if (ar.wrists && WRIST.indexOf(an) >= 0) return false;
     if (ar.shoulders && (INVERT.indexOf(an) >= 0 || (regs.indexOf('shoulders') >= 0 && mi.lvl >= 2))) return false;
     if (ar.back && (regs.indexOf('lowback') >= 0 || regs.indexOf('back') >= 0) && mi.lvl >= 2) return false;
@@ -428,7 +428,7 @@ class Component extends DCLogic {
       ['Frog stand, toes down', 'balance', 1, 'v', '5 × 10 s', 'frogstand', 'Knees on the backs of your elbows, toes still on the floor.', 'Lean forward until your toes feel light.', ['shoulders', 'arms', 'core'], ['shoulders']],
       ['Heel pulls off the wall', 'balance', 3, 'v', '5 tries', 'handstand', 'In your wall handstand, hands a little closer to the wall.', 'Ease one heel off the wall, then both, for a second.', ['shoulders', 'arms', 'core'], ['shoulders']],
       ['Baby freeze, toes down', 'dance', 3, 'v', '5 × 5 s', 'freeze', 'Baby freeze setup, both toes stay on the floor.', 'Lean onto your head and arm until your feet feel light.', ['shoulders', 'arms', 'core'], []],
-      ['Tripod knee rest', 'freezes', 0, 'v', '5 × 10 s', 'headstand', 'Head and hands make a triangle on something soft, toes on the floor.', 'Walk in and rest one knee, then both, on your elbows.', ['shoulders', 'core'], ['shoulders']],
+      ['Tripod knee rest', 'freezes', 0, 'v', '5 × 10 s', 'tripodrest', 'Head and hands make a triangle on something soft, toes on the floor.', 'Walk in and rest one knee, then both, on your elbows.', ['shoulders', 'core'], ['shoulders']],
       ['Wall push-up', 'push', 0, 'm', '3 × 12', 'wallpush', 'Hands on the wall at shoulder height.', 'Chest to the wall, then push away.'],
       ['Wide wall push-up', 'push', 0, 'v', '3 × 12', 'wallpush', 'Hands wider than your shoulders.', 'Keep your body in one straight line.'],
       ['Close-hand wall push-up', 'push', 0, 'v', '3 × 10', 'wallpush', 'Hands close together under your chest.', 'Elbows brush your ribs as you lower.'],
@@ -612,7 +612,7 @@ class Component extends DCLogic {
       ['Tripod headstand', 'freezes', 0, 'm', '5 × 10 s', 'headstand', 'Head and hands make a triangle on a soft surface.', 'Walk your feet in and lift your knees onto your elbows.'],
       ['Elbow freeze', 'freezes', 1, 'm', '5 tries, hold 3 s', 'freeze', 'Plant one elbow into your hip.', 'Balance your body sideways on that arm.'],
       ['Turtle freeze', 'freezes', 2, 'm', '5 tries, hold 3 s', 'turtle', 'Both elbows tucked into your stomach.', 'Lean forward and lift both feet.'],
-      ['Headstand freeze', 'freezes', 3, 'm', '5 tries, hold 3 s', 'headstand', 'From a tripod headstand, lift your legs.', 'Freeze them in a fun shape.'],
+      ['Headstand freeze', 'freezes', 3, 'm', '5 tries, hold 3 s', 'hsfreeze', 'From a tripod headstand, lift your legs.', 'Freeze them in a fun shape.'],
       ['Freeze chains', 'freezes', 4, 'm', '4 tries', 'freeze', 'Link two or three freezes.', 'Move through footwork between them.'],
       ['Lizard hold, 60 s', 'splits', 0, 'm', '60 s per side', 'lowlunge', 'Low lunge, both hands inside the front foot.', 'Breathe and sink a little deeper.'],
       ['Front-split slide', 'splits', 1, 'm', '45 s per side', 'split', 'Hands on books on both sides.', 'Slide the front heel forward a little at a time.'],
@@ -648,7 +648,7 @@ class Component extends DCLogic {
       ['Wheel pose', 'stretch', 4, 'v', '3 × 10 s', 'wheel', 'Hands by your ears, fingers toward your shoulders.', 'Press up through hands and feet, chest lifting.', ['chest', 'shoulders'], ['back', 'glutes']],
       ['Pancake with reach', 'stretch', 4, 'v', '45 s', 'seatedfold', 'Legs wide, sit tall.', 'Walk your hands forward and breathe into it.', ['hips'], ['hamstrings', 'lowback']],
       // ---- added: hidden paths ----
-      ['Tuck to tripod', 'freezes', 1, 'v', '5 tries', 'headstand', 'Head and hands make a triangle, knees rest on your elbows.', 'Hold the tuck, then slowly come down.', ['shoulders', 'core'], ['shoulders']],
+      ['Tuck to tripod', 'freezes', 1, 'v', '5 tries', 'tucktripod', 'Head and hands make a triangle, knees rest on your elbows.', 'Hold the tuck, then slowly come down.', ['shoulders', 'core'], ['shoulders']],
       ['Turtle shuffle', 'freezes', 3, 'v', '3 tries', 'turtle', 'Hold the turtle.', 'Shift your weight hand to hand to turn in a circle.', ['shoulders', 'arms', 'core'], []],
       ['Air chair prep', 'freezes', 4, 'v', '5 tries', 'chairfreeze', 'One hand down, that elbow tucked into your hip.', 'Lean back and lift your feet one at a time.', ['shoulders', 'arms', 'core'], ['lowback']],
       ['Half split rocks', 'splits', 0, 'v', '10 per side', 'halfsplit', 'Back knee down, front leg straight.', 'Gently rock forward and back.', [], ['hamstrings']],
@@ -793,7 +793,7 @@ class Component extends DCLogic {
       shoulderiso: ['H50,13 N50,23 P50,49 E51,36 W52,48 K49,69 F47,89 e51,36 w53,48 k52,69 f53,89', 'H51,14 N50,23 P50,49 E43,34 W54,40 K49,69 F47,89 e51,36 w52,48 k52,69 f53,89', 0.9, null],
       twostep: ['H50,15 N50,24 P48,50 E40,32 W42,44 K51,70 F46,89 e48,37 w58,44 k56,68 f60,88', 'H50,15 N50,24 P52,50 E48,37 W58,44 K51,70 F42,88 e40,32 w42,44 k58,69 f56,89', 1.0, null],
       turtle: ['H19,64 N28,66 P54,70 E35,77 W34,89 K46,88 F66,89 e34,78 w38,89 k48,89 f68,89', 'H22,72 N28,70 P52,66 E40,76 W34,89 K48,80 F66,76 e42,76 w38,89 k50,81 f68,77', 2.4, null],
-      chairfreeze: ['H30,58 N38,62 P56,72 E44,76 W34,89 K64,68 F70,89 e46,64 w50,70 k68,70 f74,89', 'H30,62 N37,66 P55,74 E44,78 W34,89 K62,58 F78,54 e45,66 w50,72 k66,60 f82,58', 2.6, null],
+      chairfreeze: ['H32,64 N39,70 E50,77 W50,89 e37,58 w42,47 P63,80 K77,70 F86,88 k76,71 f84,89', 'K75,64 F91,76 k80,72 f66,62', 2.6, null],
       squatjab: ['H48,42 N49,50 P40,70 E58,50 W66,44 K58,72 F50,89 e56,50 w60,42 k60,72 f54,89', 'H50,14 N50,23 P50,49 E62,22 W74,21 K48,69 F47,89 e54,32 w58,22 k52,69 f53,89', 1.1, null],
       godown: ['H50,14 N50,23 P50,49 E48,36 W47,48 K48,69 F47,89 e52,36 w53,48 k52,69 f53,89', 'H67,46 N59,51 P44,72 E61,64 W63,75 K64,73 F52,89 e62,63 w64,75 k64,71 f56,89', 2.4, null],
       warrior: ['H51,26 N51,35 P50,61 E55,23 W53,11 K68,69 F72,89 e56,23 w55,11 k41,79 f24,89', 'H50,28 N50,37 P49,63 E63,37 W75,37 K68,70 F73,89 e37,37 w25,37 k43,82 f24,89', 3.2],
@@ -826,7 +826,10 @@ class Component extends DCLogic {
       quad: [S + ' w44,52 k48,70 f40,58', 'H50,13 N50,22', 3],
       calfwall: ['H34,22 N38,30 P50,56 E30,30 W20,30 K58,72 F64,89 e32,30 w21,30 k44,72 f44,89', 'H30,24 N35,32 P48,58', 3, { wall: 18 }],
       kneel: ['H52,32 N52,40 P52,64 E52,50 W52,60 K52,88 F30,88 e54,50 w54,60 k54,88 f32,88', 'H50,38 N50,46 P46,70', 3],
-      headstand: ['H44,84 N45,76 P50,52 E36,80 W34,89 K40,64 F54,72 e38,80 w36,89 k42,64 f56,72', 'P50,48 K50,30 F51,12 k52,30 f53,12', 3],
+      headstand: ['H46,84 N46,75 E58,77 W58,89 e57,77 w57,89 P48,49 K53,68 F58,87 k52,68 f57,88', 'P46,49 K46,29 F46,9 k47,29 f47,9', 3.4, null, 'P52,50 K60,69 F42,62 k59,69 f41,62'],
+      tripodrest: ['H46,84 N46,75 E58,77 W58,89 e57,77 w57,89 P48,49 K53,68 F58,87 k52,68 f57,88', 'P52,50 K60,69 F42,62', 2.8],
+      tucktripod: ['H46,84 N46,75 E58,77 W58,89 e57,77 w57,89 P48,49 K53,68 F58,87 k52,68 f57,88', 'P52,50 K60,69 F42,62 k59,69 f41,62', 2.8],
+      hsfreeze: ['H46,84 N46,75 E58,77 W58,89 e57,77 w57,89 P52,50 K60,69 F42,62 k59,69 f41,62', 'P46,49 K51,30 F56,11 k36,33 f52,29', 2.6],
       split: ['H50,38 N50,46 P50,72 E44,60 W40,80 K66,82 F78,86 e56,60 w60,80 k36,82 f22,88', 'H50,48 N50,56 P50,82 E42,68 W38,86 K68,88 F88,88 k32,88 f12,88', 3.4],
       bear: ['H24,58 N30,62 P60,60 E30,75 W30,89 K62,76 F72,89 e32,75 w32,89 k58,76 f68,89', 'E36,75 W38,89 K56,76 F66,89 e28,75 w26,89 k62,76 f74,89', 1.2],
       crab: ['H70,52 N64,58 P40,64 E66,74 W68,89 K28,70 F22,89 e64,74 w66,89 k30,70 f24,89', 'E62,74 W60,89 K32,70 F28,89', 1.2]
@@ -1134,7 +1137,7 @@ class Component extends DCLogic {
     const liked = Object.keys(this.likedFams());
     const surpriseFams = (() => { const lf = liked.filter((k) => ['dance', 'strikes', 'balance', 'stretch', 'mobility'].indexOf(k) >= 0); return (lf.length ? lf.concat(lf) : []).concat(['dance', 'strikes', 'balance']).concat(Object.keys(U)); })();
     const TOP = ['groove', 'indianstep', 'twostep', 'bodyroll', 'shoulderiso', 'march', 'wave'];
-    const FLOOR = ['sixstep', 'freeze', 'godown', 'chairfreeze', 'turtle', 'headstand'];
+    const FLOOR = ['sixstep', 'freeze', 'godown', 'chairfreeze', 'turtle', 'headstand', 'tripodrest', 'tucktripod', 'hsfreeze'];
     const STAND = ['warrior', 'tree', 'chairpose', 'dancer', 'downdog', 'fold', 'lowlunge', 'quad', 'calfwall', 'armstretch'];
     const pick = (kind, i, k) => {
       const rot = (arr) => arr[(off + i) % arr.length];
