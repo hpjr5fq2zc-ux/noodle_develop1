@@ -782,6 +782,12 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
       <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds <button onClick="{{testSound}}" style="margin-left: 8px; border: 0; background: #F4F4F4; padding: 4px 8px; font: 800 11px Inter Tight, sans-serif; color: #161616">Test</button></span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
       <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Noodle chatter</span><button role="switch" aria-checked="{{chatterOn}}" aria-label="Noodle chatter" onClick="{{toggleChatter}}" style="{{chatterTrack}}"><span style="{{chatterKnob}}"></span></button></div>
       <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
+        <span style="font-size: 16px; font-weight: 700">Daily reminder in your calendar</span>
+        <div style="margin-top: 8px; display: flex; gap: 6px">
+          <sc-for list="{{calOpts}}" as="co" hint-placeholder-count="3"><button onClick="{{co.pick}}" style="{{co.box}}">{{co.t}}</button></sc-for>
+        </div>
+      </div>
+      <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
         <span style="font-size: 16px; font-weight: 700">Rest between moves</span>
         <div style="margin-top: 8px; display: flex; gap: 6px">
           <sc-for list="{{restOpts}}" as="ro" hint-placeholder-count="4"><button onClick="{{ro.pick}}" aria-pressed="{{ro.on}}" style="{{ro.box}}">{{ro.t}}</button></sc-for>
@@ -899,8 +905,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=51"></script>
-<script src="app.js?v=51"></script>
+<script src="runtime.js?v=52"></script>
+<script src="app.js?v=52"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};

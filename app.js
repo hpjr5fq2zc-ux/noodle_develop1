@@ -399,6 +399,20 @@ class Component extends DCLogic {
     const u = URL.createObjectURL(blob), l = document.createElement('a'); l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
     this.setState({ setMsg: 'Backup saved to your downloads.' });
   }
+  remindCal(slot) {
+    const T = { morning: [8, 0, 'Morning wake-up'], midday: [12, 30, 'Midday reset'], evening: [21, 0, 'Evening wind-down'] }[slot];
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    const p = (n) => String(n).padStart(2, '0'), day = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+    const st = day + 'T' + p(T[0]) + p(T[1]) + '00', en = day + 'T' + p(T[0]) + p(T[1] + 10 >= 60 ? T[1] - 50 : T[1] + 10) + '00';
+    const en2 = T[1] + 10 >= 60 ? day + 'T' + p(T[0] + 1) + p(T[1] - 50) + '00' : en;
+    const url = location.href.split('#')[0].split('?')[0];
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Noodle//EN', 'BEGIN:VEVENT', 'UID:noodle-' + slot + '-' + Date.now() + '@noodle', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+      'DTSTART:' + st, 'DTEND:' + en2, 'RRULE:FREQ=DAILY', 'SUMMARY:Noodle: ' + T[2], 'DESCRIPTION:Even 2 minutes counts. ' + url, 'URL:' + url,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Time to noodle!', 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const l = document.createElement('a'); l.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics); l.download = 'noodle-' + slot + '.ics';
+    document.body.appendChild(l); l.click(); l.remove();
+    this.setState({ setMsg: 'Open the file to add it to your calendar. Delete the event anytime to stop.' });
+  }
   restore() {
     const i = document.createElement('input'); i.type = 'file'; i.accept = '.json,application/json';
     i.onchange = () => {
@@ -1523,7 +1537,7 @@ class Component extends DCLogic {
       startAll: () => { this.ensureAudio(); this.sfx('start'); this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }); },
       rootClass: s.calm ? 'calm' : '',
       chatter: s.chatter,
-      restLine: restLines[(s.idx + s.seed) % restLines.length],
+      restLine: s.idx === 0 ? 'First minutes feel hardest. It gets easier!' : s.idx === 1 ? 'Body is warming up. Stick with me.' : restLines[(s.idx + s.seed) % restLines.length],
       sessLine: sessLines[(s.seed + (s.sessions || 0)) % sessLines.length],
       petLine: petLines[(s.homePets || 0) % petLines.length],
       doneStats: [['Minutes', '#E5282E', '#FFFFFF'], ['Moves', '#1556C2', '#FFFFFF'], ['New', '#FFC20E', '#161616'], ['Level-ups', '#FFFFFF', '#161616']].map((d, i) => {
@@ -1531,7 +1545,7 @@ class Component extends DCLogic {
         const shown = p > 0;
         return { l: d[0], v: Math.round(val * p), box: 'display:flex;flex-direction:column;align-items:center;justify-content:center;height:74px;margin:0 ' + (i < 3 ? 3 : 0) + 'px 0 0;background:' + d[1] + ';color:' + d[2] + ';transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s;opacity:' + (shown ? 1 : 0.15) + ';transform:scale(' + (p >= 1 ? 1 : shown ? 1.12 : 0.85) + ')' };
       }),
-      doneNote: (() => { try { const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); const inst = navigator.standalone || matchMedia('(display-mode: standalone)').matches; if (ios && !inst && (s.sessions || 0) <= 3) return 'Tip: tap Share, then Add to Home Screen, so your progress stays safe.'; } catch (e) {} return s.doneNote || 'That was a good wiggle.'; })(), doneFaceSt: this.face(s.doneFace || 'grin', 44),
+      doneNote: (() => { try { const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); const inst = navigator.standalone || matchMedia('(display-mode: standalone)').matches; if ((s.sessions || 0) === 1) return 'First one done! Feeling a bit sore tomorrow is normal. Sharp pain is not, so ease back.'; if (ios && !inst && (s.sessions || 0) <= 4) return 'Tip: tap Share, then Add to Home Screen, so your progress stays safe.'; } catch (e) {} return s.doneNote || 'That was a good wiggle.'; })(), doneFaceSt: this.face(s.doneFace || 'grin', 44),
       showUpNext: !s.askFb && !s.fbMsg,
       askFb: s.askFb, hasFbMsg: !!s.fbMsg && !s.askFb, fbMsg: s.fbMsg,
       lastMove: cur.n,
@@ -1616,6 +1630,7 @@ class Component extends DCLogic {
       soundOn: s.sound ? 'true' : 'false', soundTrack: sT.track, soundKnob: sT.knob, toggleSound: () => { this.ensureAudio(); const on = !s.sound; this.setState({ sound: on }); if (on) setTimeout(() => this.sfx('level'), 30); },
       testSound: () => { this.ensureAudio(); if (!s.sound) this.setState({ sound: true }); setTimeout(() => this.sfx('finish'), 30); },
       chatterOn: s.chatter ? 'true' : 'false', chatterTrack: chT.track, chatterKnob: chT.knob, toggleChatter: () => this.setState({ chatter: !s.chatter }),
+      calOpts: [['morning', 'Morning'], ['midday', 'Midday'], ['evening', 'Evening']].map((o) => ({ t: o[1], pick: () => this.remindCal(o[0]), box: 'flex:1;height:44px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;background:#FFFFFF;color:#161616' })),
       restOpts: [10, 15, 30, 45].map((v) => ({ t: v + ' s', on: (s.rest || 15) === v ? 'true' : 'false', pick: () => this.setState({ rest: v }), box: 'flex:1;height:44px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + ((s.rest || 15) === v ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') })),
       backup: () => this.backup(), restore: () => this.restore(),
       resetLabel: s.resetArm ? 'Tap again to erase everything' : 'Reset progress',
