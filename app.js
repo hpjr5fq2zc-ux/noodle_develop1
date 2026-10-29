@@ -179,6 +179,12 @@ class Component extends DCLogic {
     }
     this._pk = null; this.setState(upd);
   }
+  youSwipe(dir) {
+    const p = (this.state.yPanel || 0) + dir;
+    if (p < 0 || p > 3) return false;
+    this.setState({ yPanel: p, yDir: dir > 0 ? 'swl' : 'swr' });
+    return true;
+  }
   lvSum() { const L = this.state.levels; return Math.max(0, Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0) - ((this.state.profile && this.state.profile.base) || 0)); }
   tricks() {
     return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%'], ['Play dead', 30, 'trDead', 1.8, '50% 60%'], ['Zoomies', 34, 'trZoom', 1.4], ['Sneeze', 38, 'trSneeze', 0.9]];
@@ -1242,6 +1248,10 @@ class Component extends DCLogic {
       regionName: pretty[region].replace(/^./, (c) => c.toUpperCase()), regionLine,
       regionGoLabel: 'Give your ' + pretty[region] + ' some love · 15 min',
       regionGo: go('session', '#1556C2', { focus: region, mood: 'Surprise', time: 15, energy: 50, swaps: {}, idx: 0, visited: true }),
+      yTabs: [['Noodle', 'circle', '#E5282E'], ['Month', 'square', '#1556C2'], ['Body', 'peak', '#F26A0F'], ['Moves', 'diamond', '#6B3FA0']].map((t, i) => { const on = (s.yPanel || 0) === i; return { t: t[0], on: on ? 'true' : 'false', shape: this.shp(t[1], on ? t[2] : '#C8C8C8', 12), go: () => { if (!on) this.setState({ yPanel: i, yDir: i > (s.yPanel || 0) ? 'swl' : 'swr' }); }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:6px;font:800 12px Inter Tight,sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:color .3s;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      yBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + ((s.yPanel || 0) * 25) + '%',
+      yp0: (s.yPanel || 0) === 0, yp1: s.yPanel === 1, yp2: s.yPanel === 2, yp3: s.yPanel === 3,
+      ySlide: s.yDir || 'a-up',
       sheetBody: s.sheet === 'body', sheetMoves: s.sheet === 'moves',
       openBody: () => this.setState({ sheet: 'body' }), openMoves: () => this.setState({ sheet: 'moves' }), closeSheet: () => this.setState({ sheet: null }),
       foundN, foundTotal: collection.length,
