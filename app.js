@@ -185,6 +185,124 @@ class Component extends DCLogic {
     this.setState({ mCard: p, mDir: dir > 0 ? 'swl' : 'swr' });
     return true;
   }
+  clarify() {
+    // Plain-language "think of it as" + clear steps for moves whose names or motions are hard to picture.
+    return {
+      'Cloud hands': ['Slowly wiping a big window in front of your face.', 'Stand with feet wide and knees soft.', 'One hand floats up past your face while the other sweeps low past your belly.', 'Shift your weight toward the high hand, then switch. Slow, like moving through water.'],
+      'Towel pass-through': ['Drawing a big rainbow over your head with a towel.', 'Hold a towel wide with both hands, arms straight in front of your hips.', 'Lift it up over your head and back behind you, arms staying straight.', 'Bring it back the same way. Grip wider if your shoulders pinch.'],
+      'Wrist prep circuit': ['Gently warming your wrists before they carry weight.', 'Kneel on all fours, hands under shoulders, fingers forward.', 'Rock your shoulders forward past your hands, then back. 10 slow rocks.', 'Turn fingers sideways, then backward, and rock again.'],
+      'Pelvic tilts': ['Flattening a grape under your low back, then letting it go.', 'Lie on your back, knees bent, feet flat.', 'Gently press your low back into the floor by tipping your hips up a little.', 'Release so your back arches slightly. Tiny, slow movements.'],
+      'Neck isolations': ['A pigeon walking, but only your head moves.', 'Stand tall, shoulders relaxed and still.', 'Slide your head straight forward, then straight back, chin level.', 'Then slide it side to side. Small and smooth, never forced.'],
+      'Chest isolations': ['Your chest is pulled by a string, front then back.', 'Stand with soft knees, hips still.', 'Push your chest forward, then pull it back so your upper back rounds.', 'Keep your shoulders down and your hips quiet.'],
+      'Shoulder isolations': ['Shrugging one shoulder at a time to a beat.', 'Stand relaxed with soft knees.', 'Pop one shoulder up toward your ear and drop it.', 'Then the other. Keep your head and hips still.'],
+      'Body roll': ['A wave rolling down your body from chest to hips.', 'Push your chest forward first.', 'Let the wave travel to your belly, then your hips.', 'Bend your knees as it reaches your hips. Start slow.'],
+      'Bounce and rock': ['Nodding along to music, with your whole body.', 'Stand with feet hip-width, knees soft.', 'Bounce gently by bending your knees on every beat.', 'Let your chest rock forward and back with the bounce.'],
+      'Two-step': ['The classic party side-step.', 'Step one foot out to the side.', 'Bring the other foot in to tap next to it.', 'Repeat to the other side. Add arm swings when it feels easy.'],
+      'Indian step': ['A bouncy front-and-back step from breaking.', 'Kick one foot forward and tap it, as if stepping on a bug.', 'Hop back to center and do the other foot.', 'Arms swing loosely across your body.'],
+      'Cross step': ['Crossing your feet like an X, then uncrossing.', 'Step one foot across the other.', 'Hop to uncross and land feet apart.', 'Switch which foot crosses in front.'],
+      'Salsa rock': ['Rocking forward and back like a salsa basic.', 'Step one foot forward, shift your weight onto it.', 'Rock back onto the other foot.', 'Bring the front foot home. Repeat on the other side.'],
+      'Low-impact running man': ['Running in place, but sliding instead of jumping.', 'Lift one knee up.', 'As that foot comes down, slide the other foot back.', 'Switch legs in a smooth rhythm.'],
+      'Shuffle running man': ['The running man with a bounce.', 'Knee up, then hop as you slide the standing foot back.', 'Land on the lifted foot and switch.', 'Stay light on the balls of your feet.'],
+      'Six-step': ['Walking in a circle around your hands, low to the ground.', 'Crouch with one hand on the floor.', 'Step your feet around your hands in 6 steps: cross, kick out, step behind, and so on.', 'Go slow until the pattern feels natural.'],
+      'Three-step': ['A shorter, simpler six-step.', 'Crouch with one hand down.', 'Step one leg through, kick it out, and bring it back.', 'Switch sides. Three steps per side.'],
+      'Kick-outs': ['Popping your legs out from a crouch.', 'Crouch with both hands on the floor.', 'Hop and kick both feet out to one side.', 'Hop them back under you and repeat to the other side.'],
+      'CC footwork': ['Switching legs back and forth under your body.', 'Crouch with hands down, one leg bent under, the other out straight.', 'Hop and swap the legs.', 'Keep your hips low and the rhythm steady.'],
+      'Coffee grinder': ['Sweeping one leg in a big circle like a clock hand.', 'Crouch low, hands down, one leg straight out.', 'Sweep that leg in a circle under you.', 'Hop the other foot over it as it passes.'],
+      'Footwork freestyle': ['Mixing the floor steps you know, your way.', 'Start with six-step.', 'Add three-steps and kick-outs whenever you like.', 'Change direction to keep it fresh.'],
+      'Toprock freestyle': ['Your own standing dance warm-up.', 'Start with the Indian step.', 'Mix in cross steps and arm styles.', 'No wrong moves. Just keep a beat.'],
+      'Controlled go-down': ['Sitting into a deep crouch without falling.', 'From standing, bend your knees and sink down.', 'Reach your hands to the floor in front to catch yourself.', 'Stand back up the same way.'],
+      'Toprock-to-floor transition': ['Going from standing dance to floor dance smoothly.', 'Do 8 counts of standing steps.', 'Sink down and catch yourself with your hands.', 'Flow straight into a few floor steps.'],
+      'Baby freeze': ['Balancing sideways on one hand like a tripod.', 'Crouch, tuck one elbow into your side, the other against your knee.', 'Rest the side of your head on the floor near your hands.', 'Lean until your feet lift. Hold 3 seconds, then come down.'],
+      'Footwork into baby freeze': ['Moving, then suddenly stopping in a freeze.', 'Do one round of six-step.', 'Drop into a baby freeze.', 'Hold it for a moment, then come out.'],
+      'Elbow freeze': ['Balancing sideways on one bent arm.', 'Crouch and plant one elbow into your hip.', 'Lean onto that arm, the other hand helping on the floor.', 'Lift your feet and hold a few seconds.'],
+      'Turtle freeze': ['Balancing flat like a turtle on both elbows.', 'Crouch and tuck both elbows into your stomach.', 'Lean forward onto your hands.', 'Lift both feet and hold.'],
+      'Turtle shuffle': ['Turning in a circle while in the turtle freeze.', 'Hold the turtle freeze.', 'Shift weight from one hand to the other.', 'Take small hand steps to rotate.'],
+      'Chair freeze': ['Leaning back on one hand like sitting in an invisible chair.', 'One hand on the floor, that elbow tucked into your lower back.', 'Lean back onto it and lift your feet.', 'Cross one leg over the other and hold.'],
+      'Air chair prep': ['Building toward the chair freeze, one foot at a time.', 'Set up like the chair freeze.', 'Lift one foot, then the other.', 'Hold a second, then come down safely.'],
+      'Freeze chains': ['Linking freezes like beads on a string.', 'Hit one freeze and hold it.', 'Move through a few floor steps.', 'Hit a second freeze. Try for three.'],
+      'Tripod headstand': ['Making a triangle with your head and hands.', 'Put your hands and the top of your head down in a triangle.', 'Walk your feet in and rest your knees on your elbows.', 'Lift your legs slowly. Come down the same way.'],
+      'Tuck to tripod': ['The first step of a headstand.', 'Set up the head-and-hands triangle.', 'Rest your knees on your elbows and hold.', 'That is the whole move. Come down slowly.'],
+      'Stance and jab': ['A boxer flicking the light switch on and off.', 'Stand with one foot forward, fists by your cheeks.', 'Snap your front hand straight out and back.', 'Your other hand stays guarding your face.'],
+      'Jab-cross': ['One-two: a quick punch, then a strong one.', 'Jab with your front hand.', 'Then punch with your back hand, turning your back hip and heel.', 'Bring both hands back to your face.'],
+      'Hooks and uppercuts': ['Hooks swing sideways, uppercuts scoop up.', 'Hook: bend your elbow at shoulder height and swing in a curve.', 'Uppercut: dip slightly and drive your fist upward.', 'Turn your hips with every punch.'],
+      'Elbow strikes': ['Using your elbow like a short swinging hammer.', 'Raise your elbow to shoulder height.', 'Swing it across your body, turning your hips.', 'Keep the other hand guarding.'],
+      'Slip and roll': ['Dodging a punch, then ducking under one.', 'Slip: lean your head slightly to one side.', 'Roll: bend your knees and dip under in a U shape.', 'Come up on the other side, hands up.'],
+      'Bob and weave': ['Ducking under a swing, side to side.', 'Bend your knees to lower your head.', 'Move in a U shape to the other side.', 'Rise up with your hands still guarding.'],
+      'Slip-slip-cross': ['Dodge, dodge, punch back.', 'Lean your head left, then right.', 'As you come back to center, throw a cross.', 'Hands back to your face.'],
+      'Teep push kick': ['Pushing a door open with your foot.', 'Lift your knee high.', 'Push the ball of your foot straight forward.', 'Pull it back and set it down.'],
+      'Front and round kick': ['Front kick goes straight, round kick swings around.', 'Front: lift the knee, then extend the foot forward.', 'Round: pivot your standing foot and swing your shin around.', 'Bring the leg back to your stance each time.'],
+      'Side kick': ['Stomping out to the side with your heel.', 'Lift your knee toward your chest.', 'Turn sideways and drive your heel straight out.', 'Pull it back before you set it down.'],
+      'Knee strikes': ['Bringing your knee up hard into a target.', 'Hands up as if holding someone in front of you.', 'Drive one knee up, pulling your hands down.', 'Switch knees.'],
+      'Switch kick combo': ['Punch, swap feet, kick.', 'Throw a jab and a cross.', 'Quickly swap your stance with a little hop.', 'Round kick with the leg that is now in back.'],
+      'Slow spinning back kick': ['Turning around and stomping backward.', 'Turn your back to the target and look over your shoulder.', 'Lift your knee and drive your heel straight back.', 'Turn back to face forward. Slow and controlled.'],
+      'Combos with slips': ['Punching and dodging together.', 'Throw a jab and cross.', 'Slip your head to one side.', 'Throw a hook back. Keep the rhythm.'],
+      'Guard bounce': ['A boxer bouncing while waiting.', 'Feet staggered, hands up by your cheeks.', 'Bounce lightly on the balls of your feet.', 'Stay relaxed and keep your hands up.'],
+      'Bouncing stance': ['A boxer bouncing while waiting.', 'Feet staggered, hands up by your cheeks.', 'Bounce lightly, shifting weight front to back.', 'Stay relaxed.'],
+      'Pendulum step': ['Swinging back and forth like a clock pendulum.', 'Hands up, light on your feet.', 'Hop forward, then back, keeping your stance.', 'Small and quick.'],
+      'Switch stance drill': ['Swapping which foot is in front, with a hop.', 'Stand in your fighting stance.', 'Hop and swap your feet.', 'Hands stay up the whole time.'],
+      'Angle steps': ['Stepping off to the side to change angles.', 'From your stance, step diagonally forward.', 'Pivot to face the same direction.', 'Step back and repeat to the other side.'],
+      'Prone Y-T-W raises': ['Lying face down and making the letters Y, T and W with your arms.', 'Lie face down, forehead on a towel.', 'Lift your arms in a Y shape, then a T, then a W.', 'Thumbs up, squeeze your shoulder blades, small lifts.'],
+      'Reverse snow angel': ['A snow angel, but lying face down.', 'Lie face down, arms by your sides, hovering.', 'Sweep your arms overhead along the floor.', 'Sweep them back down to your hips.'],
+      'Superman hold': ['Flying like Superman, lying on your belly.', 'Lie face down, arms stretched forward.', 'Lift your arms, chest and legs a little off the floor.', 'Hold while breathing. Look down, not up.'],
+      'Prone swimmers': ['Swimming on the floor, face down.', 'Lie face down, arms overhead and hovering.', 'Sweep your arms down to your hips.', 'Sweep them back overhead. Slow.'],
+      'Scapular desk pulls': ['Pulling your shoulder blades together without bending your arms.', 'Hang under a sturdy desk, arms straight.', 'Squeeze your shoulder blades so your chest rises a little.', 'Relax and repeat. Arms stay straight.'],
+      'Towel floor pull': ['Rowing a towel across the floor, face down.', 'Lie face down holding a towel in front of you.', 'Pull it toward your chest, elbows sliding back.', 'Reach it forward again.'],
+      'Tucked hollow hold': ['Becoming a banana, with knees bent.', 'Lie on your back, press your low back down.', 'Lift your shoulders, bring your knees in, reach forward.', 'Hold while breathing.'],
+      'Hollow hold': ['Becoming a banana, belly button down.', 'Lie on your back, press your low back into the floor.', 'Lift your shoulders and legs a little, arms overhead.', 'Hold. Bend your knees if your back lifts.'],
+      'Hollow rocks': ['Rocking like a rocking chair in the banana shape.', 'Hold the hollow shape.', 'Rock gently from shoulders to hips.', 'Keep the shape. Do not bend in the middle.'],
+      'Dead bug': ['A bug on its back, moving opposite arm and leg.', 'Lie on your back, arms up, knees bent over hips.', 'Lower one arm overhead and the opposite leg toward the floor.', 'Return, then switch. Low back stays down.'],
+      'Bird-dog': ['A dog pointing: one arm forward, other leg back.', 'On hands and knees, back flat.', 'Reach one arm forward and the opposite leg back.', 'Hold a breath, return, switch sides.'],
+      'Russian twist': ['Passing something side to side while seated.', 'Sit, lean back a little, feet on the floor.', 'Turn your chest to one side, hands by your hip.', 'Turn to the other side. Lift your feet to make it harder.'],
+      'Woodchop': ['Chopping wood diagonally across your body.', 'Hands clasped high on one side.', 'Pull them down across your body to the opposite knee.', 'Pivot your back foot as you chop.'],
+      'Bent-knee windshield wipers': ['Your knees are wipers going side to side.', 'Lie on your back, arms out wide, knees up over hips.', 'Lower both knees to one side.', 'Bring them back up and over. Shoulders stay down.'],
+      'Straight-leg windshield wipers': ['Wipers, with straight legs.', 'Lie on your back, arms wide, legs straight up.', 'Lower your legs to one side.', 'Bring them back through the middle.'],
+      'Tuck L-sit on chairs': ['Lifting yourself off the seat between two chairs.', 'Hands on two sturdy chairs, arms straight.', 'Push down so your bottom lifts.', 'Tuck your knees up and hold.'],
+      'L-sit': ['Making an L shape, held up by your hands.', 'Hands on the floor or two chairs beside your hips.', 'Press down and lift your bottom.', 'Hold your legs straight out in front.'],
+      'Dragon flag negative': ['A slow-motion plank falling back down from your shoulders.', 'Lie on your back, hold the bed frame behind your head.', 'Lift your body straight up so only your shoulders touch.', 'Lower as one piece, slowly.'],
+      'Frog stand': ['Balancing like a frog on your hands.', 'Squat down, hands flat on the floor.', 'Rest your knees on the backs of your elbows.', 'Lean forward until your feet lift.'],
+      'Crow pose': ['A tighter frog stand, knees high on your arms.', 'Squat, hands down, knees high on your upper arms.', 'Look forward and lean in.', 'Lift one foot, then both.'],
+      'Side crow': ['Crow pose, but twisted to the side.', 'Squat and twist so both knees face one side.', 'Plant your hands and rest your knees on one arm.', 'Lean in until your feet float.'],
+      'Pike hold on the bed': ['An upside-down V, with feet up on the bed.', 'Hands on the floor, feet on the bed.', 'Walk your hands in so your hips stack over your shoulders.', 'Hold, pressing the floor away.'],
+      '90/90 hip switches': ['Rotating your knees like windshield wipers while seated.', 'Sit with both knees bent at right angles, one in front, one to the side.', 'Rotate both knees to the other side.', 'Use your hands behind you for balance.'],
+      'No-hands 90/90 transitions': ['The 90/90 switch, no hands.', 'Sit tall in the 90/90 position.', 'Switch sides without leaning on your hands.', 'Lift your chest as you rotate.'],
+      'Cossack squat': ['A side lunge where one leg stays straight.', 'Wide stance, toes slightly out.', 'Sit down into one leg, the other straight with toes up.', 'Shift to the other side.'],
+      'Cossack flow': ['Gliding low from side to side.', 'Wide stance.', 'Sink into one side, then glide through the middle.', 'Stay low as you shift.'],
+      'Jefferson curl': ['Rolling down your spine one bone at a time.', 'Stand tall, chin tucked.', 'Roll down slowly, vertebra by vertebra, letting your arms hang.', 'Roll back up the same way. Go gently.'],
+      "World's greatest stretch": ['A lunge, a twist and a reach, all in one.', 'Step into a long lunge.', 'Put the same-side hand down inside your front foot.', 'Rotate and reach the other arm up. Switch sides.'],
+      'Open book': ['Your arms open like the covers of a book.', 'Lie on your side, knees bent, arms together in front.', 'Open the top arm across to the other side, eyes following.', 'Close the book. Repeat.'],
+      'Cat-cow': ['A cat arching its back, then a cow dropping its belly.', 'On hands and knees.', 'Round your back up and tuck your chin (cat).', 'Drop your belly and lift your chest (cow). Slow, with your breath.'],
+      'Thread the needle': ['Sliding your arm under your body to rest.', 'On hands and knees.', 'Slide one arm under your chest along the floor.', 'Rest your shoulder and ear down. Switch sides.'],
+      'Pancake': ['Folding forward with your legs wide.', 'Sit with your legs wide.', 'Walk your hands forward, chest long.', 'Breathe and stay. Only go as far as feels okay.'],
+      'Pancake good mornings': ['Bowing forward and back, legs wide.', 'Sit legs wide, hands behind your head.', 'Hinge forward with a long back.', 'Sit back up tall.'],
+      'Lizard': ['A very low lunge, hands inside the front foot.', 'Step into a low lunge.', 'Put both hands inside your front foot.', 'Lower onto your forearms if it feels good.'],
+      'Frog stretch': ['A frog lying down, knees wide.', 'On hands and knees, slide your knees wide apart.', 'Keep your shins in line with each other.', 'Gently rock your hips back.'],
+      'Happy baby': ['A baby on its back holding its feet.', 'Lie on your back, knees toward your armpits.', 'Hold the outsides of your feet.', 'Gently rock side to side.'],
+      'Sphinx': ['Lying on your belly propped up on your forearms.', 'Lie face down, elbows under your shoulders.', 'Lift your chest, forearms on the floor.', 'Relax your belly and low back.'],
+      'Puppy pose': ['A puppy stretching with its bottom up.', 'Start on hands and knees.', 'Walk your hands forward, hips staying over your knees.', 'Let your chest melt toward the floor.'],
+      'Pigeon pose': ['Sitting with one shin across the front, one leg back.', 'From hands and knees, bring one knee forward behind your wrist.', 'Slide the other leg straight back.', 'Fold forward only as far as feels good.'],
+      'King pigeon prep': ['Pigeon, reaching back for your back foot.', 'Set up in pigeon.', 'Bend your back knee.', 'Reach back for that foot only if it comes easily.'],
+      'Sun salutation': ['A short yoga flow from standing to the floor and back.', 'Reach up, then fold down.', 'Step back to a plank, lower to cobra.', 'Push back to downward dog, then walk up to standing.'],
+      'Cat crawl': ['Crawling quietly like a cat.', 'Hands and feet down, knees just off the floor.', 'Move your opposite hand and foot together.', 'Small, quiet steps.'],
+      'Crocodile crawl': ['Crawling low like a crocodile.', 'Hold the bottom of a push-up.', 'Bring one knee toward the same elbow and reach forward.', 'Crawl forward, staying low.'],
+      'Gorilla shuffle': ['Moving sideways like a gorilla.', 'Deep squat, hands on the floor in front.', 'Shift your weight onto your hands.', 'Hop your feet sideways past your hands.'],
+      'Crab reach': ['A crab reaching over its body.', 'Sit, hands behind you, lift your hips (crab).', 'Reach one arm over your body to the other side.', 'Come back and switch.'],
+      'Inchworm walk': ['An inchworm stretching out and scrunching up.', 'Fold down and put your hands on the floor.', 'Walk your hands out to a plank.', 'Walk your feet in toward your hands.'],
+      'Bear hold': ['A bear about to move, holding still.', 'On hands and knees, toes tucked.', 'Lift your knees an inch off the floor.', 'Hold, back flat.'],
+      'Bear crawl': ['Walking on hands and feet like a bear.', 'Bear position, knees just off the floor.', 'Move opposite hand and foot forward.', 'Small steps, hips low.'],
+      'Lateral bear crawl': ['Bear crawling sideways.', 'Bear position, knees just off the floor.', 'Step your hand and foot to the side together.', 'Go a few steps, then come back.'],
+      'Crab walk': ['Walking like a crab, belly up.', 'Sit, hands behind you, feet flat.', 'Lift your hips.', 'Walk on hands and feet.'],
+      'Crawl flow': ['Mixing crawls without stopping.', 'Bear crawl forward.', 'Turn into a crab walk.', 'Flip back to bear. Keep moving.'],
+      'Reverse Nordic': ['Leaning back from your knees like a tipping plank.', 'Kneel tall, body straight from knees to head.', 'Lean back slowly, keeping hips straight.', 'Come back up. Only lean as far as you can control.'],
+      'Archer push-up': ['A push-up where one arm does most of the work.', 'Hands very wide.', 'Lower toward one hand while the other arm stays straight.', 'Press up, then switch sides.'],
+      'Pseudo-planche push-up': ['A push-up leaning forward like a superhero landing.', 'Hands by your waist, fingers turned out.', 'Lean your shoulders forward past your hands.', 'Do push-ups while keeping that lean.'],
+      'Pike push-up': ['A push-up in an upside-down V.', 'Hips high, hands and feet on the floor.', 'Bend your elbows to lower your head toward the floor.', 'Press back up.'],
+      'Wall walk-up': ['Walking up the wall backwards with your feet.', 'Start in a plank with feet against the wall.', 'Walk your feet up the wall as your hands walk in.', 'Go as high as you control, then walk down.'],
+      'Kick-up practice': ['Practicing the kick into a handstand, safely.', 'Face the wall, hands down a little away from it.', 'Kick one leg up, the other follows.', 'Land softly. Small kicks first.'],
+      'Burpee walk-out': ['A burpee with no jumping.', 'Squat and put your hands down.', 'Walk your feet back to a plank.', 'Walk them back in and stand up.'],
+      'Step-out plank jack': ['A jumping jack in a plank, but stepping.', 'Hold a plank.', 'Step one foot out wide, then the other.', 'Step them back in. Hips stay level.'],
+      'Skater steps': ['A speed skater, without the jumping.', 'Take a big step to one side.', 'Swing the other leg behind you and reach across.', 'Step to the other side.']
+    };
+  }
   youSwipe(dir) {
     const p = (this.state.yPanel || 0) + dir;
     if (p < 0 || p > 3) return false;
@@ -419,11 +537,11 @@ class Component extends DCLogic {
       ['90/90 hip switches', 'mobility', 1, 'm', '8 per side', 'hip9090', 'Sit with both knees bent at 90 degrees.', 'Rotate both knees to the other side.', ['hips'], ['glutes']],
       ['Cat-cow', 'mobility', 1, 'v', '10 slow', 'catcow', 'On all fours, round your back up.', 'Then let your belly drop and look up.', ['core'], ['back', 'lowback']],
       ['Open book', 'mobility', 1, 'v', '8 per side', 'twistlie', 'Lie on your side, knees bent, arms together.', 'Open the top arm across and follow it with your eyes.', ['chest'], ['back']],
-      ['Towel pass-through', 'mobility', 1, 'v', '10', 'jointcircles', 'Hold a towel wide, arms straight.', 'Lift it over your head and behind you.', ['shoulders', 'chest'], ['shoulders']],
+      ['Towel pass-through', 'mobility', 1, 'v', '10', 'passthrough', 'Hold a towel wide, arms straight.', 'Lift it over your head and behind you.', ['shoulders', 'chest'], ['shoulders']],
       ['Deep squat sit', 'mobility', 2, 'm', '1 min', 'deepsquat', 'Sink into your deepest squat, heels down.', 'Elbows push your knees out.', ['hips', 'legs'], ['glutes']],
       ["World's greatest stretch", 'mobility', 2, 'v', '3 per side', 'lowlunge', 'Long lunge, hand inside your front foot.', 'Rotate and reach the other arm up.', ['hips', 'legs', 'core'], ['hamstrings', 'back']],
       ['Spine waves', 'mobility', 2, 'v', '8 slow', 'wave', 'Roll down one vertebra at a time.', 'Roll back up from the bottom.', ['core'], ['back', 'lowback']],
-      ['Wrist prep circuit', 'mobility', 2, 'v', '1 min', 'catcow', 'On all fours, rock gently over your hands.', 'Turn your fingers sideways, then back, and rock again.', ['arms'], ['arms']],
+      ['Wrist prep circuit', 'mobility', 2, 'v', '1 min', 'wristrock', 'On all fours, rock gently over your hands.', 'Turn your fingers sideways, then back, and rock again.', ['arms'], ['arms']],
       ['Deep squat with rotations', 'mobility', 3, 'm', '2 min', 'deepsquat', 'Sit in a deep squat.', 'Reach one arm up and rotate, then switch.', ['hips', 'legs', 'core'], ['back', 'glutes']],
       ['Jefferson curl', 'mobility', 3, 'v', '2 × 6 slow', 'fold', 'Stand tall and tuck your chin.', 'Curl down one vertebra at a time, then roll up.', [], ['back', 'lowback', 'hamstrings']],
       ['Wall walk-down', 'mobility', 3, 'v', '3 tries', 'bridge', 'Back to a wall, reach overhead.', 'Walk your hands down the wall toward a bridge.', ['shoulders', 'chest', 'hips'], ['back']],
@@ -548,10 +666,10 @@ class Component extends DCLogic {
       ['Cat crawl', 'crawls', 1, 'v', '3 × 8 steps', 'bear', 'Hands and feet down, knees just off the floor.', 'Move opposite hand and foot together, quietly.', ['shoulders', 'core'], []],
       ['Frog jumps', 'crawls', 2, 'v', '3 × 5', 'squatjump', 'Deep squat, hands touch the floor.', 'Jump forward and land back in the squat.', ['legs'], ['glutes']],
       ['Crocodile crawl', 'crawls', 3, 'v', '3 × 6 steps', 'pushup', 'Hold the bottom of a push-up.', 'Crawl forward, knee toward elbow, staying low.', ['chest', 'shoulders', 'core'], []],
-      ['Neck isolations', 'dance', 0, 'v', '2 × 30 s', 'shoulderiso', 'Shoulders still.', 'Slide your head forward, back and side to side.', ['shoulders'], []],
+      ['Neck isolations', 'dance', 0, 'v', '2 × 30 s', 'neckslide', 'Shoulders still.', 'Slide your head forward, back and side to side.', ['shoulders'], []],
       ['Chest isolations', 'dance', 1, 'v', '2 × 30 s', 'bodyroll', 'Hips still.', 'Push your chest forward, then pull it back.', ['core', 'chest'], ['back']],
-      ['Cloud hands', 'mobility', 0, 'v', '2 min', 'wave', 'Soft knees, shift your weight side to side.', 'Arms float past your face like clouds, slow breath.', ['shoulders', 'core'], []],
-      ['Pelvic tilts', 'mobility', 0, 'v', '10 slow reps', 'glutebridge', 'On your back, knees bent.', 'Gently rock your low back flat, then arch a little.', ['core', 'hips'], ['lowback']],
+      ['Cloud hands', 'mobility', 0, 'v', '2 min', 'cloudhands', 'Soft knees, shift your weight side to side.', 'Arms float past your face like clouds, slow breath.', ['shoulders', 'core'], []],
+      ['Pelvic tilts', 'mobility', 0, 'v', '10 slow reps', 'pelvictilt', 'On your back, knees bent.', 'Gently rock your low back flat, then arch a little.', ['core', 'hips'], ['lowback']],
       ['Locomotion warm-up', 'cond', 0, 'w', '2 min', 'march', 'Skip, side-shuffle, walk backwards.', 'Change it up every 20 seconds.'],
       ['Side crow', 'balance', 3, 'v', '5 tries, hold 5 s', 'frogstand', 'Twist and stack both knees on one arm.', 'Lean forward until your feet float.', ['shoulders', 'arms', 'core'], []],
     ];
@@ -653,6 +771,11 @@ class Component extends DCLogic {
       shoulderstand: ['H21,87 N30,86 P36,61 E44,80 W40,70 K39,41 F41,21 e42,80 w40,70 k41,41 f43,21', 'H21,87 N30,86 P35,60 E43,79 W39,69 K37,40 F38,20 e45,79 w41,69 k39,40 f40,20', 3],
       tuckjump: ['H48,42 N49,50 P40,70 E40,58 W36,66 K58,72 F50,89 e42,58 w38,66 k60,72 f54,89', 'H51,10 N50,19 P49,45 E58,10 W62,0 K66,40 F54,54 e60,10 w64,0 k68,41 f56,55', 0.9],
       squatjump: ['H48,42 N49,50 P40,70 E40,58 W36,66 K58,72 F50,89 e42,58 w38,66 k60,72 f54,89', 'H50,4 N50,13 P50,39 E52,1 W53,-11 K49,59 F48,79 e54,1 w55,-11 k52,59 f53,79', 1.0],
+      cloudhands: ['H47,17 N47,26 P46,52 E58,32 W61,18 K48,71 F44,89 e55,34 w60,44 k56,71 f58,89', 'H53,17 N53,26 P54,52 E60,34 W64,44 K46,71 F44,89 e64,32 w66,18 k58,71 f58,89', 4, null],
+      passthrough: ['H50,14 N50,23 P50,49 E55,35 W58,46 K49,69 F48,89 e56,35 w59,46 k52,69 f53,89', 'H50,14 N50,23 P50,49 E40,34 W31,43 K49,69 F48,89 e41,34 w32,43 k52,69 f53,89', 4, null, 'H50,14 N50,23 P50,49 E51,10 W52,-2 K49,69 F48,89 e53,10 w54,-2 k52,69 f53,89'],
+      wristrock: ['H24,60 N31,64 P56,70 E30,76 W30,89 K58,89 F76,89 e32,76 w32,89 k60,89 f78,89', 'H16,64 N23,67 P50,72 E25,78 W30,89 K58,89 F76,89 e27,78 w32,89 k60,89 f78,89', 3, null],
+      pelvictilt: ['H12,84 N20,85 P46,86 E30,88 W40,88 K60,70 F70,89 e30,88 w40,88 k62,70 f72,89', 'H12,84 N20,85 P46,83 E30,88 W40,88 K60,69 F70,89 e30,88 w40,88 k62,69 f72,89', 3, null],
+      neckslide: ['H55,14 N51,23 P50,49 E46,34 W44,46 K48,69 F47,89 e54,34 w56,46 k52,69 f53,89', 'H46,14 N49,23 P50,49 E46,34 W44,46 K48,69 F47,89 e54,34 w56,46 k52,69 f53,89', 1.6, null],
       wave: ['H57,16 N53,25 P47,50 E51,38 W49,49 K51,70 F47,89 e52,38 w51,50 k53,69 f53,89', 'H46,16 N48,24 P53,50 E49,37 W50,49 K53,70 F47,89 e50,37 w52,49 k57,70 f53,89', 2.4],
       fold: ['H50,14 N50,23 P50,49 E48,36 W47,48 K49,69 F47,89 e49,36 w49,48 k52,69 f53,89', 'H63,80 N61,72 P48,49 E50,78 W57,88 K48,69 F47,89 e51,79 w59,88 k51,69 f53,89', 3],
       bridge: [LY + ' E18,78 W20,89 e20,78 w22,89 P46,86 K60,70 F70,89 k62,70 f72,89 H14,84 N22,85', 'H22,76 N26,66 P50,48 E22,78 W20,89 K66,64 F70,89 e24,78 w22,89 k68,64 f72,89', 3],
@@ -715,7 +838,7 @@ class Component extends DCLogic {
     Object.keys(F).forEach((k) => { if (F[k].hidden) { const p = F[k].parents; if ((levels[p[0]] || 0) >= 2 && (levels[p[1]] || 0) >= 2 && ((this.state && this.state.sessions) || 0) >= 3) U[k] = true; } });
     return U;
   }
-  figure(name, calm) {
+  figure(name, calm, slow) {
     const MI = this.moveInfo(), A = this.animRows(), F = this.fams();
     const mv = MI[name];
     const an = A[(mv && mv.anim) || 'stand'] || A.stand;
@@ -753,7 +876,7 @@ class Component extends DCLogic {
     Object.keys(m).forEach((k) => { m[k] = [Math.round(m[k][0] * 10) / 10, Math.round(m[k][1] * 10) / 10]; });
     if (an[4]) Object.assign(m, parse(an[4]));
     const vals = (x, y, mm) => calm ? [x, x, x, x, x].join(';') : [x, mm, y, mm, x].join(';');
-    const out = { dur: an[2] + 's', aria: 'Figure demonstrating ' + name, kt: '0;0.25;0.5;0.75;1', ks: '.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1' };
+    const out = { dur: (an[2] * (slow ? 2.5 : 1)) + 's', aria: 'Figure demonstrating ' + name, kt: '0;0.25;0.5;0.75;1', ks: '.45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1' };
     SEG.forEach(([p, q], i) => {
       out['s' + i] = {
         x1: a[p][0], y1: a[p][1], x2: a[q][0], y2: a[q][1],
@@ -1126,7 +1249,8 @@ class Component extends DCLogic {
     const flat = plan.reduce((a, b) => a.concat(b.moves), []);
     const per = flat[s.idx] ? flat[s.idx].secs : 30, per0 = flat[0] ? flat[0].secs : 30;
     const idx = Math.min(s.idx, flat.length - 1);
-    const cur = flat[idx] || { n: '', rx: '', block: '', color: '#E5282E', ink: '#FFFFFF', pose: 'walk' };
+    const cur0 = flat[idx] || { n: '', rx: '', block: '', color: '#E5282E', ink: '#FFFFFF', pose: 'walk' };
+    const cur = Object.assign({}, cur0, { like: (this.clarify()[cur0.n] || [''])[0] });
     const C = 2 * Math.PI * 62;
     const frac = s.remaining / (s.resting ? (s.rest || 15) : per);
     const mm = Math.floor(s.remaining / 60), ss = s.remaining % 60;
@@ -1193,7 +1317,8 @@ class Component extends DCLogic {
     const pretty = { shoulders: 'shoulders', chest: 'chest', arms: 'arms', core: 'core', hips: 'hips', legs: 'legs', back: 'upper back', lowback: 'lower back', glutes: 'glutes', hamstrings: 'hamstrings' };
     const works = []; mi.f.concat(mi.b).forEach((r) => { if (works.indexOf(pretty[r]) < 0) works.push(pretty[r]); });
     const fresh = Object.keys(U).filter((k) => !s.seen[k]);
-    const mvFig = this.figure(mvName, s.calm);
+    const mvFig = this.figure(mvName, s.calm, s.slowMo);
+    const CL = this.clarify(), mcl = CL[mvName];
     const mvSteps = F[mi.fam].steps;
     const mvEasier = mi.lvl > 0 ? mvSteps[mi.lvl - 1] : '';
     const mvHarder = mi.lvl < 4 ? (mi.role === 'm' ? mvSteps[mi.lvl + 1] : mvSteps[mi.lvl]) : '';
@@ -1355,7 +1480,9 @@ class Component extends DCLogic {
       mvName, mvFam: { name: mf.name },
       mvStage: 'position:relative;height:340px;flex:none;overflow:hidden;background:' + mf.color + ';color:' + mf.ink,
       
-      mvCues: mi.cues.map((c) => ({ t: c })),
+      mvCues: (mcl ? mcl.slice(1) : mi.cues).map((c) => ({ t: c })),
+      mvLike: mcl ? mcl[0] : '', hasLike: !!mcl,
+      toggleSlow: () => this.setState({ slowMo: !s.slowMo }), slowLabel: s.slowMo ? 'Slow-mo on' : 'Tap for slow-mo',
       mvWorks: works.length ? works.join(', ').replace(/^./, (c) => c.toUpperCase()) : 'Whole body',
       mbf: regionMap(mi.f, FK, mf.color === '#161616' ? '#E5282E' : mf.color), mbb: regionMap(mi.b, BK, mf.color === '#161616' ? '#E5282E' : mf.color),
       mvFamShape: this.shp(mf.shape, mf.color, 22),
