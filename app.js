@@ -1605,8 +1605,15 @@ class Component extends DCLogic {
       moods, time: s.time, energy: s.energy, energyLabel,
       sessMins: this.sessTime(),
       isMain: this.moment() === 'main', notMain: this.moment() !== 'main', moMorning: this.moment() === 'morning', moMidday: this.moment() === 'midday', moEvening: this.moment() === 'evening',
-      tapSky: () => { this.sfx(this.moment() === 'evening' ? 'pop' : 'bark'); clearTimeout(this.skt); this.setState({ skyOn: true }); this.skt = setTimeout(() => this.setState({ skyOn: false }), 2600); },
-      skyFace: s.skyOn ? 'sky-on' : '',
+      tapSky: () => {
+        clearTimeout(this.skt);
+        const n = (s.skyPop || 0) + 1;
+        if (s.skyOn) { this.setState({ skyOn: false, skyPop: n }); return; } // tap again to hide the face
+        this.sfx(this.moment() === 'evening' ? 'pop' : 'bark');
+        this.setState({ skyOn: true, skyPop: n });
+        this.skt = setTimeout(() => this.setState({ skyOn: false }), 3000);
+      },
+      skyFace: (s.skyOn ? 'sky-on ' : '') + (s.skyPop ? (s.skyPop % 2 ? 'sp1' : 'sp2') : ''),
       bounceWord: () => { this.sfx('pop'); this.setState({ wordN: (s.wordN || 0) + 1 }); },
       wordAnim: s.wordN ? (s.wordN % 2 ? 'wb1' : 'wb2') : '',
       moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: (t[0] === 'evening' ? 'display:block;width:11px;height:11px;border-radius:50%;box-shadow:inset 3px -2px 0 0 ' + (on ? t[3] : '#C8C8C8') : this.shp(t[2], on ? t[3] : '#C8C8C8', 11)), go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
