@@ -1605,6 +1605,8 @@ class Component extends DCLogic {
       moods, time: s.time, energy: s.energy, energyLabel,
       sessMins: this.sessTime(),
       isMain: this.moment() === 'main', notMain: this.moment() !== 'main', moMorning: this.moment() === 'morning', moMidday: this.moment() === 'midday', moEvening: this.moment() === 'evening',
+      bounceWord: () => { this.sfx('pop'); this.setState({ wordN: (s.wordN || 0) + 1 }); },
+      wordAnim: s.wordN ? (s.wordN % 2 ? 'wb1' : 'wb2') : '',
       moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: (t[0] === 'evening' ? 'display:block;width:11px;height:11px;border-radius:50%;box-shadow:inset 3px -2px 0 0 ' + (on ? t[3] : '#C8C8C8') : this.shp(t[2], on ? t[3] : '#C8C8C8', 11)), go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
       moBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + (['morning', 'midday', 'main', 'evening'].indexOf(this.moment()) * 25) + '%',
       moCard: (() => {

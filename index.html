@@ -54,6 +54,11 @@ a{color:#1556C2}a:hover{color:#0E3F92}
 @keyframes trFlip2{0%{transform:none}12%{transform:scale(1.1,.82)}30%{transform:translateY(-30px) rotate(-60deg)}55%{transform:translateY(-44px) rotate(-200deg)}80%{transform:translateY(-8px) rotate(-340deg)}90%{transform:rotate(-360deg) scale(1.08,.88)}100%{transform:rotate(-360deg)}}
 @keyframes flipA{from{transform:perspective(400px) rotateY(90deg)}to{transform:none}}
 @keyframes flipB{from{transform:perspective(400px) rotateY(-90deg)}to{transform:none}}
+@keyframes wordHopA{0%,100%{transform:none}20%{transform:translateY(2px) scale(1.12,.86)}45%{transform:translateY(-14px) scale(.94,1.08)}70%{transform:translateY(1px) scale(1.06,.94)}85%{transform:translateY(-3px)}}
+@keyframes wordHopB{0%,100%{transform:none}20%{transform:translateY(2px) scale(1.12,.86)}45%{transform:translateY(-14px) scale(.94,1.08)}70%{transform:translateY(1px) scale(1.06,.94)}85%{transform:translateY(-3px)}}
+.wl{transform-box:fill-box;transform-origin:50% 100%}
+.wb1 .wl{animation:wordHopA .7s cubic-bezier(.3,.7,.4,1) both}.wb2 .wl{animation:wordHopB .7s cubic-bezier(.3,.7,.4,1) both}
+.wb1 .wl:nth-child(2),.wb2 .wl:nth-child(2){animation-delay:.06s}.wb1 .wl:nth-child(3),.wb2 .wl:nth-child(3){animation-delay:.12s}.wb1 .wl:nth-child(4),.wb2 .wl:nth-child(4){animation-delay:.18s}.wb1 .wl:nth-child(5),.wb2 .wl:nth-child(5){animation-delay:.24s}.wb1 .wl:nth-child(6),.wb2 .wl:nth-child(6){animation-delay:.3s}
 @keyframes raySpin{to{transform:rotate(360deg)}}
 @keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
 .sky-rays{animation:raySpin 40s linear infinite}
@@ -142,7 +147,7 @@ body.wide #dc-root>div{width:844px!important;height:390px!important}
 body.wide .nav{flex-direction:column!important;top:8px!important}
 /* check-in */
 body.wide .ck-red{width:200px!important;height:200px!important;right:-90px!important;top:-110px!important}
-body.wide .ck-word{width:80px;height:19px;right:14px!important;top:16px!important}
+body.wide .ck-word{width:80px!important;height:19px!important;right:14px!important;top:16px!important}
 body.wide .ck-yel{width:50px!important;height:50px!important;right:auto!important;left:378px!important;top:24px!important}
 body.wide .ck-ring{right:auto!important;left:372px!important;top:206px!important}
 body.wide .ck-mo{left:432px!important;right:auto!important;width:290px;top:22px!important}
@@ -226,7 +231,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
   <div class="a-spin d3 ck-yel" aria-hidden="true" style="position: absolute; width: 74px; height: 74px; border-top-right-radius: 100%; background: #FFC20E; right: 26px; top: 168px"></div>
   <div class="a-pop d4 ck-ring" aria-hidden="true" style="position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 9px solid #0B7A3E; box-sizing: border-box; right: 112px; top: 210px"></div>
 
-  <svg class="a-up d2 ck-word" width="100" height="24" viewBox="0 0 150 36" role="img" aria-label="Noodle" style="position: absolute; right: 22px; top: 28px"><path d="M0 36 V13 a11 11 0 0 1 22 0 V36 h-7 V13 a4 4 0 0 0 -8 0 V36 z" fill="#FFFFFF"/><circle cx="39" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/><circle cx="68" cy="24" r="12" fill="#FFFFFF"/><circle cx="97" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/><rect x="102" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/><rect x="114" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/><path d="M129.5 24 H146.5 A8.5 8.5 0 1 0 144 30" fill="none" stroke="#FFFFFF" stroke-width="7"/></svg>
+  <button class="a-up d2 ck-word" onClick="{{bounceWord}}" aria-label="Noodle" style="position: absolute; right: 22px; top: 28px; width: 100px; height: 24px; border: 0; background: transparent; padding: 0; z-index: 3; overflow: visible"><svg class="{{wordAnim}}" width="100%" height="100%" viewBox="0 0 150 36" aria-hidden="true" style="display: block; overflow: visible"><g class="wl"><path d="M0 36 V13 a11 11 0 0 1 22 0 V36 h-7 V13 a4 4 0 0 0 -8 0 V36 z" fill="#FFFFFF"/></g><g class="wl"><circle cx="39" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/></g><g class="wl"><circle cx="68" cy="24" r="12" fill="#FFFFFF"/></g><g class="wl"><circle cx="97" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/><rect x="102" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/></g><g class="wl"><rect x="114" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/></g><g class="wl"><path d="M129.5 24 H146.5 A8.5 8.5 0 1 0 144 30" fill="none" stroke="#FFFFFF" stroke-width="7"/></g></svg></button>
 
   <nav class="nav" aria-label="Main" style="position: absolute; left: 8px; top: 10px; display: flex; gap: 2px; z-index: 5">
     <button onClick="{{navHome}}" aria-current="page" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #161616"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{navDog}}"><svg width="34" height="20" viewBox="0 0 220 130" aria-hidden="true" style="display: block; overflow: visible"><path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle cx="184" cy="38" r="3.5" fill="#161616"/></svg></span></span><span style="border-bottom: 2px solid #161616; padding-bottom: 1px">{{moveWord}}</span></button>
@@ -873,8 +878,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=41"></script>
-<script src="app.js?v=41"></script>
+<script src="runtime.js?v=42"></script>
+<script src="app.js?v=42"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
