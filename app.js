@@ -1281,7 +1281,9 @@ class Component extends DCLogic {
         peekOpen: s.peek === fk && !locked,
         peekLabel: (() => { const n = ms.filter((x) => !s.tried[x] && MI[x].lvl > (s.levels[fk] || 0)).length; return locked ? n + ' moves unlock with this path' : n ? (s.peek === fk ? 'Hide harder moves' : 'Peek at ' + n + ' harder ' + (n === 1 ? 'move' : 'moves')) : 'Nothing harder left. Wow.'; })(),
         peekGo: () => { if (!locked) this.setState({ peek: s.peek === fk ? null : fk }); },
-        peekMoves: ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)).map((n) => ({ n, lvl: ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'][MI[n].lvl], open: () => this.openMove(n, 'you') })),
+        peekMoves: (() => { const ah = ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)); const nl = ah.length ? Math.min.apply(null, ah.map((n) => MI[n].lvl)) : 0; return ah.filter((n) => MI[n].lvl === nl).map((n) => ({ n, open: () => this.openMove(n, 'you') })); })(),
+        nextLvl: (() => { const ah = ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)); return ah.length ? ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'][Math.min.apply(null, ah.map((n) => MI[n].lvl))] : ''; })(),
+        laterLine: (() => { const ah = ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)); if (!ah.length) return ''; const nl = Math.min.apply(null, ah.map((n) => MI[n].lvl)); const more = ah.filter((n) => MI[n].lvl > nl).length; return more ? 'and ' + more + ' more for later. No rush.' : 'That is everything here.'; })(),
         hasReady: !locked && ms.some((n) => !s.tried[n] && MI[n].lvl <= (s.levels[fk] || 0)),
         readyMore: (() => { const n = ms.filter((x) => !s.tried[x] && MI[x].lvl <= (s.levels[fk] || 0)).length - 6; return n > 0 ? '+' + n + ' more at your level' : ''; })(),
         hasGot: got.length > 0
@@ -1453,13 +1455,13 @@ class Component extends DCLogic {
       isCheckin: s.screen === 'checkin', isSession: s.screen === 'session', isPlayer: s.screen === 'player', isDone: s.screen === 'done',
       moods, time: s.time, energy: s.energy, energyLabel,
       sessMins: this.sessTime(),
-      isMain: this.moment() === 'main', notMain: this.moment() !== 'main',
-      moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: 'display:none', go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:36px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:4px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      isMain: this.moment() === 'main', notMain: this.moment() !== 'main', moMorning: this.moment() === 'morning', moMidday: this.moment() === 'midday', moEvening: this.moment() === 'evening',
+      moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: (t[0] === 'evening' ? 'display:block;width:11px;height:11px;border-radius:50%;box-shadow:inset 3px -2px 0 0 ' + (on ? t[3] : '#C8C8C8') : this.shp(t[2], on ? t[3] : '#C8C8C8', 11)), go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
       moBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + (['morning', 'midday', 'main', 'evening'].indexOf(this.moment()) * 25) + '%',
       moCard: (() => {
         const M = { morning: ['Morning wake-up', 'Gentle joints, a little blood flow, one big stretch.', '#FFC20E', '#161616'], midday: ['Midday reset', 'Unstick from the desk. Neck, back, hips, legs.', '#F26A0F', '#161616'], evening: ['Evening wind-down', 'Slow floor stretches to help you sleep.', '#1556C2', '#FFFFFF'] }[this.moment()] || ['', '', '#FFFFFF', '#161616'];
         const fl = this.flat();
-        return { title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], box: 'background:' + M[2] + ';color:' + M[3], moves: fl.slice(0, 5).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, M[3], 10) })) };
+        return { title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], moves: fl.slice(0, 4).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, this.fams()[m.fam].color, 9) })).concat(fl.length > 4 ? [{ n: '+' + (fl.length - 4) + ' more', shape: 'display:none' }] : []) };
       })(),
       onTime: (e) => this.setState({ time: Number(e.target.value) }),
       onEnergy: (e) => this.setState({ energy: Number(e.target.value) }),

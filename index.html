@@ -54,6 +54,11 @@ a{color:#1556C2}a:hover{color:#0E3F92}
 @keyframes trFlip2{0%{transform:none}12%{transform:scale(1.1,.82)}30%{transform:translateY(-30px) rotate(-60deg)}55%{transform:translateY(-44px) rotate(-200deg)}80%{transform:translateY(-8px) rotate(-340deg)}90%{transform:rotate(-360deg) scale(1.08,.88)}100%{transform:rotate(-360deg)}}
 @keyframes flipA{from{transform:perspective(400px) rotateY(90deg)}to{transform:none}}
 @keyframes flipB{from{transform:perspective(400px) rotateY(-90deg)}to{transform:none}}
+@keyframes raySpin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.35}}
+.sky-rays{animation:raySpin 40s linear infinite}
+.sky-stars{animation:twinkle 3s ease-in-out infinite}
+.calm .sky-rays,.calm .sky-stars{animation:none}
 @keyframes swipeL{from{transform:translateX(100%)}to{transform:none}}
 @keyframes swipeR{from{transform:translateX(-100%)}to{transform:none}}
 .swl{animation:swipeL .65s cubic-bezier(.22,.9,.28,1) both}.swr{animation:swipeR .65s cubic-bezier(.22,.9,.28,1) both}
@@ -141,7 +146,10 @@ body.wide .ck-word{width:80px;height:19px;right:14px!important;top:16px!importan
 body.wide .ck-yel{width:50px!important;height:50px!important;right:auto!important;left:378px!important;top:24px!important}
 body.wide .ck-ring{right:auto!important;left:372px!important;top:206px!important}
 body.wide .ck-mo{left:432px!important;right:auto!important;width:290px;top:22px!important}
-body.wide .ck-card{left:432px!important;right:24px!important;top:74px!important;padding:12px 16px!important}
+body.wide .ck-card{left:432px!important;right:24px!important;top:74px!important;display:grid;grid-template-columns:140px 1fr}
+body.wide .ck-sky{height:auto!important}
+body.wide .ck-sky svg{height:100%}
+body.wide .ck-info{padding:10px 14px!important}
 body.wide .ck-h1{left:80px!important;top:22px!important;transform:scale(.7);transform-origin:0 0}
 body.wide .ck-time{left:432px!important;right:24px!important;top:88px!important}
 body.wide .ck-energy{left:432px!important;right:24px!important;top:186px!important}
@@ -289,11 +297,18 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 
   </sc-if>
   <sc-if value="{{notMain}}" hint-placeholder-val="{{ false }}">
-  <div class="a-right ck-card" style="position: absolute; left: 20px; right: 20px; top: 300px; padding: 18px; box-sizing: border-box; {{moCard.box}}">
-    <p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; opacity: .75">{{moCard.line}}</p>
-    <h2 style="margin: 4px 0 0; font-size: 32px; font-weight: 900; line-height: .95; letter-spacing: -.03em">{{moCard.title}}</h2>
-    <p style="margin: 8px 0 12px; font-size: 14px; font-weight: 600; line-height: 1.35">{{moCard.desc}}</p>
-    <sc-for list="{{moCard.moves}}" as="mm" hint-placeholder-count="4"><p style="margin: 0; padding: 6px 0; border-top: 2px solid rgba(0,0,0,.12); display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800"><span style="{{mm.shape}}"></span>{{mm.n}}</p></sc-for>
+  <div class="a-right ck-card" style="position: absolute; left: 20px; right: 20px; top: 296px; border: 3px solid #161616; background: #FFFFFF; box-sizing: border-box; overflow: hidden">
+    <div class="ck-sky" style="height: 104px; position: relative; overflow: hidden">
+      <sc-if value="{{moMorning}}" hint-placeholder-val="{{ false }}"><svg width="100%" height="104" viewBox="0 0 344 104" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="display: block"><rect width="344" height="104" fill="#FFF1C6"/><g class="sky-rays" style="transform-origin: 172px 86px"><rect x="170" y="8" width="4" height="22" fill="#FFC20E"/><rect x="170" y="8" width="4" height="22" fill="#FFC20E" transform="rotate(-35 172 86)"/><rect x="170" y="8" width="4" height="22" fill="#FFC20E" transform="rotate(35 172 86)"/><rect x="170" y="8" width="4" height="22" fill="#FFC20E" transform="rotate(-70 172 86)"/><rect x="170" y="8" width="4" height="22" fill="#FFC20E" transform="rotate(70 172 86)"/></g><path d="M126 86 A46 46 0 0 1 218 86 Z" fill="#FFC20E"/><rect y="86" width="344" height="18" fill="#161616"/><path d="M0 86 Q40 64 86 86 Z" fill="#0E8178"/><path d="M262 86 Q300 70 344 86 Z" fill="#0E8178"/></svg></sc-if>
+      <sc-if value="{{moMidday}}" hint-placeholder-val="{{ false }}"><svg width="100%" height="104" viewBox="0 0 344 104" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="display: block"><rect width="344" height="104" fill="#FFE2CC"/><g class="sky-rays" style="transform-origin: 172px 48px"><rect x="170" y="2" width="4" height="12" fill="#F26A0F"/><rect x="170" y="82" width="4" height="12" fill="#F26A0F"/><rect x="124" y="46" width="12" height="4" fill="#F26A0F"/><rect x="208" y="46" width="12" height="4" fill="#F26A0F"/><rect x="170" y="2" width="4" height="12" fill="#F26A0F" transform="rotate(45 172 48)"/><rect x="170" y="2" width="4" height="12" fill="#F26A0F" transform="rotate(-45 172 48)"/><rect x="170" y="82" width="4" height="12" fill="#F26A0F" transform="rotate(45 172 48)"/><rect x="170" y="82" width="4" height="12" fill="#F26A0F" transform="rotate(-45 172 48)"/></g><circle cx="172" cy="48" r="28" fill="#F26A0F"/><rect x="40" y="70" width="34" height="34" fill="#1556C2"/><rect x="74" y="56" width="22" height="48" fill="#E5282E"/><rect x="262" y="64" width="40" height="40" fill="#FFC20E"/><rect y="100" width="344" height="4" fill="#161616"/></svg></sc-if>
+      <sc-if value="{{moEvening}}" hint-placeholder-val="{{ false }}"><svg width="100%" height="104" viewBox="0 0 344 104" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="display: block"><rect width="344" height="104" fill="#1556C2"/><circle cx="196" cy="48" r="30" fill="#FFC20E"/><circle cx="212" cy="38" r="27" fill="#1556C2"/><g class="sky-stars"><circle cx="70" cy="28" r="3" fill="#FFFFFF"/><circle cx="110" cy="62" r="2" fill="#FFFFFF"/><circle cx="266" cy="22" r="3" fill="#FFFFFF"/><circle cx="292" cy="66" r="2" fill="#FFFFFF"/><rect x="138" y="18" width="7" height="7" fill="#FFFFFF" transform="rotate(45 141 21)"/><rect x="240" y="76" width="6" height="6" fill="#FFFFFF" transform="rotate(45 243 79)"/></g><path d="M0 104 Q86 80 172 98 Q258 84 344 104 Z" fill="#161616"/></svg></sc-if>
+    </div>
+    <div class="ck-info" style="padding: 14px 16px 12px">
+      <p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">{{moCard.line}}</p>
+      <h2 style="margin: 4px 0 0; font-size: 30px; font-weight: 900; line-height: .95; letter-spacing: -.03em">{{moCard.title}}</h2>
+      <p style="margin: 6px 0 10px; font-size: 14px; font-weight: 600; line-height: 1.35; color: #3A3A3A">{{moCard.desc}}</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px"><sc-for list="{{moCard.moves}}" as="mm" hint-placeholder-count="4"><span style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #F4F4F4; font-size: 12px; font-weight: 800"><span style="{{mm.shape}}"></span>{{mm.n}}</span></sc-for></div>
+    </div>
   </div>
   </sc-if>
   <button class="a-rise d5 half ck-go" onClick="{{go}}" style="position: absolute; left: 45px; bottom: -1px; width: 300px; height: 150px; border: 0; border-radius: 150px 150px 0 0; background: #1556C2; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 0 34px; box-sizing: border-box; font-family: Inter Tight, sans-serif">
@@ -520,12 +535,6 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
       <sc-if value="{{ch.done}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 900; color: #0B7A3E; flex: none">Done!</span></sc-if>
     </div>
     <sc-if value="{{hasBanner}}" hint-placeholder-val="{{ false }}"><button class="a-pop" onClick="{{bannerGo}}" style="order: 4; margin-top: 10px; height: 54px; flex: none; border: 0; background: #161616; color: #FFFFFF; display: flex; align-items: center; gap: 12px; padding: 0 14px; font: 800 15px Inter Tight, sans-serif; text-align: left"><span style="{{bannerShape}}"></span><span style="flex: 1">{{bannerText}}</span><span style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #FFC20E">See it</span></button></sc-if>
-    <div class="pa-picks" style="order: 7; margin-top: 22px">
-      <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Noodle picks for you</h2>
-      <sc-for list="{{picks}}" as="pk" hint-placeholder-count="3">
-        <button onClick="{{pk.open}}" style="width: 100%; display: flex; align-items: center; gap: 12px; height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: transparent; padding: 0; text-align: left; font: 700 16px Inter Tight, sans-serif; color: #161616"><span style="{{pk.shape}}"></span><span style="flex: 1">{{pk.n}}</span><span style="font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #FFFFFF; background: #161616; padding: 3px 7px">New</span></button>
-      </sc-for>
-    </div>
     <div class="pa-nudge" style="order: 8; margin-top: 18px; display: flex; align-items: center; gap: 12px; border-top: 3px solid #161616; padding-top: 12px">
       <svg width="54" height="35" viewBox="0 0 100 66" aria-hidden="true" style="flex: none"><ellipse cx="27" cy="36" rx="8" ry="16" fill="#161616"/><ellipse cx="73" cy="36" rx="8" ry="16" fill="#161616"/><circle cx="50" cy="32" r="24" fill="#E5282E"/><ellipse cx="50" cy="44" rx="12" ry="9" fill="#FFC20E"/><circle cx="50" cy="39" r="4.5" fill="#161616"/><circle cx="41" cy="27" r="3.5" fill="#161616"/><circle cx="59" cy="27" r="3.5" fill="#161616"/></svg>
       <p style="flex: 1; margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3">{{nudgeText}}</p>
@@ -719,7 +728,11 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
                 <sc-if value="{{cf.hasGot}}" hint-placeholder-val="{{ true }}"><p style="margin: 0 0 4px; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #595959">Found</p><div style="display: flex; flex-wrap: wrap; gap: 4px"><sc-for list="{{cf.moves}}" as="cm" hint-placeholder-count="3"><button onClick="{{cm.open}}" style="{{cm.box}}">{{cm.n}}</button></sc-for></div></sc-if>
                 <sc-if value="{{cf.hasReady}}" hint-placeholder-val="{{ true }}"><p style="margin: 8px 0 4px; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #595959">Ready for you</p><div style="display: flex; flex-wrap: wrap; gap: 4px"><sc-for list="{{cf.ready}}" as="cr" hint-placeholder-count="3"><button onClick="{{cr.open}}" style="{{cr.box}}">{{cr.n}}</button></sc-for><span style="font-size: 11px; font-weight: 700; color: #8A8A8A; align-self: center">{{cf.readyMore}}</span></div></sc-if>
                 <button onClick="{{cf.peekGo}}" style="margin-top: 8px; border: 0; background: transparent; padding: 4px 0; font: 800 12px Inter Tight, sans-serif; color: #1556C2; text-decoration: underline; text-underline-offset: 3px">{{cf.peekLabel}}</button>
-                <sc-if value="{{cf.peekOpen}}" hint-placeholder-val="{{ false }}"><div class="a-up" style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px"><sc-for list="{{cf.peekMoves}}" as="pm" hint-placeholder-count="3"><button onClick="{{pm.open}}" style="border: 2px dashed #C8C8C8; background: #FFFFFF; padding: 2px 8px; font: 700 12px Inter Tight, sans-serif; color: #595959; display: flex; gap: 6px; align-items: baseline">{{pm.n}}<span style="font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #8A8A8A">{{pm.lvl}}</span></button></sc-for></div></sc-if>
+                <sc-if value="{{cf.peekOpen}}" hint-placeholder-val="{{ false }}"><div class="a-up" style="margin-top: 6px; border-left: 3px solid #E4E4E4; padding-left: 10px">
+                  <p style="margin: 0 0 4px; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #8A8A8A">Next up · {{cf.nextLvl}}</p>
+                  <sc-for list="{{cf.peekMoves}}" as="pm" hint-placeholder-count="3"><button onClick="{{pm.open}}" style="display: block; width: 100%; border: 0; background: transparent; padding: 5px 0; text-align: left; font: 700 14px Inter Tight, sans-serif; color: #595959">{{pm.n}}</button></sc-for>
+                  <p style="margin: 4px 0 0; font-size: 12px; color: #8A8A8A">{{cf.laterLine}}</p>
+                </div></sc-if>
               </div>
             </sc-if>
           </div>
@@ -859,8 +872,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=38"></script>
-<script src="app.js?v=38"></script>
+<script src="runtime.js?v=39"></script>
+<script src="app.js?v=39"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
