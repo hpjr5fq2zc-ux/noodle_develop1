@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Noodle Dev</title>
+<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Noodle Dev">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1556C2}a:hover{color:#0E3F92}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes slideFromRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+@keyframes rise{from{transform:translateY(100%)}to{transform:none}}
+@keyframes spin{from{transform:rotate(-90deg) scale(0)}to{transform:none}}
+@keyframes peek{0%{opacity:0;transform:translateY(40px)}60%{opacity:1;transform:translateY(-6px)}100%{opacity:1;transform:none}}
+@keyframes tilt{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-8deg)}95%{transform:rotate(6deg)}}
+@keyframes expand{from{clip-path:circle(0% at 50% 100%)}to{clip-path:circle(150% at 50% 100%)}}
+@keyframes trSit{0%,100%{transform:none}30%,70%{transform:scale(1.12,.78)}}
+@keyframes trWag{0%,100%{transform:none}20%{transform:rotate(-5deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(5deg)}}
+@keyframes trHop{0%,100%{transform:none}15%{transform:scale(1.1,.85)}35%{transform:translateY(-34px)}55%{transform:none}70%{transform:translateY(-16px)}85%{transform:none}}
+@keyframes trSpin{0%,100%{transform:none}25%{transform:scaleX(0)}50%{transform:scaleX(-1)}75%{transform:scaleX(0)}}
+@keyframes trRoll{0%{transform:none}20%{transform:translateY(-10px)}80%{transform:translateY(-10px) rotate(360deg)}100%{transform:rotate(360deg)}}
+@keyframes trBow{0%,100%{transform:none}30%,70%{transform:rotate(14deg)}}
+@keyframes trDance{0%,100%{transform:none}12%{transform:translateX(-10px) rotate(-8deg)}25%{transform:translateX(10px) rotate(8deg) translateY(-6px)}37%{transform:translateX(-10px) rotate(-8deg)}50%{transform:translateX(10px) rotate(8deg) translateY(-6px)}62%{transform:translateX(-10px) rotate(-8deg)}75%{transform:translateX(10px) rotate(8deg)}}
+@keyframes trHand{0%,100%{transform:none}25%,75%{transform:translateX(-26px) rotate(58deg)}40%{transform:translateX(-26px) rotate(62deg)}60%{transform:translateX(-26px) rotate(55deg)}}
+@keyframes trMoon{0%,100%{transform:none}45%{transform:translateX(-28px)}50%{transform:translateX(-28px) scaleX(-1)}95%{transform:scaleX(-1)}}
+@keyframes trFlip{0%{transform:none}12%{transform:scale(1.1,.82)}30%{transform:translateY(-30px) rotate(-60deg)}55%{transform:translateY(-44px) rotate(-200deg)}80%{transform:translateY(-8px) rotate(-340deg)}90%{transform:rotate(-360deg) scale(1.08,.88)}100%{transform:rotate(-360deg)}}
+@keyframes trSit2{0%,100%{transform:none}30%,70%{transform:scale(1.12,.78)}}
+@keyframes trWag2{0%,100%{transform:none}20%{transform:rotate(-5deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(5deg)}}
+@keyframes trHop2{0%,100%{transform:none}15%{transform:scale(1.1,.85)}35%{transform:translateY(-34px)}55%{transform:none}70%{transform:translateY(-16px)}85%{transform:none}}
+@keyframes trSpin2{0%,100%{transform:none}25%{transform:scaleX(0)}50%{transform:scaleX(-1)}75%{transform:scaleX(0)}}
+@keyframes trRoll2{0%{transform:none}20%{transform:translateY(-10px)}80%{transform:translateY(-10px) rotate(360deg)}100%{transform:rotate(360deg)}}
+@keyframes trBow2{0%,100%{transform:none}30%,70%{transform:rotate(14deg)}}
+@keyframes trDance2{0%,100%{transform:none}12%{transform:translateX(-10px) rotate(-8deg)}25%{transform:translateX(10px) rotate(8deg) translateY(-6px)}37%{transform:translateX(-10px) rotate(-8deg)}50%{transform:translateX(10px) rotate(8deg) translateY(-6px)}62%{transform:translateX(-10px) rotate(-8deg)}75%{transform:translateX(10px) rotate(8deg)}}
+@keyframes trHand2{0%,100%{transform:none}25%,75%{transform:translateX(-26px) rotate(58deg)}40%{transform:translateX(-26px) rotate(62deg)}60%{transform:translateX(-26px) rotate(55deg)}}
+@keyframes trMoon2{0%,100%{transform:none}45%{transform:translateX(-28px)}50%{transform:translateX(-28px) scaleX(-1)}95%{transform:scaleX(-1)}}
+@keyframes trFlip2{0%{transform:none}12%{transform:scale(1.1,.82)}30%{transform:translateY(-30px) rotate(-60deg)}55%{transform:translateY(-44px) rotate(-200deg)}80%{transform:translateY(-8px) rotate(-340deg)}90%{transform:rotate(-360deg) scale(1.08,.88)}100%{transform:rotate(-360deg)}}
+@keyframes flipA{from{transform:perspective(400px) rotateY(90deg)}to{transform:none}}
+@keyframes flipB{from{transform:perspective(400px) rotateY(-90deg)}to{transform:none}}
+@keyframes swipeL{from{transform:translateX(100%)}to{transform:none}}
+@keyframes swipeR{from{transform:translateX(-100%)}to{transform:none}}
+.swl{animation:swipeL .65s cubic-bezier(.22,.9,.28,1) both}.swr{animation:swipeR .65s cubic-bezier(.22,.9,.28,1) both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes wag{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(16deg)}}
+@keyframes stepA{0%,100%{transform:rotate(20deg)}50%{transform:rotate(-20deg)}}
+@keyframes stepB{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(20deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes walkAcross{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes hop{0%,100%{transform:none}14%{transform:translateY(5px) scale(1.07,.88)}42%{transform:translateY(-38px) scale(.95,1.07) rotate(-6deg)}58%{transform:translateY(-38px) scale(.97,1.04) rotate(-3deg)}76%{transform:translateY(3px) scale(1.09,.86)}88%{transform:translateY(-4px) scale(.98,1.02)}}
+@keyframes hopB{0%,100%{transform:none}14%{transform:translateY(5px) scale(1.07,.88)}42%{transform:translateY(-38px) scale(.95,1.07) rotate(-6deg)}58%{transform:translateY(-38px) scale(.97,1.04) rotate(-3deg)}76%{transform:translateY(3px) scale(1.09,.86)}88%{transform:translateY(-4px) scale(.98,1.02)}}
+@keyframes walkIn{from{transform:translateX(-170px)}to{transform:translateX(226px)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes swapA{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes swapB{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes confetti{0%{opacity:0;transform:translateY(-40px) rotate(0) scale(.4)}20%{opacity:1}100%{opacity:1;transform:translateY(0) rotate(200deg) scale(1)}}
+.a-pop{animation:pop .7s cubic-bezier(.2,.9,.3,1.2) both}
+.a-spin{animation:spin .8s cubic-bezier(.2,.9,.3,1) both}
+.a-up{animation:fadeUp .6s ease-out both}
+.a-in{animation:slideIn .55s ease-out both}
+.a-rise{animation:rise .45s cubic-bezier(.2,.9,.3,1.15) backwards}
+.a-peek{transform-origin:50% 100%;animation:peek .6s cubic-bezier(.2,.9,.3,1.25) .9s both,tilt 2.4s ease-in-out 1.8s 1}
+.a-screen{animation:fadeIn .3s cubic-bezier(0,0,.2,1) both}
+.a-right{animation:slideFromRight .3s cubic-bezier(0,0,.2,1) both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.35s}.d4{animation-delay:.5s}.d5{animation-delay:.65s}.d6{animation-delay:.8s}
+.expand{position:absolute;inset:0;z-index:50;animation:expand .375s cubic-bezier(.4,0,.2,1) both}
+.n-tail{transform-box:fill-box;transform-origin:100% 100%;animation:wag .45s ease-in-out 8}
+.n-eye{transform-box:fill-box;transform-origin:center;animation:blink 4s 3}
+.walking .n-la{transform-box:fill-box;transform-origin:50% 0;animation:stepA .5s ease-in-out 6}
+.walking .n-lb{transform-box:fill-box;transform-origin:50% 0;animation:stepB .5s ease-in-out 6}
+.walking .n-body{animation:bob .25s ease-in-out 12}
+.walker{position:absolute;animation:walkIn 2.4s cubic-bezier(.3,.1,.3,1) .4s both}
+.walker .n-la,.walker .n-lb{animation-iteration-count:5.6!important}
+.walker .n-body{animation-iteration-count:11.2!important}
+.walker .n-tail{animation:wag .45s ease-in-out 9}
+.pet{border:0;background:transparent;padding:0;cursor:pointer;display:block;transform-origin:50% 100%}
+.hopper{transform-origin:50% 100%;animation:hop 1s cubic-bezier(.3,.7,.4,1) .3s 3 both}
+.breather{transform-origin:50% 100%;animation:breathe 3s ease-in-out 3}
+.confetti{position:absolute;animation:confetti 1.2s cubic-bezier(.2,.8,.3,1) both}
+button,a{transition:transform .38s cubic-bezier(.3,1.7,.5,1)}
+button:active,a:active{transform:scale(.92);transition:transform .08s cubic-bezier(.4,0,1,1)}
+.quiet:active{transform:scale(.96)}
+.half{transform-origin:50% 100%}
+.half:active{transform:scale(.96)}
+input[type=range]{-webkit-appearance:none;appearance:none;cursor:grab}
+input[type=range]:active{cursor:grabbing}
+input[type=range]::-webkit-slider-runnable-track{background:transparent;height:44px}
+input[type=range]::-moz-range-track{background:transparent}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:5px;border-radius:50%;border:4px solid #FFFFFF;box-shadow:0 0 0 3px #161616;transition:transform .15s}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;border:4px solid #FFFFFF;box-shadow:0 0 0 3px #161616}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.18)}
+input[type=range]:focus-visible{outline:3px solid #1556C2;outline-offset:2px;border-radius:8px}
+.s-time::-webkit-slider-thumb{background:#E5282E}.s-time::-moz-range-thumb{background:#E5282E}
+.s-energy::-webkit-slider-thumb{background:#FFC20E}.s-energy::-moz-range-thumb{background:#FFC20E}
+.scroll::-webkit-scrollbar{display:none}
+@keyframes phraseIn{0%{opacity:0;transform:translateY(18px) rotate(-3deg)}60%{opacity:1;transform:translateY(-4px) rotate(1deg)}100%{opacity:1;transform:none}}
+.phrase{animation:phraseIn .45s cubic-bezier(.2,.9,.3,1.2) both}
+.quick .a-pop,.quick .a-spin,.quick .a-up,.quick .a-in,.quick .a-rise,.quick .a-peek{animation-duration:.25s!important;animation-delay:0s!important}
+@keyframes wiggleA{0%,100%{transform:none}20%{transform:rotate(-9deg) scale(1.05,.95)}45%{transform:rotate(8deg) scale(.97,1.04)}70%{transform:rotate(-5deg)}85%{transform:rotate(3deg)}}
+@keyframes wiggleB{0%,100%{transform:none}20%{transform:rotate(-9deg) scale(1.05,.95)}45%{transform:rotate(8deg) scale(.97,1.04)}70%{transform:rotate(-5deg)}85%{transform:rotate(3deg)}}
+@keyframes heartUp{0%{opacity:0;transform:translateY(10px) scale(.4)}30%{opacity:1;transform:translateY(-12px) scale(1)}100%{opacity:0;transform:translateY(-48px) scale(.9)}}
+.heart{animation:heartUp 1.2s ease-out both}
+@keyframes zoomIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.zoomIn{animation:zoomIn .3s cubic-bezier(0,0,.2,1) both}
+@keyframes levelup{0%{opacity:0;transform:scale(.3) rotate(-20deg)}60%{opacity:1;transform:scale(1.12) rotate(-4deg)}100%{opacity:1;transform:rotate(-6deg)}}
+.levelup{animation:levelup .5s cubic-bezier(.2,.9,.3,1.3) both}
+.bubble{position:absolute;white-space:nowrap}
+.calm *{animation:none!important;transition:none!important}
+@keyframes flipIn{0%{transform:perspective(400px) rotateY(90deg)}60%{transform:perspective(400px) rotateY(-12deg)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<style>
+html,body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;margin:0;height:100%;background:#FFFFFF;overflow:hidden;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+#stage{touch-action:manipulation;position:absolute;top:0;left:0;width:390px;height:844px;transform-origin:0 0}
+button{cursor:pointer}
+body.wide::before{content:"";z-index:-1;position:fixed;left:0;bottom:0;width:18vh;height:9vh;border-radius:18vh 18vh 0 0;background:#1556C2}
+body.wide::after{content:"";z-index:-1;position:fixed;right:0;top:0;width:14vh;height:14vh;border-bottom-left-radius:100%;background:#FFC20E}
+body.wide #dc-root>div{width:844px!important;height:390px!important}
+body.wide .nav{flex-direction:column!important;top:8px!important}
+/* check-in */
+body.wide .ck-red{width:200px!important;height:200px!important;right:-90px!important;top:-110px!important}
+body.wide .ck-word{width:80px;height:19px;right:14px!important;top:16px!important}
+body.wide .ck-yel{width:50px!important;height:50px!important;right:auto!important;left:378px!important;top:24px!important}
+body.wide .ck-ring{right:auto!important;left:372px!important;top:206px!important}
+body.wide .ck-h1{left:80px!important;top:22px!important;transform:scale(.7);transform-origin:0 0}
+body.wide .ck-time{left:432px!important;right:24px!important;top:88px!important}
+body.wide .ck-energy{left:432px!important;right:24px!important;top:186px!important}
+body.wide .ck-mood{left:432px!important;right:auto!important;top:294px!important}
+body.wide .ck-go{left:110px!important;width:260px!important;height:130px!important;border-radius:130px 130px 0 0!important;padding-bottom:24px!important}
+body.wide .ck-go span:first-child{font-size:46px!important}
+body.wide .ck-pet{left:192px!important;top:202px!important}
+/* session */
+body.wide .ss{flex-direction:row!important}
+body.wide .ss-head{width:380px;height:100%!important}
+body.wide .ss-h1{top:96px!important}
+body.wide .ss-sum{top:176px!important}
+body.wide .ss .scroll{padding-bottom:150px!important}
+body.wide .ss-start{left:502px!important;width:240px!important;height:120px!important;border-radius:120px 120px 0 0!important;padding-bottom:22px!important}
+/* player */
+body.wide .pl{flex-direction:row!important}
+body.wide .ps{width:56%;height:100%!important;flex:none!important}
+body.wide .pc{left:10px!important;top:60px!important;width:214px!important;height:214px!important}
+body.wide .pf{left:14px!important;top:62px!important;width:210px!important;height:210px!important}
+body.wide .pf svg{width:210px;height:210px}
+body.wide .pw,body.wide .pb{display:none!important}
+body.wide .pt{left:240px!important;right:14px!important;top:84px!important;bottom:auto!important}
+body.wide .pt h1{font-size:32px!important}
+body.wide .pr{left:0!important;right:auto!important;width:236px;top:96px!important}
+body.wide .pr svg{width:216px;height:128px}
+body.wide .pcn{padding:10px 12px!important}
+/* done */
+body.wide .dn-hop{right:auto!important;width:422px;top:60px!important}
+body.wide .dn-h1{left:430px!important;top:100px!important}
+body.wide .dn-p{left:430px!important;top:250px!important}
+body.wide .dn-home{left:61px!important}
+body.wide .confetti{translate:0 -330px}
+body.wide .confetti:nth-child(odd){translate:440px 0}
+/* tabs */
+body.wide .tb-h1{left:84px!important;top:22px!important}
+body.wide .pa-scroll{top:0!important;left:84px!important;flex-direction:row!important;gap:30px;align-items:flex-start;padding:16px 16px 20px 0!important}
+body.wide .pa-left{display:flex!important;flex-direction:column;width:330px;flex:none}
+body.wide .pa-right{display:block!important;flex:1;position:sticky;top:0}
+body.wide .pa-results{margin-top:0!important}
+body.wide .pa-gridwrap{margin-top:0!important;width:264px!important;height:356px!important}
+body.wide .pa-grid{scale:.75;transform-origin:0 0}
+body.wide .pd{display:grid!important;grid-template-columns:380px 1fr;grid-template-rows:1fr auto}
+body.wide .pd-head{grid-row:1/3;height:100%!important}
+body.wide .pd-head h1{top:150px!important}body.wide .pd-head p:first-of-type{top:132px!important}body.wide .pd-head p:last-of-type{top:208px!important}
+body.wide .pd-ol{padding-top:14px!important}
+body.wide .pd-li{height:54px!important}
+body.wide .pd-btns{padding-bottom:16px!important}
+body.wide .mc{flex-direction:row!important}
+body.wide .mc-stage{width:420px;height:100%!important}
+body.wide .yo-scroll{left:84px!important;top:86px!important;display:flex;gap:30px;align-items:flex-start;padding:4px 20px 24px 0!important}
+body.wide .yo-a{display:block!important;width:330px;flex:none}
+body.wide .yo-b{display:block!important;flex:1;min-width:0}
+body.wide .yo-b>section:first-child{margin-top:0!important;border-top:0!important;padding-top:0!important}
+body.wide .yo-gear{right:auto!important;left:200px!important;top:24px!important}
+body.wide .yo-cal>button{height:30px!important}
+body.wide .yo-a>section:first-child{padding:8px!important}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<template id="tpl">
+
+<div class="{{rootClass}}" style="width: 390px; height: 844px; box-sizing: border-box; background: #FFFFFF; color: #161616; font-family: Inter Tight, system-ui, sans-serif; position: relative; overflow: hidden">
+
+<!-- ============ CHECK-IN ============ -->
+<sc-if value="{{isCheckin}}" hint-placeholder-val="{{ true }}">
+<div class="{{checkinClass}}" style="position: absolute; inset: 0">
+  <div class="a-pop ck-red" aria-hidden="true" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; background: #E5282E; right: -96px; top: -112px"></div>
+  <div class="a-spin d3 ck-yel" aria-hidden="true" style="position: absolute; width: 74px; height: 74px; border-top-right-radius: 100%; background: #FFC20E; right: 26px; top: 168px"></div>
+  <div class="a-pop d4 ck-ring" aria-hidden="true" style="position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 9px solid #0B7A3E; box-sizing: border-box; right: 112px; top: 210px"></div>
+
+  <svg class="a-up d2 ck-word" width="100" height="24" viewBox="0 0 150 36" role="img" aria-label="Noodle" style="position: absolute; right: 22px; top: 28px"><path d="M0 36 V13 a11 11 0 0 1 22 0 V36 h-7 V13 a4 4 0 0 0 -8 0 V36 z" fill="#FFFFFF"/><circle cx="39" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/><circle cx="68" cy="24" r="12" fill="#FFFFFF"/><circle cx="97" cy="24" r="8.5" fill="none" stroke="#FFFFFF" stroke-width="7"/><rect x="102" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/><rect x="114" y="0" width="7" height="36" rx="3.5" fill="#FFFFFF"/><path d="M129.5 24 H146.5 A8.5 8.5 0 1 0 144 30" fill="none" stroke="#FFFFFF" stroke-width="7"/></svg>
+
+  <nav class="nav" aria-label="Main" style="position: absolute; left: 8px; top: 10px; display: flex; gap: 2px; z-index: 5">
+    <button onClick="{{navHome}}" aria-current="page" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #161616"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{navDog}}"><svg width="34" height="20" viewBox="0 0 220 130" aria-hidden="true" style="display: block; overflow: visible"><path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle cx="184" cy="38" r="3.5" fill="#161616"/></svg></span></span><span style="border-bottom: 2px solid #161616; padding-bottom: 1px">{{moveWord}}</span></button>
+    <button onClick="{{navPaths}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" fill="#161616"/><rect x="1.5" y="1.5" width="11" height="11" fill="#E5282E"/><rect x="14" y="1.5" width="6.5" height="6" fill="#FFFFFF"/><rect x="14" y="9" width="6.5" height="3.5" fill="#FFC20E"/><rect x="1.5" y="14" width="6" height="6.5" fill="#1556C2"/><rect x="9" y="14" width="11.5" height="6.5" fill="#FFFFFF"/></svg></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">Paths</span></button>
+    <button onClick="{{navYou}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{youFace}}"></span></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">You</span></button>
+  </nav>
+
+  <h1 class="ck-h1" style="position: absolute; left: 20px; top: 84px; margin: 0; width: 300px">
+   <button class="a-up d1" onClick="{{nextPhrase}}" aria-label="{{phraseAria}}" style="{{phraseStyle}}">
+    <sc-if value="{{phEven}}" hint-placeholder-val="{{ true }}">
+      <span class="phrase" style="display: block">
+        <sc-for list="{{phraseLines}}" as="ln" hint-placeholder-count="3"><span style="display: block">{{ln.t}}</span></sc-for>
+      </span>
+    </sc-if>
+    <sc-if value="{{phOdd}}" hint-placeholder-val="{{ true }}">
+      <span class="phrase" style="display: block">
+        <sc-for list="{{phraseLines}}" as="ln" hint-placeholder-count="3"><span style="display: block">{{ln.t}}</span></sc-for>
+      </span>
+    </sc-if>
+   </button>
+  </h1>
+
+  <section class="a-in d2 ck-time" aria-labelledby="p-time" style="position: absolute; left: 20px; right: 20px; top: 282px; display: flex; gap: 16px">
+    <h2 id="p-time" style="margin: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #595959">Time</h2>
+    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 58px">
+        <p style="margin: 0; display: flex; align-items: baseline; gap: 6px"><span style="font-size: 54px; font-weight: 900; line-height: 1; letter-spacing: -.03em">{{time}}</span><span style="font-size: 15px; font-weight: 700; color: #595959">min</span></p>
+        <span aria-hidden="true" style="width: 58px; height: 58px; display: flex; align-items: center; justify-content: center"><span style="{{timeDot}}"></span></span>
+      </div>
+      <div style="position: relative; height: 44px">
+        <span aria-hidden="true" style="{{timeTrack}}"></span>
+        <input class="s-time" type="range" min="5" max="60" step="5" value="{{time}}" onChange="{{onTime}}" aria-label="Session length in minutes" style="position: absolute; left: 0; top: 0; width: 100%; height: 44px; margin: 0; background: transparent">
+      </div>
+    </div>
+  </section>
+
+  <section class="a-in d3 ck-energy" aria-labelledby="p-energy" style="position: absolute; left: 20px; right: 20px; top: 398px; display: flex; gap: 16px">
+    <h2 id="p-energy" style="margin: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #595959">Energy</h2>
+    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 58px">
+        <p style="margin: 0; font-size: 40px; font-weight: 900; line-height: 1; letter-spacing: -.03em">{{energyLabel}}</p>
+        <span aria-hidden="true" style="width: 58px; height: 58px; display: flex; align-items: flex-end; justify-content: center"><span style="{{energyTri}}"></span></span>
+      </div>
+      <div style="position: relative; height: 44px">
+        <span aria-hidden="true" style="{{energyTrack}}"></span>
+        <input class="s-energy" type="range" min="0" max="100" step="1" value="{{energy}}" onChange="{{onEnergy}}" aria-label="Energy level" aria-valuetext="{{energyLabel}}" style="position: absolute; left: 0; top: 0; width: 100%; height: 44px; margin: 0; background: transparent">
+      </div>
+    </div>
+  </section>
+
+  <section class="a-in d4 ck-mood" aria-labelledby="p-mood" style="position: absolute; left: 20px; right: 12px; top: 520px; display: flex; align-items: flex-end; gap: 10px">
+    <h2 id="p-mood" style="margin: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #595959">Mood</h2>
+    <div style="display: flex; align-items: flex-end; gap: 2px">
+      <sc-for list="{{moods}}" as="m" hint-placeholder-count="5">
+        <button onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="border: 0; background: transparent; padding: 0; width: 54px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: Inter Tight, sans-serif; color: #161616">
+          <span style="height: 46px; display: flex; align-items: flex-end; justify-content: center"><span style="{{m.shape}}"></span></span>
+          <span style="{{m.lab}}">{{m.l}}</span>
+          <span style="{{m.bar}}"></span>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <button class="a-rise d5 half ck-go" onClick="{{go}}" style="position: absolute; left: 45px; bottom: -1px; width: 300px; height: 150px; border: 0; border-radius: 150px 150px 0 0; background: #1556C2; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 0 34px; box-sizing: border-box; font-family: Inter Tight, sans-serif">
+    <span style="font-size: 56px; font-weight: 900; line-height: .9; letter-spacing: -.03em">GO</span>
+    <span style="font-size: 13px; font-weight: 600; margin-top: 4px; color: #DDE7FA">build my session</span>
+  </button>
+  <button class="pet ck-pet" onClick="{{petHome}}" aria-label="Pet Noodle" style="position: absolute; left: 147px; top: 640px; width: 96px; height: 62px">
+   <span style="{{petWiggle}}">
+   <svg class="a-peek" width="96" height="62" viewBox="0 0 100 64" aria-hidden="true" style="display: block; overflow: visible">
+    <ellipse cx="27" cy="34" rx="8" ry="16" fill="#161616" style="{{earL}}"/>
+    <ellipse cx="73" cy="34" rx="8" ry="16" fill="#161616" style="{{earR}}"/>
+    <circle cx="50" cy="30" r="24" fill="#E5282E"/>
+    <circle cx="33" cy="36" r="4" fill="#F6A5A9" style="{{blush}}"/><circle cx="67" cy="36" r="4" fill="#F6A5A9" style="{{blush}}"/>
+    <ellipse cx="50" cy="42" rx="12" ry="9" fill="#FFC20E"/>
+    <circle cx="50" cy="37" r="4.5" fill="#161616"/>
+    <g style="{{openEyes}}"><circle class="n-eye" cx="41" cy="25" r="3.5" fill="#161616"/><circle class="n-eye" cx="59" cy="25" r="3.5" fill="#161616"/></g>
+    <g style="{{happyEyes}}"><path d="M37 27 q4 -6 8 0" stroke="#161616" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M55 27 q4 -6 8 0" stroke="#161616" stroke-width="2.8" fill="none" stroke-linecap="round"/></g>
+    <path d="M18 64 v-6 a8 8 0 0 1 16 0 v6 z" fill="#161616"/>
+    <path d="M66 64 v-6 a8 8 0 0 1 16 0 v6 z" fill="#161616"/>
+   </svg>
+   </span>
+   <sc-if value="{{petting}}" hint-placeholder-val="{{ false }}"><span style="{{heartsBox}}"><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 10px; top: -6px; animation-delay: 0s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 40px; top: -6px; animation-delay: 0.15s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg><svg width="18" height="16" viewBox="0 0 18 16" aria-hidden="true" style="position: absolute; left: 70px; top: -6px; animation-delay: 0.3s" class="heart"><circle cx="5" cy="5" r="5" fill="#F6A5A9"/><circle cx="13" cy="5" r="5" fill="#F6A5A9"/><path d="M0.6 7 L9 16 L17.4 7 Z" fill="#F6A5A9"/></svg></span></sc-if>
+  </button>
+  <div class="a-pop d6" aria-hidden="true" style="position: absolute; left: 0; bottom: 0; width: 46px; height: 46px; background: #F26A0F; clip-path: polygon(0 0, 100% 100%, 0 100%)"></div>
+  <div class="a-pop d6" aria-hidden="true" style="position: absolute; right: 0; bottom: 0; width: 46px; height: 46px; background: #F6A5A9; border-top-left-radius: 100%"></div>
+</div>
+</sc-if>
+
+<!-- ============ SESSION ============ -->
+<sc-if value="{{isSession}}" hint-placeholder-val="{{ false }}">
+<div class="a-screen ss" style="position: absolute; inset: 0; display: flex; flex-direction: column">
+  <header class="ss-head" style="position: relative; height: 262px; flex: none; background: #1556C2; color: #FFFFFF; overflow: hidden">
+    <div class="a-spin d2" aria-hidden="true" style="position: absolute; width: 130px; height: 130px; border-top-left-radius: 100%; background: #FFC20E; right: 0; bottom: 0"></div>
+    <div class="a-pop d3" aria-hidden="true" style="position: absolute; width: 64px; height: 32px; border-radius: 32px 32px 0 0; background: #F6A5A9; right: 120px; top: 64px"></div>
+    <div class="a-pop d4" aria-hidden="true" style="position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #E5282E; right: 40px; top: 70px"></div>
+    <div style="position: absolute; left: 12px; right: 12px; top: 12px; display: flex; justify-content: space-between">
+      <button onClick="{{home}}" aria-label="Back to check-in" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button onClick="{{shuffle}}" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #161616; font: 700 14px Inter Tight, sans-serif; display: flex; align-items: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h4c4 0 6 10 10 10h4M3 17h4c1.5 0 2.7-1.4 3.7-3M14 9.8C15 8.3 16 7 17 7h4M18 4l3 3-3 3M18 14l3 3-3 3"/></svg>Shuffle</button>
+    </div>
+    <h1 class="a-up d1 ss-h1" style="position: absolute; left: 20px; top: 74px; margin: 0; font-size: 80px; font-weight: 900; line-height: .85; letter-spacing: -.04em">{{time}}<span style="font-size: 30px; letter-spacing: 0"> MIN</span></h1>
+    <p class="a-up d2 ss-sum" style="position: absolute; left: 22px; top: 150px; margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: #DDE7FA">{{summary}}</p>
+    <div class="walker" style="left: 0; bottom: -2px">
+      <button class="pet" onClick="{{pet}}" aria-label="Pet Noodle" style="{{petStyle}}">
+      <svg class="walking" width="140" height="83" viewBox="0 0 220 130" aria-hidden="true">
+        <path class="n-tail" d="M44 62 L14 34 L50 52 Z" fill="#161616"/>
+        <rect class="n-la" x="56" y="84" width="12" height="26" rx="6" fill="#161616"/>
+        <rect class="n-lb" x="78" y="84" width="12" height="26" rx="6" fill="#161616"/>
+        <rect class="n-lb" x="138" y="84" width="12" height="26" rx="6" fill="#161616"/>
+        <rect class="n-la" x="160" y="84" width="12" height="26" rx="6" fill="#161616"/>
+        <g class="n-body">
+          <rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/>
+          <rect x="148" y="50" width="10" height="44" fill="#FFC20E"/>
+          <circle cx="176" cy="46" r="24" fill="#E5282E"/>
+          <path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/>
+          <circle cx="211" cy="46" r="5" fill="#161616"/>
+          <ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/>
+          <circle class="n-eye" cx="184" cy="38" r="3.5" fill="#161616"/>
+        </g>
+      </svg>
+      </button>
+    </div>
+    <sc-if value="{{chatter}}" hint-placeholder-val="{{ true }}"><span class="bubble" style="position: absolute; left: 236px; bottom: 92px; background: #FFFFFF; color: #161616; font: 800 13px Inter Tight, sans-serif; padding: 8px 12px; animation: pop .4s cubic-bezier(.2,.9,.3,1.3) 2.8s both">Let&#39;s gooo!<span aria-hidden="true" style="position: absolute; left: 18px; bottom: -8px; width: 14px; height: 10px; background: #FFFFFF; clip-path: polygon(0 0, 100% 0, 0 100%)"></span></span></sc-if>
+  </header>
+
+  <div class="scroll" style="flex: 1; overflow-y: auto; padding: 8px 0 160px; scrollbar-width: none">
+    <sc-for list="{{blocks}}" as="b" hint-placeholder-count="4">
+      <section class="a-right" style="{{b.delay}}">
+        <div style="display: flex; align-items: center; gap: 10px; margin: 8px 20px 0; padding: 12px 0 6px; border-top: 3px solid #161616">
+          <span aria-hidden="true" style="{{b.shape}}"></span>
+          <h2 style="margin: 0; flex: 1; font-size: 13px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase">{{b.name}}</h2>
+          <span style="font-size: 12px; font-weight: 600; color: #595959">{{b.count}}</span>
+        </div>
+        <sc-for list="{{b.moves}}" as="mv" hint-placeholder-count="2">
+          <div style="{{mv.row}}">
+            <span style="width: 22px; flex: none; display: flex; justify-content: center"><span style="{{mv.shape}}"></span></span>
+            <div style="flex: 1; min-width: 0">
+              <button onClick="{{mv.open}}" style="border: 0; background: transparent; padding: 0; text-align: left; font: 700 17px Inter Tight, sans-serif; color: #161616; text-decoration: underline; text-decoration-color: #E2E2E2; text-decoration-thickness: 2px; text-underline-offset: 4px">{{mv.n}}</button>
+              <p style="margin: 1px 0 0; font-size: 13px; color: #595959">{{mv.rx}}</p>
+            </div>
+            <button class="quiet" onClick="{{mv.swap}}" aria-label="{{mv.swapLabel}}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #E2E2E2; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></button>
+          </div>
+        </sc-for>
+      </section>
+    </sc-for>
+  </div>
+
+  <button class="a-rise d4 half ss-start" onClick="{{startAll}}" style="position: absolute; left: 65px; bottom: -1px; width: 260px; height: 130px; border: 0; border-radius: 130px 130px 0 0; background: #161616; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 0 30px; box-sizing: border-box; font-family: Inter Tight, sans-serif">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFC20E" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+    <span style="font-size: 40px; font-weight: 900; line-height: .9; letter-spacing: -.02em; margin-top: 4px">START</span>
+  </button>
+</div>
+</sc-if>
+
+<!-- ============ PLAYER ============ -->
+<sc-if value="{{isPlayer}}" hint-placeholder-val="{{ false }}">
+<div class="a-screen pl" style="position: absolute; inset: 0; display: flex; flex-direction: column">
+  <div class="ps" style="{{stage}}">
+    <div class="pc" aria-hidden="true" style="position: absolute; width: 260px; height: 260px; border-radius: 50%; background: #FFFFFF; left: 65px; top: 66px"></div>
+    <div aria-hidden="true" style="position: absolute; width: 120px; height: 120px; border-top-left-radius: 100%; background: rgba(0,0,0,.12); right: 0; bottom: 0"></div>
+    <div style="position: absolute; left: 12px; right: 12px; top: 14px; display: flex; align-items: center; gap: 10px">
+      <button onClick="{{exitPlayer}}" aria-label="End workout" style="width: 44px; height: 44px; flex: none; border-radius: 50%; border: 0; background: rgba(255,255,255,.92); color: #161616; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div style="flex: 1; display: flex; gap: 4px">
+        <sc-for list="{{segs}}" as="sg" hint-placeholder-count="9"><span style="{{sg.style}}"></span></sc-for>
+      </div>
+    </div>
+    <sc-if value="{{pEven}}" hint-placeholder-val="{{ true }}">
+      <div class="a-right pf" style="position: absolute; left: 80px; top: 80px; width: 230px; height: 230px"><svg width="230" height="230" viewBox="0 0 100 100" role="img" aria-label="{{pfg.aria}}" style="display: block; overflow: visible"><line x1="4" y1="90.5" x2="96" y2="90.5" stroke="#D9D9D9" stroke-width="2.4" stroke-linecap="round"/><line x1="{{pfg.wx}}" y1="6" x2="{{pfg.wx}}" y2="90.5" stroke="#CFCFCF" stroke-width="2.4" opacity="{{pfg.wo}}"/><rect x="{{pfg.bx}}" y="{{pfg.by}}" width="{{pfg.bw}}" height="{{pfg.bh}}" rx="2" fill="#F0F0F0" stroke="#CFCFCF" stroke-width="1.6" opacity="{{pfg.bo}}"/><line x1="{{pfg.rx1}}" y1="{{pfg.ry}}" x2="{{pfg.rx2}}" y2="{{pfg.ry}}" stroke="#8A8A8A" stroke-width="3" stroke-linecap="round" opacity="{{pfg.ro}}"/><line x1="{{pfg.s0.x1}}" y1="{{pfg.s0.y1}}" x2="{{pfg.s0.x2}}" y2="{{pfg.s0.y2}}" stroke="{{pfg.s0.c}}" stroke-width="{{pfg.s0.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s0.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s0.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s0.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s0.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s1.x1}}" y1="{{pfg.s1.y1}}" x2="{{pfg.s1.x2}}" y2="{{pfg.s1.y2}}" stroke="{{pfg.s1.c}}" stroke-width="{{pfg.s1.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s1.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s1.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s1.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s1.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s2.x1}}" y1="{{pfg.s2.y1}}" x2="{{pfg.s2.x2}}" y2="{{pfg.s2.y2}}" stroke="{{pfg.s2.c}}" stroke-width="{{pfg.s2.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s2.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s2.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s2.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s2.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s3.x1}}" y1="{{pfg.s3.y1}}" x2="{{pfg.s3.x2}}" y2="{{pfg.s3.y2}}" stroke="{{pfg.s3.c}}" stroke-width="{{pfg.s3.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s3.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s3.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s3.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s3.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s4.x1}}" y1="{{pfg.s4.y1}}" x2="{{pfg.s4.x2}}" y2="{{pfg.s4.y2}}" stroke="{{pfg.s4.c}}" stroke-width="{{pfg.s4.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s4.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s4.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s4.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s4.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s5.x1}}" y1="{{pfg.s5.y1}}" x2="{{pfg.s5.x2}}" y2="{{pfg.s5.y2}}" stroke="{{pfg.s5.c}}" stroke-width="{{pfg.s5.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s5.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s5.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s5.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s5.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s6.x1}}" y1="{{pfg.s6.y1}}" x2="{{pfg.s6.x2}}" y2="{{pfg.s6.y2}}" stroke="{{pfg.s6.c}}" stroke-width="{{pfg.s6.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s6.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s6.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s6.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s6.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s7.x1}}" y1="{{pfg.s7.y1}}" x2="{{pfg.s7.x2}}" y2="{{pfg.s7.y2}}" stroke="{{pfg.s7.c}}" stroke-width="{{pfg.s7.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s7.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s7.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s7.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s7.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s8.x1}}" y1="{{pfg.s8.y1}}" x2="{{pfg.s8.x2}}" y2="{{pfg.s8.y2}}" stroke="{{pfg.s8.c}}" stroke-width="{{pfg.s8.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s8.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s8.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s8.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s8.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s9.x1}}" y1="{{pfg.s9.y1}}" x2="{{pfg.s9.x2}}" y2="{{pfg.s9.y2}}" stroke="{{pfg.s9.c}}" stroke-width="{{pfg.s9.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s9.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s9.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s9.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s9.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><circle cx="{{pfg.hx}}" cy="{{pfg.hy}}" r="6.5" fill="#161616"><animate attributeName="cx" values="{{pfg.ahx}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="cy" values="{{pfg.ahy}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></circle></svg></div>
+      <svg class="walking pw" width="84" height="50" viewBox="0 0 220 130" aria-hidden="true" style="position: absolute; right: 16px; top: 316px"><path class="n-tail" d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect class="n-la" x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-la" x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><g class="n-body"><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle class="n-eye" cx="184" cy="38" r="3.5" fill="#161616"/></g></svg>
+      <div class="a-right d1 pt" style="position: absolute; left: 22px; right: 22px; bottom: 26px">
+        <p style="{{blockLabel}}">{{cur.block}}</p>
+        <h1 style="margin: 4px 0 0; font-size: 46px; font-weight: 900; line-height: .92; letter-spacing: -.03em">{{cur.n}}</h1>
+        <p style="margin: 8px 0 0; font-size: 18px; font-weight: 600">{{cur.rx}}</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{pOdd}}" hint-placeholder-val="{{ false }}">
+      <div class="a-right pf" style="position: absolute; left: 80px; top: 80px; width: 230px; height: 230px"><svg width="230" height="230" viewBox="0 0 100 100" role="img" aria-label="{{pfg.aria}}" style="display: block; overflow: visible"><line x1="4" y1="90.5" x2="96" y2="90.5" stroke="#D9D9D9" stroke-width="2.4" stroke-linecap="round"/><line x1="{{pfg.wx}}" y1="6" x2="{{pfg.wx}}" y2="90.5" stroke="#CFCFCF" stroke-width="2.4" opacity="{{pfg.wo}}"/><rect x="{{pfg.bx}}" y="{{pfg.by}}" width="{{pfg.bw}}" height="{{pfg.bh}}" rx="2" fill="#F0F0F0" stroke="#CFCFCF" stroke-width="1.6" opacity="{{pfg.bo}}"/><line x1="{{pfg.rx1}}" y1="{{pfg.ry}}" x2="{{pfg.rx2}}" y2="{{pfg.ry}}" stroke="#8A8A8A" stroke-width="3" stroke-linecap="round" opacity="{{pfg.ro}}"/><line x1="{{pfg.s0.x1}}" y1="{{pfg.s0.y1}}" x2="{{pfg.s0.x2}}" y2="{{pfg.s0.y2}}" stroke="{{pfg.s0.c}}" stroke-width="{{pfg.s0.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s0.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s0.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s0.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s0.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s1.x1}}" y1="{{pfg.s1.y1}}" x2="{{pfg.s1.x2}}" y2="{{pfg.s1.y2}}" stroke="{{pfg.s1.c}}" stroke-width="{{pfg.s1.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s1.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s1.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s1.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s1.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s2.x1}}" y1="{{pfg.s2.y1}}" x2="{{pfg.s2.x2}}" y2="{{pfg.s2.y2}}" stroke="{{pfg.s2.c}}" stroke-width="{{pfg.s2.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s2.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s2.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s2.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s2.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s3.x1}}" y1="{{pfg.s3.y1}}" x2="{{pfg.s3.x2}}" y2="{{pfg.s3.y2}}" stroke="{{pfg.s3.c}}" stroke-width="{{pfg.s3.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s3.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s3.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s3.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s3.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s4.x1}}" y1="{{pfg.s4.y1}}" x2="{{pfg.s4.x2}}" y2="{{pfg.s4.y2}}" stroke="{{pfg.s4.c}}" stroke-width="{{pfg.s4.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s4.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s4.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s4.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s4.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s5.x1}}" y1="{{pfg.s5.y1}}" x2="{{pfg.s5.x2}}" y2="{{pfg.s5.y2}}" stroke="{{pfg.s5.c}}" stroke-width="{{pfg.s5.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s5.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s5.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s5.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s5.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s6.x1}}" y1="{{pfg.s6.y1}}" x2="{{pfg.s6.x2}}" y2="{{pfg.s6.y2}}" stroke="{{pfg.s6.c}}" stroke-width="{{pfg.s6.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s6.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s6.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s6.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s6.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s7.x1}}" y1="{{pfg.s7.y1}}" x2="{{pfg.s7.x2}}" y2="{{pfg.s7.y2}}" stroke="{{pfg.s7.c}}" stroke-width="{{pfg.s7.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s7.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s7.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s7.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s7.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s8.x1}}" y1="{{pfg.s8.y1}}" x2="{{pfg.s8.x2}}" y2="{{pfg.s8.y2}}" stroke="{{pfg.s8.c}}" stroke-width="{{pfg.s8.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s8.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s8.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s8.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s8.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><line x1="{{pfg.s9.x1}}" y1="{{pfg.s9.y1}}" x2="{{pfg.s9.x2}}" y2="{{pfg.s9.y2}}" stroke="{{pfg.s9.c}}" stroke-width="{{pfg.s9.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{pfg.s9.ax1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y1" values="{{pfg.s9.ay1}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="x2" values="{{pfg.s9.ax2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="y2" values="{{pfg.s9.ay2}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></line><circle cx="{{pfg.hx}}" cy="{{pfg.hy}}" r="6.5" fill="#161616"><animate attributeName="cx" values="{{pfg.ahx}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/><animate attributeName="cy" values="{{pfg.ahy}}" dur="{{pfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{pfg.kt}}" keySplines="{{pfg.ks}}"/></circle></svg></div>
+      <svg class="walking pw" width="84" height="50" viewBox="0 0 220 130" aria-hidden="true" style="position: absolute; right: 16px; top: 316px"><path class="n-tail" d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect class="n-la" x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-la" x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><g class="n-body"><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle class="n-eye" cx="184" cy="38" r="3.5" fill="#161616"/></g></svg>
+      <div class="a-right d1 pt" style="position: absolute; left: 22px; right: 22px; bottom: 26px">
+        <p style="{{blockLabel}}">{{cur.block}}</p>
+        <h1 style="margin: 4px 0 0; font-size: 46px; font-weight: 900; line-height: .92; letter-spacing: -.03em">{{cur.n}}</h1>
+        <p style="margin: 8px 0 0; font-size: 18px; font-weight: 600">{{cur.rx}}</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{resting}}" hint-placeholder-val="{{ false }}">
+      <div class="a-right pr" style="position: absolute; left: 0; right: 0; top: 118px; display: flex; justify-content: center">
+        <svg class="breather" width="250" height="148" viewBox="0 0 220 130" role="img" aria-label="Noodle resting with you"><path class="n-tail" d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect class="n-la" x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-la" x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><g class="n-body"><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle class="n-eye" cx="184" cy="38" r="3.5" fill="#161616"/></g></svg>
+      </div>
+      <sc-if value="{{chatter}}" hint-placeholder-val="{{ true }}"><span class="bubble pb" style="position: absolute; left: 196px; top: 92px; background: #FFFFFF; color: #161616; font: 800 13px Inter Tight, sans-serif; padding: 8px 12px; box-shadow: 0 0 0 3px #161616; animation: pop .4s cubic-bezier(.2,.9,.3,1.3) .3s both">{{restLine}}<span aria-hidden="true" style="position: absolute; left: 18px; bottom: -8px; width: 14px; height: 10px; background: #FFFFFF; clip-path: polygon(0 0, 100% 0, 0 100%)"></span></span></sc-if>
+      <div class="a-right d1 pt" style="position: absolute; left: 22px; right: 22px; bottom: 26px">
+        <p style="margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; opacity: .7">Rest</p>
+        <h1 style="margin: 4px 0 0; font-size: 46px; font-weight: 900; line-height: .92; letter-spacing: -.035em">Breathe.</h1>
+        <p style="margin: 8px 0 0; font-size: 18px; font-weight: 600">Up next: {{upNext}}</p>
+      </div>
+    </sc-if>
+  </div>
+
+  <div class="pcn" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 10px 20px 22px">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 26px">
+      <button onClick="{{prev}}" aria-label="Previous move" style="width: 56px; height: 56px; border-radius: 50%; border: 3px solid #161616; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 5.5v13l-9-6.5z"/><rect x="5" y="5" width="3" height="14" rx="1"/></svg></button>
+      <button onClick="{{togglePause}}" aria-label="{{pauseLabel}}" style="width: 150px; height: 150px; border: 0; padding: 0; background: transparent; position: relative; font-family: Inter Tight, sans-serif; color: #161616">
+        <svg width="150" height="150" viewBox="0 0 150 150" aria-hidden="true" style="position: absolute; left: 0; top: 0; transform: rotate(-90deg)">
+          <circle cx="75" cy="75" r="62" fill="none" stroke="#EFEFEF" stroke-width="14"/>
+          <circle cx="75" cy="75" r="62" fill="none" stroke-width="14" stroke-linecap="round" style="{{ring}}"/>
+        </svg>
+        <span style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center">
+          <span style="font-size: 38px; font-weight: 900; letter-spacing: -.02em; font-variant-numeric: tabular-nums">{{clock}}</span>
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #595959; margin-top: 2px">{{pauseText}}</span>
+        </span>
+      </button>
+      <button onClick="{{next}}" aria-label="Next move" style="width: 56px; height: 56px; border-radius: 50%; border: 3px solid #161616; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 5.5v13l9-6.5z"/><rect x="16" y="5" width="3" height="14" rx="1"/></svg></button>
+    </div>
+    <sc-if value="{{showUpNext}}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 14px; color: #595959">Up next: <b style="color: #161616">{{upNext}}</b></p></sc-if>
+    <sc-if value="{{askFb}}" hint-placeholder-val="{{ false }}">
+      <div class="a-up" style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+        <p style="margin: 0; font-size: 14px; font-weight: 700">How was {{lastMove}}?</p>
+        <div style="display: flex; gap: 8px">
+          <button onClick="{{fbEasy}}" style="height: 44px; padding: 0 12px 0 8px; border: 3px solid #161616; background: #FFFFFF; font: 800 14px Inter Tight, sans-serif; color: #161616; display: flex; align-items: center; gap: 6px"><span style="{{faceEasy}}"></span>Easy</button>
+          <button onClick="{{fbRight}}" style="height: 44px; padding: 0 12px 0 8px; border: 3px solid #161616; background: #FFC20E; font: 800 14px Inter Tight, sans-serif; color: #161616; display: flex; align-items: center; gap: 6px"><span style="{{faceRight}}"></span>Just right</button>
+          <button onClick="{{fbHard}}" style="height: 44px; padding: 0 12px 0 8px; border: 3px solid #161616; background: #FFFFFF; font: 800 14px Inter Tight, sans-serif; color: #161616; display: flex; align-items: center; gap: 6px"><span style="{{faceHard}}"></span>Hard</button>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{hasFbMsg}}" hint-placeholder-val="{{ false }}"><p class="a-up" style="margin: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px"><span class="a-pop" style="{{fbFace}}"></span>{{fbMsg}}</p></sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ DONE ============ -->
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div class="a-screen" style="position: absolute; inset: 0">
+  <sc-for list="{{confetti}}" as="c" hint-placeholder-count="14"><span class="confetti" aria-hidden="true" style="{{c.style}}"></span></sc-for>
+  <div class="dn-hop" style="position: absolute; left: 0; right: 0; top: 190px; display: flex; justify-content: center">
+    <svg class="hopper" width="230" height="136" viewBox="0 0 220 130" role="img" aria-label="Noodle jumping to celebrate">
+      <path class="n-tail" d="M44 74 L14 64 L46 62 Z" fill="#161616"/>
+      <rect x="44" y="84" width="12" height="34" rx="6" fill="#161616" transform="rotate(40 50 86)"/>
+      <rect x="66" y="84" width="12" height="34" rx="6" fill="#161616" transform="rotate(30 72 86)"/>
+      <rect x="146" y="64" width="12" height="34" rx="6" fill="#161616" transform="rotate(-40 152 66)"/>
+      <rect x="164" y="60" width="12" height="34" rx="6" fill="#161616" transform="rotate(-30 170 62)"/>
+      <rect x="40" y="52" width="140" height="42" rx="21" fill="#E5282E" transform="rotate(-14 110 73)"/>
+      <rect x="150" y="44" width="10" height="42" fill="#FFC20E" transform="rotate(-14 110 73)"/>
+      <circle cx="180" cy="38" r="22" fill="#E5282E"/>
+      <path d="M190 30 h20 a9 9 0 0 1 0 18 h-20 z" fill="#E5282E"/>
+      <circle cx="210" cy="38" r="4.5" fill="#161616"/>
+      <path d="M194 48 l10 0 l-5 8 z" fill="#161616"/>
+      <ellipse cx="170" cy="48" rx="8" ry="15" fill="#161616" transform="rotate(-25 170 40)"/>
+      <circle cx="188" cy="31" r="3.5" fill="#161616"/>
+    </svg>
+  </div>
+  <h1 class="a-up d2 dn-h1" style="position: absolute; left: 20px; right: 20px; top: 380px; margin: 0; text-align: center; font-size: 72px; font-weight: 900; line-height: .86; letter-spacing: -.04em; text-transform: uppercase">Nice<br>work!</h1>
+  <p class="a-up d3 dn-p" style="position: absolute; left: 20px; right: 20px; top: 520px; margin: 0; text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: #595959">{{doneSummary}}</p>
+  <button class="a-rise d4 half dn-home" onClick="{{home}}" style="position: absolute; left: 45px; bottom: -1px; width: 300px; height: 150px; border: 0; border-radius: 150px 150px 0 0; background: #1556C2; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 0 38px; box-sizing: border-box; font-family: Inter Tight, sans-serif">
+    <span style="font-size: 40px; font-weight: 900; line-height: .9; letter-spacing: -.02em">HOME</span>
+  </button>
+</div>
+</sc-if>
+
+<!-- ============ PATHS ============ -->
+<sc-if value="{{isPaths}}" hint-placeholder-val="{{ false }}">
+<div class="{{tabClass}}" style="position: absolute; inset: 0">
+  <nav class="nav" aria-label="Main" style="position: absolute; left: 8px; top: 10px; display: flex; gap: 2px; z-index: 5">
+    <button onClick="{{navHome}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{navDog}}"><svg width="34" height="20" viewBox="0 0 220 130" aria-hidden="true" style="display: block; overflow: visible"><path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle cx="184" cy="38" r="3.5" fill="#161616"/></svg></span></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">{{moveWord}}</span></button>
+    <button onClick="{{navPaths}}" aria-current="page" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #161616"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" fill="#161616"/><rect x="1.5" y="1.5" width="11" height="11" fill="#E5282E"/><rect x="14" y="1.5" width="6.5" height="6" fill="#FFFFFF"/><rect x="14" y="9" width="6.5" height="3.5" fill="#FFC20E"/><rect x="1.5" y="14" width="6" height="6.5" fill="#1556C2"/><rect x="9" y="14" width="11.5" height="6.5" fill="#FFFFFF"/></svg></span><span style="border-bottom: 2px solid #161616; padding-bottom: 1px">Paths</span></button>
+    <button onClick="{{navYou}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{youFace}}"></span></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">You</span></button>
+  </nav>
+  <div class="scroll pa-scroll" style="position: absolute; left: 0; right: 0; top: 70px; bottom: 0; overflow-y: auto; padding: 0 20px 28px; scrollbar-width: none; display: flex; flex-direction: column">
+   <div class="pa-left" style="display: contents">
+    <h1 class="a-up d1" style="order: 1; margin: 6px 0 0; font-size: 56px; font-weight: 900; line-height: .9; letter-spacing: -.045em">Paths</h1>
+    <p class="a-up d2" style="order: 2; margin: 8px 0 0; font-size: 14px; line-height: 1.35; color: #595959">{{pathsSub}}</p>
+    <label class="a-up d2" style="order: 3; display: block; margin-top: 12px">
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search moves</span>
+      <input type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search moves, like hips or kick" style="width: 100%; box-sizing: border-box; height: 48px; border: 3px solid #161616; border-radius: 0; padding: 0 14px; font: 600 16px Inter Tight, sans-serif; color: #161616; background: #FFFFFF">
+    </label>
+    <sc-if value="{{hasBanner}}" hint-placeholder-val="{{ false }}"><button class="a-pop" onClick="{{bannerGo}}" style="order: 4; margin-top: 10px; height: 54px; flex: none; border: 0; background: #161616; color: #FFFFFF; display: flex; align-items: center; gap: 12px; padding: 0 14px; font: 800 15px Inter Tight, sans-serif; text-align: left"><span style="{{bannerShape}}"></span><span style="flex: 1">{{bannerText}}</span><span style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #FFC20E">See it</span></button></sc-if>
+    <div class="pa-picks" style="order: 7; margin-top: 22px">
+      <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Noodle picks for you</h2>
+      <sc-for list="{{picks}}" as="pk" hint-placeholder-count="3">
+        <button onClick="{{pk.open}}" style="width: 100%; display: flex; align-items: center; gap: 12px; height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: transparent; padding: 0; text-align: left; font: 700 16px Inter Tight, sans-serif; color: #161616"><span style="{{pk.shape}}"></span><span style="flex: 1">{{pk.n}}</span><span style="font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #FFFFFF; background: #161616; padding: 3px 7px">New</span></button>
+      </sc-for>
+    </div>
+    <div class="pa-nudge" style="order: 8; margin-top: 18px; display: flex; align-items: center; gap: 12px; border-top: 3px solid #161616; padding-top: 12px">
+      <svg width="54" height="35" viewBox="0 0 100 66" aria-hidden="true" style="flex: none"><ellipse cx="27" cy="36" rx="8" ry="16" fill="#161616"/><ellipse cx="73" cy="36" rx="8" ry="16" fill="#161616"/><circle cx="50" cy="32" r="24" fill="#E5282E"/><ellipse cx="50" cy="44" rx="12" ry="9" fill="#FFC20E"/><circle cx="50" cy="39" r="4.5" fill="#161616"/><circle cx="41" cy="27" r="3.5" fill="#161616"/><circle cx="59" cy="27" r="3.5" fill="#161616"/></svg>
+      <p style="flex: 1; margin: 0; font-size: 14px; font-weight: 600; line-height: 1.3">{{nudgeText}}</p>
+    </div>
+   </div>
+   <div class="pa-right" style="display: contents">
+    <sc-if value="{{hasQuery}}" hint-placeholder-val="{{ false }}">
+      <div style="order: 5; margin-top: 12px" class="pa-results">
+        <h2 style="margin: 0 0 6px; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">{{resultCount}}</h2>
+        <sc-for list="{{results}}" as="r" hint-placeholder-count="4">
+          <button onClick="{{r.open}}" style="width: 100%; display: flex; align-items: center; gap: 12px; height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: transparent; padding: 0; text-align: left; font: 700 16px Inter Tight, sans-serif; color: #161616"><span style="{{r.shape}}"></span><span style="flex: 1">{{r.n}}</span><span style="font-size: 12px; font-weight: 600; color: #595959">{{r.fam}}</span></button>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{noQuery}}" hint-placeholder-val="{{ true }}">
+    <div class="pa-gridwrap" style="order: 6; margin-top: 14px; flex: none; width: 356px; height: 476px; align-self: center">
+      <div class="a-up d2 pa-grid" style="position: relative; width: 350px; height: 470px; background: #161616; border: 3px solid #161616">
+        <sc-for list="{{cells}}" as="c" hint-placeholder-count="11">
+          <button onClick="{{c.open}}" aria-label="{{c.aria}}" style="{{c.box}}"><span style="{{c.fill}}"></span><span style="{{c.shape}}"></span><span style="{{c.label}}">{{c.name}}</span><span style="{{c.lvl}}">{{c.lvlName}}</span></button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+   </div>
+  </div>
+  <sc-if value="{{pathIsOpen}}" hint-placeholder-val="{{ false }}">
+  <div class="zoomIn pd" style="position: absolute; inset: 0; z-index: 10; background: #FFFFFF; display: flex; flex-direction: column">
+    <header class="pd-head" style="{{pdHead}}">
+      <span aria-hidden="true" style="{{pdBigShape}}"></span>
+      <button onClick="{{closePath}}" aria-label="Back to all paths" style="position: absolute; left: 12px; top: 12px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <p style="position: absolute; left: 20px; top: 96px; margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; opacity: .8">Path</p>
+      <h1 style="position: absolute; left: 20px; top: 114px; margin: 0; font-size: 52px; font-weight: 900; line-height: .9; letter-spacing: -.045em">{{pd.name}}</h1>
+      <p style="position: absolute; left: 20px; top: 172px; margin: 0; font-size: 15px; font-weight: 700">{{pd.lvlName}}</p>
+      <sc-if value="{{celebrate}}" hint-placeholder-val="{{ false }}"><span class="levelup" style="position: absolute; right: 22px; top: 70px; background: #FFFFFF; color: #161616; font: 900 22px Inter Tight, sans-serif; padding: 8px 14px; box-shadow: 0 0 0 3px #161616">LEVEL UP!</span></sc-if>
+    </header>
+    <ol class="pd-ol" style="list-style: none; margin: 0; padding: 22px 20px 0; flex: 1">
+      <sc-for list="{{pdSteps}}" as="st" hint-placeholder-count="5">
+        <li class="pd-li" style="position: relative; display: flex; align-items: center; gap: 16px; height: 66px">
+          <span aria-hidden="true" style="{{st.line}}"></span><span aria-hidden="true" style="{{st.dot}}"></span>
+          <span style="{{st.text}}">{{st.n}}</span>
+          <sc-if value="{{st.here}}" hint-placeholder-val="{{ false }}"><span style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase"><svg width="44" height="29" viewBox="0 0 100 66" aria-hidden="true" class="hopper"><ellipse cx="27" cy="36" rx="8" ry="16" fill="#161616"/><ellipse cx="73" cy="36" rx="8" ry="16" fill="#161616"/><circle cx="50" cy="32" r="24" fill="#E5282E"/><ellipse cx="50" cy="44" rx="12" ry="9" fill="#FFC20E"/><circle cx="50" cy="39" r="4.5" fill="#161616"/><circle cx="41" cy="27" r="3.5" fill="#161616"/><circle cx="59" cy="27" r="3.5" fill="#161616"/></svg>You</span></sc-if>
+        </li>
+      </sc-for>
+    </ol>
+    <div class="pd-btns" style="display: flex; gap: 10px; padding: 0 20px 24px">
+      <button onClick="{{pdEasier}}" style="flex: 1; height: 54px; border: 3px solid #161616; background: #FFFFFF; font: 800 15px Inter Tight, sans-serif; color: #161616">Too hard</button>
+      <button onClick="{{pdNext}}" style="flex: 2; height: 54px; border: 0; background: #161616; color: #FFFFFF; font: 800 15px Inter Tight, sans-serif">{{pdNextLabel}}</button>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ MOVE CARD ============ -->
+<sc-if value="{{isMove}}" hint-placeholder-val="{{ false }}">
+<div class="a-screen mc" style="position: absolute; inset: 0; display: flex; flex-direction: column">
+  <div class="mc-stage" style="{{mvStage}}">
+    <div aria-hidden="true" style="position: absolute; width: 230px; height: 230px; border-radius: 50%; background: #FFFFFF; left: 80px; top: 40px"></div>
+    <button onClick="{{closeMove}}" aria-label="Back" style="position: absolute; left: 12px; top: 12px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div style="position: absolute; left: 90px; top: 50px; width: 210px; height: 210px"><svg width="210" height="210" viewBox="0 0 100 100" role="img" aria-label="{{mfg.aria}}" style="display: block; overflow: visible"><line x1="4" y1="90.5" x2="96" y2="90.5" stroke="#D9D9D9" stroke-width="2.4" stroke-linecap="round"/><line x1="{{mfg.wx}}" y1="6" x2="{{mfg.wx}}" y2="90.5" stroke="#CFCFCF" stroke-width="2.4" opacity="{{mfg.wo}}"/><rect x="{{mfg.bx}}" y="{{mfg.by}}" width="{{mfg.bw}}" height="{{mfg.bh}}" rx="2" fill="#F0F0F0" stroke="#CFCFCF" stroke-width="1.6" opacity="{{mfg.bo}}"/><line x1="{{mfg.rx1}}" y1="{{mfg.ry}}" x2="{{mfg.rx2}}" y2="{{mfg.ry}}" stroke="#8A8A8A" stroke-width="3" stroke-linecap="round" opacity="{{mfg.ro}}"/><line x1="{{mfg.s0.x1}}" y1="{{mfg.s0.y1}}" x2="{{mfg.s0.x2}}" y2="{{mfg.s0.y2}}" stroke="{{mfg.s0.c}}" stroke-width="{{mfg.s0.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s0.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s0.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s0.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s0.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s1.x1}}" y1="{{mfg.s1.y1}}" x2="{{mfg.s1.x2}}" y2="{{mfg.s1.y2}}" stroke="{{mfg.s1.c}}" stroke-width="{{mfg.s1.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s1.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s1.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s1.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s1.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s2.x1}}" y1="{{mfg.s2.y1}}" x2="{{mfg.s2.x2}}" y2="{{mfg.s2.y2}}" stroke="{{mfg.s2.c}}" stroke-width="{{mfg.s2.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s2.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s2.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s2.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s2.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s3.x1}}" y1="{{mfg.s3.y1}}" x2="{{mfg.s3.x2}}" y2="{{mfg.s3.y2}}" stroke="{{mfg.s3.c}}" stroke-width="{{mfg.s3.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s3.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s3.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s3.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s3.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s4.x1}}" y1="{{mfg.s4.y1}}" x2="{{mfg.s4.x2}}" y2="{{mfg.s4.y2}}" stroke="{{mfg.s4.c}}" stroke-width="{{mfg.s4.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s4.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s4.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s4.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s4.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s5.x1}}" y1="{{mfg.s5.y1}}" x2="{{mfg.s5.x2}}" y2="{{mfg.s5.y2}}" stroke="{{mfg.s5.c}}" stroke-width="{{mfg.s5.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s5.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s5.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s5.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s5.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s6.x1}}" y1="{{mfg.s6.y1}}" x2="{{mfg.s6.x2}}" y2="{{mfg.s6.y2}}" stroke="{{mfg.s6.c}}" stroke-width="{{mfg.s6.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s6.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s6.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s6.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s6.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s7.x1}}" y1="{{mfg.s7.y1}}" x2="{{mfg.s7.x2}}" y2="{{mfg.s7.y2}}" stroke="{{mfg.s7.c}}" stroke-width="{{mfg.s7.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s7.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s7.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s7.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s7.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s8.x1}}" y1="{{mfg.s8.y1}}" x2="{{mfg.s8.x2}}" y2="{{mfg.s8.y2}}" stroke="{{mfg.s8.c}}" stroke-width="{{mfg.s8.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s8.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s8.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s8.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s8.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><line x1="{{mfg.s9.x1}}" y1="{{mfg.s9.y1}}" x2="{{mfg.s9.x2}}" y2="{{mfg.s9.y2}}" stroke="{{mfg.s9.c}}" stroke-width="{{mfg.s9.w}}" stroke-linecap="round"><animate attributeName="x1" values="{{mfg.s9.ax1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y1" values="{{mfg.s9.ay1}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="x2" values="{{mfg.s9.ax2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="y2" values="{{mfg.s9.ay2}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></line><circle cx="{{mfg.hx}}" cy="{{mfg.hy}}" r="6.5" fill="#161616"><animate attributeName="cx" values="{{mfg.ahx}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/><animate attributeName="cy" values="{{mfg.ahy}}" dur="{{mfg.dur}}" repeatCount="indefinite" calcMode="spline" keyTimes="{{mfg.kt}}" keySplines="{{mfg.ks}}"/></circle></svg></div>
+    <svg class="walking" width="76" height="45" viewBox="0 0 220 130" aria-hidden="true" style="position: absolute; right: 12px; top: 16px"><path class="n-tail" d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect class="n-la" x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-lb" x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect class="n-la" x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><g class="n-body"><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle class="n-eye" cx="184" cy="38" r="3.5" fill="#161616"/></g></svg>
+    <div style="position: absolute; left: 20px; right: 20px; bottom: 18px">
+      <p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; opacity: .85">{{mvFam.name}}</p>
+      <h1 style="margin: 4px 0 0; font-size: 40px; font-weight: 900; line-height: .92; letter-spacing: -.04em">{{mvName}}</h1>
+    </div>
+  </div>
+  <div class="scroll" style="flex: 1; overflow-y: auto; padding: 18px 20px 24px; scrollbar-width: none">
+    <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">How</h2>
+    <ol style="margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 16px; line-height: 1.4">
+      <sc-for list="{{mvCues}}" as="cu" hint-placeholder-count="2"><li>{{cu.t}}</li></sc-for>
+    </ol>
+    <div style="margin-top: 16px; padding-top: 14px; border-top: 3px solid #161616; display: flex; align-items: flex-end; gap: 14px">
+      <div style="flex: 1; min-width: 0"><h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Works</h2><p style="margin: 6px 0 0; font-size: 15px; font-weight: 600; line-height: 1.35">{{mvWorks}}</p></div>
+      <svg width="56" height="112" viewBox="0 0 60 120" role="img" aria-label="Front of body"><circle cx="30" cy="10" r="8" fill="#E4E4E4"/><rect x="6" y="34" width="7" height="30" rx="3.5" fill="{{mbf.arms}}"/><rect x="47" y="34" width="7" height="30" rx="3.5" fill="{{mbf.arms}}"/><circle cx="15" cy="28" r="6" fill="{{mbf.shoulders}}"/><circle cx="45" cy="28" r="6" fill="{{mbf.shoulders}}"/><rect x="20" y="22" width="20" height="17" rx="3" fill="{{mbf.chest}}"/><rect x="21" y="41" width="18" height="20" rx="3" fill="{{mbf.core}}"/><rect x="20" y="63" width="20" height="11" rx="3" fill="{{mbf.hips}}"/><rect x="20" y="76" width="9" height="40" rx="4.5" fill="{{mbf.legs}}"/><rect x="31" y="76" width="9" height="40" rx="4.5" fill="{{mbf.legs}}"/></svg>
+      <svg width="56" height="112" viewBox="0 0 60 120" role="img" aria-label="Back of body"><circle cx="30" cy="10" r="8" fill="#E4E4E4"/><rect x="6" y="34" width="7" height="30" rx="3.5" fill="{{mbb.arms}}"/><rect x="47" y="34" width="7" height="30" rx="3.5" fill="{{mbb.arms}}"/><circle cx="15" cy="28" r="6" fill="{{mbb.shoulders}}"/><circle cx="45" cy="28" r="6" fill="{{mbb.shoulders}}"/><rect x="20" y="22" width="20" height="20" rx="3" fill="{{mbb.back}}"/><rect x="21" y="44" width="18" height="17" rx="3" fill="{{mbb.lowback}}"/><rect x="20" y="63" width="20" height="11" rx="3" fill="{{mbb.glutes}}"/><rect x="20" y="76" width="9" height="40" rx="4.5" fill="{{mbb.hamstrings}}"/><rect x="31" y="76" width="9" height="40" rx="4.5" fill="{{mbb.hamstrings}}"/></svg>
+    </div>
+    <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <sc-if value="{{hasEasier}}" hint-placeholder-val="{{ true }}"><button onClick="{{openEasier}}" style="min-height: 60px; border: 3px solid #161616; background: #FFFFFF; padding: 8px 10px; text-align: left; display: flex; flex-direction: column; gap: 2px; font-family: Inter Tight, sans-serif; color: #161616"><span style="font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #595959">Easier</span><span style="font-size: 14px; font-weight: 800; line-height: 1.15">{{mvEasier}}</span></button></sc-if>
+      <sc-if value="{{hasHarder}}" hint-placeholder-val="{{ true }}"><button onClick="{{openHarder}}" style="min-height: 60px; border: 3px solid #161616; background: #161616; padding: 8px 10px; text-align: left; display: flex; flex-direction: column; gap: 2px; font-family: Inter Tight, sans-serif; color: #FFFFFF"><span style="font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #BDBDBD">Harder</span><span style="font-size: 14px; font-weight: 800; line-height: 1.15">{{mvHarder}}</span></button></sc-if>
+    </div>
+    <button onClick="{{mvOpenPath}}" style="margin-top: 16px; width: 100%; height: 54px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 12px; padding: 0 14px; font: 800 15px Inter Tight, sans-serif; color: #161616"><span style="{{mvFamShape}}"></span>See the {{mvFam.name}} path</button>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ YOU ============ -->
+<sc-if value="{{isYou}}" hint-placeholder-val="{{ false }}">
+<div class="{{tabClass}}" style="position: absolute; inset: 0">
+  <nav class="nav" aria-label="Main" style="position: absolute; left: 8px; top: 10px; display: flex; gap: 2px; z-index: 5">
+    <button onClick="{{navHome}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{navDog}}"><svg width="34" height="20" viewBox="0 0 220 130" aria-hidden="true" style="display: block; overflow: visible"><path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle cx="184" cy="38" r="3.5" fill="#161616"/></svg></span></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">{{moveWord}}</span></button>
+    <button onClick="{{navPaths}}" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #595959"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" fill="#161616"/><rect x="1.5" y="1.5" width="11" height="11" fill="#E5282E"/><rect x="14" y="1.5" width="6.5" height="6" fill="#FFFFFF"/><rect x="14" y="9" width="6.5" height="3.5" fill="#FFC20E"/><rect x="1.5" y="14" width="6" height="6.5" fill="#1556C2"/><rect x="9" y="14" width="11.5" height="6.5" fill="#FFFFFF"/></svg></span><span style="border-bottom: 2px solid transparent; padding-bottom: 1px">Paths</span></button>
+    <button onClick="{{navYou}}" aria-current="page" style="width: 54px; height: 54px; border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 800 9px Inter Tight, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #161616"><span style="height: 22px; display: flex; align-items: center; justify-content: center"><span style="{{youFace}}"></span></span><span style="border-bottom: 2px solid #161616; padding-bottom: 1px">You</span></button>
+  </nav>
+  <h1 class="a-up d1 tb-h1" style="position: absolute; left: 20px; top: 76px; margin: 0; font-size: 56px; font-weight: 900; line-height: .9; letter-spacing: -.045em">You</h1>
+  <button class="yo-gear" onClick="{{openSettings}}" aria-label="Settings" style="position: absolute; right: 14px; top: 78px; width: 44px; height: 44px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 4"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="9" y="0" width="4" height="22" fill="#161616"/><rect x="0" y="9" width="22" height="4" fill="#161616"/><rect x="9" y="0" width="4" height="22" fill="#161616" transform="rotate(45 11 11)"/><rect x="0" y="9" width="22" height="4" fill="#161616" transform="rotate(45 11 11)"/><circle cx="11" cy="11" r="7" fill="#161616"/><circle cx="11" cy="11" r="3.2" fill="#FFC20E"/></svg></button>
+  <div class="scroll yo-scroll" style="position: absolute; left: 0; right: 0; top: 140px; bottom: 0; overflow-y: auto; padding: 0 20px 28px; scrollbar-width: none">
+   <div class="yo-a" style="display: contents">
+    <section aria-label="Noodle's tricks" style="border: 3px solid #161616; padding: 12px; display: flex; gap: 12px; align-items: center">
+      <button class="pet" onClick="{{doTrick}}" aria-label="Ask Noodle to do a trick" style="width: 116px; height: 86px; flex: none; border: 0; background: #F4F4F4; padding: 0; display: flex; align-items: flex-end; justify-content: center; overflow: visible">
+        <span style="{{trickAnim}}">
+        <svg width="104" height="62" viewBox="0 0 220 130" aria-hidden="true" style="display: block; overflow: visible"><path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="138" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="160" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="40" y="50" width="140" height="44" rx="22" fill="#E5282E"/><rect x="148" y="50" width="10" height="44" fill="#FFC20E"/><circle cx="176" cy="46" r="24" fill="#E5282E"/><path d="M188 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="211" cy="46" r="5" fill="#161616"/><ellipse cx="166" cy="56" rx="8" ry="16" fill="#161616"/><circle cx="184" cy="38" r="3.5" fill="#161616"/></svg>
+        </span>
+      </button>
+      <div style="flex: 1; min-width: 0">
+        <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Noodle's tricks · {{trickCount}}</h2>
+        <p style="margin: 4px 0 8px; font-size: 14px; font-weight: 700; line-height: 1.25">{{trickLine}}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px">
+          <sc-for list="{{tricks}}" as="tk" hint-placeholder-count="6"><button onClick="{{tk.go}}" aria-label="{{tk.aria}}" style="{{tk.box}}">{{tk.t}}<sc-if value="{{tk.isNew}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; right: -5px; top: -7px; background: #E5282E; color: #FFFFFF; font-size: 8px; font-weight: 900; padding: 1px 3px">NEW</span></sc-if></button></sc-for>
+        </div>
+      </div>
+    </section>
+
+    <div style="margin-top: 18px; display: flex; align-items: baseline; justify-content: space-between">
+      <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">{{monthName}}</h2>
+      <button onClick="{{savePoster}}" style="border: 0; background: transparent; padding: 6px 0; font: 800 12px Inter Tight, sans-serif; color: #1556C2; text-decoration: underline; text-underline-offset: 3px">Save as poster</button>
+    </div>
+    <div style="margin-top: 4px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px">
+      <sc-for list="{{dow}}" as="dw" hint-placeholder-count="7"><span style="font-size: 10px; font-weight: 800; letter-spacing: .1em; color: #595959; text-align: center">{{dw.t}}</span></sc-for>
+    </div>
+    <div class="yo-cal" style="margin-top: 4px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; background: #161616; border: 3px solid #161616">
+      <sc-for list="{{calCells}}" as="cc" hint-placeholder-count="35"><button onClick="{{cc.pick}}" aria-label="{{cc.aria}}" style="{{cc.box}}"><span style="{{cc.num}}">{{cc.n}}</span></button></sc-for>
+    </div>
+    <div class="a-up" style="margin-top: 10px; min-height: 64px">
+      <p style="margin: 0; font-size: 15px; font-weight: 900">{{dayTitle}}</p>
+      <p style="margin: 2px 0 0; font-size: 13px; color: #595959">{{dayLine}}</p>
+      <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px">
+        <sc-for list="{{dayFams}}" as="df" hint-placeholder-count="2"><span style="display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800"><span style="{{df.shape}}"></span>{{df.name}}</span></sc-for>
+      </div>
+      <div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px">
+        <sc-for list="{{dayMoves}}" as="dm" hint-placeholder-count="3"><button onClick="{{dm.open}}" style="{{dm.box}}">{{dm.n}}</button></sc-for>
+      </div>
+    </div>
+   </div>
+   <div class="yo-b" style="display: contents">
+    <section aria-label="Body this week" style="margin-top: 18px; padding-top: 14px; border-top: 3px solid #161616">
+      <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Your body this week</h2>
+      <div style="margin-top: 10px; display: flex; gap: 16px; align-items: flex-start">
+        <div style="flex: none; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 8px">
+          <div style="{{bodyFlip}}">
+            <sc-for list="{{bodyParts}}" as="bp" hint-placeholder-count="10"><button onClick="{{bp.pick}}" aria-label="{{bp.aria}}" style="{{bp.box}}"></button></sc-for>
+          </div>
+          <button onClick="{{flipBody}}" style="height: 34px; padding: 0 12px; border: 3px solid #161616; background: #FFFFFF; font: 800 12px Inter Tight, sans-serif; color: #161616">{{flipLabel}}</button>
+        </div>
+        <div style="flex: 1; min-width: 0">
+          <p style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">{{sideName}}</p>
+          <p style="margin: 2px 0 0; font-size: 30px; font-weight: 900; line-height: .95; letter-spacing: -.03em">{{regionName}}</p>
+          <p style="margin: 6px 0 0; font-size: 14px; font-weight: 600; line-height: 1.35">{{regionLine}}</p>
+          <button onClick="{{regionGo}}" style="margin-top: 10px; width: 100%; min-height: 48px; border: 0; background: #161616; color: #FFFFFF; font: 800 14px Inter Tight, sans-serif; padding: 6px 10px; text-align: left; display: flex; align-items: center; gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="#FFC20E" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>{{regionGoLabel}}</button>
+          <p style="margin: 8px 0 0; font-size: 12px; color: #595959">Tap any part of the body. Darker means more love this week.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Move collection" style="margin-top: 18px; padding-top: 14px; border-top: 3px solid #161616">
+      <div style="display: flex; align-items: baseline; justify-content: space-between">
+        <h2 style="margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Moves found</h2>
+        <span style="font-size: 13px; font-weight: 900">{{foundCount}}</span>
+      </div>
+      <div style="margin-top: 6px; height: 8px; background: #EFEFEF"><span style="{{foundBar}}"></span></div>
+      <div style="margin-top: 8px">
+        <sc-for list="{{collFams}}" as="cf" hint-placeholder-count="9">
+          <div style="border-bottom: 2px solid #EFEFEF">
+            <button onClick="{{cf.toggle}}" aria-expanded="{{cf.openAttr}}" style="width: 100%; border: 0; background: transparent; padding: 9px 0; display: flex; align-items: center; gap: 10px; font-family: Inter Tight, sans-serif; color: #161616; text-align: left">
+              <span style="width: 16px; display: flex; justify-content: center"><span style="{{cf.shape}}"></span></span>
+              <span style="width: 92px; flex: none; font-size: 13px; font-weight: 800">{{cf.name}}</span>
+              <span style="flex: 1; display: flex; gap: 2px; height: 8px"><sc-for list="{{cf.segs}}" as="sg" hint-placeholder-count="10"><span style="{{sg.s}}"></span></sc-for></span>
+              <span style="width: 38px; flex: none; text-align: right; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums">{{cf.count}}</span>
+            </button>
+            <sc-if value="{{cf.open}}" hint-placeholder-val="{{ false }}">
+              <div class="a-up" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 0 0 10px 26px">
+                <sc-for list="{{cf.moves}}" as="cm" hint-placeholder-count="3"><button onClick="{{cm.open}}" style="{{cm.box}}">{{cm.n}}</button></sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 8px 0 0; font-size: 13px; color: #595959; min-height: 18px">{{collectHint}}</p>
+    </section>
+   </div>
+  </div>
+
+  <sc-if value="{{settingsOpen}}" hint-placeholder-val="{{ false }}">
+  <div class="a-up yo-sheet" style="position: absolute; inset: 0; z-index: 12; background: #FFFFFF; overflow-y: auto; padding: 20px 20px 28px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-size: 44px; font-weight: 900; letter-spacing: -.04em">Settings</h1>
+      <button onClick="{{closeSettings}}" aria-label="Close settings" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: #161616; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div style="margin-top: 14px; border-top: 3px solid #161616">
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Calm mode (less motion)</span><button role="switch" aria-checked="{{calmOn}}" aria-label="Calm mode (less motion)" onClick="{{toggleCalm}}" style="{{calmTrack}}"><span style="{{calmKnob}}"></span></button></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds</span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Noodle chatter</span><button role="switch" aria-checked="{{chatterOn}}" aria-label="Noodle chatter" onClick="{{toggleChatter}}" style="{{chatterTrack}}"><span style="{{chatterKnob}}"></span></button></div>
+      <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
+        <span style="font-size: 16px; font-weight: 700">Rest between moves</span>
+        <div style="margin-top: 8px; display: flex; gap: 6px">
+          <sc-for list="{{restOpts}}" as="ro" hint-placeholder-count="4"><button onClick="{{ro.pick}}" aria-pressed="{{ro.on}}" style="{{ro.box}}">{{ro.t}}</button></sc-for>
+        </div>
+      </div>
+    </div>
+    <h2 style="margin: 22px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Your progress</h2>
+    <p style="margin: 4px 0 0; font-size: 13px; color: #595959; line-height: 1.35">It lives only on this phone. Save a backup now and then so you never lose it.</p>
+    <div style="margin-top: 10px; display: flex; gap: 8px">
+      <button onClick="{{backup}}" style="flex: 1; height: 50px; border: 0; background: #1556C2; color: #FFFFFF; font: 800 14px Inter Tight, sans-serif">Save backup</button>
+      <button onClick="{{restore}}" style="flex: 1; height: 50px; border: 3px solid #161616; background: #FFFFFF; color: #161616; font: 800 14px Inter Tight, sans-serif">Restore</button>
+    </div>
+    <button onClick="{{resetAll}}" style="{{resetBox}}">{{resetLabel}}</button>
+    <p style="margin: 10px 0 0; font-size: 13px; font-weight: 700; min-height: 18px">{{setMsg}}</p>
+    <a href="gallery.html" style="margin-top: 14px; display: flex; align-items: center; justify-content: space-between; height: 50px; border-top: 3px solid #161616; font: 800 15px Inter Tight, sans-serif; color: #161616; text-decoration: none">Check all animations<span aria-hidden="true">→</span></a>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{expanding}}" hint-placeholder-val="{{ false }}">
+  <div class="expand" aria-hidden="true" style="{{expandStyle}}"></div>
+</sc-if>
+</div>
+</template>
+<script src="preact.min.js"></script>
+<script src="runtime.js?v=24"></script>
+<script src="app.js?v=24"></script>
+<script>
+(function(){
+var d=document,opt={passive:false};
+['gesturestart','gesturechange','gestureend'].forEach(function(t){d.addEventListener(t,function(e){e.preventDefault();},opt);});
+d.addEventListener('dblclick',function(e){e.preventDefault();},opt);
+var last=0;
+d.addEventListener('touchend',function(e){var n=Date.now();if(n-last<350)e.preventDefault();last=n;},opt);
+d.addEventListener('touchmove',function(e){if(e.touches.length>1||(e.scale&&e.scale!==1))e.preventDefault();},opt);
+d.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault();},opt);
+// swipe between tabs
+var tabs=['checkin','paths','you'],sx=0,sy=0,st=0;
+d.addEventListener('touchstart',function(e){if(e.touches.length!==1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;st=Date.now();},{passive:true});
+d.addEventListener('touchend',function(e){
+  var c=window.__noodle;if(!c||!e.changedTouches.length)return;
+  if(e.target.closest&&e.target.closest('input[type=range]'))return;
+  var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.5||Date.now()-st>700)return;
+  var i=tabs.indexOf(c.state.screen);if(i<0)return;
+  var j=dx<0?i+1:i-1;if(j<0||j>=tabs.length)return;
+  c.swipeTo(tabs[j],tabs[j]==='paths'?{pathOpen:null}:{});
+},{passive:true});
+})();
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+</body>
+</html>
