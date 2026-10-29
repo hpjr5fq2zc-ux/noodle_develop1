@@ -2,15 +2,15 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     this.timer = setInterval(() => this.tick(), 1000);
-    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -53,6 +53,20 @@ class Component extends DCLogic {
     let top = null; Object.keys(e.f).forEach((x) => { if (!top || e.f[x] > e.f[top]) top = x; });
     const history = Object.assign({}, s.history); if (top) history[k] = top;
     this.setState({ log, history });
+  }
+  safeOK(m) {
+    const sf = this.state.safe || {}, ar = sf.areas || {}, mi = this.moveInfo()[m.n];
+    if (!mi) return true;
+    const an = mi.anim || 'stand', regs = mi.f.concat(mi.b);
+    const WRIST = ['wallpush', 'incline', 'kneepush', 'pushup', 'decline', 'dip', 'pike', 'handstand', 'plank', 'sideplank', 'shouldertap', 'frogstand', 'mountain', 'burpee', 'sixstep', 'freeze', 'catcow', 'headstand', 'bear', 'crab', 'birddog', 'lsit'];
+    const KNEE = ['pistol', 'bulgarian', 'lunge', 'nordic', 'cossack', 'skater', 'burpee', 'deepsquat', 'kneel', 'wallsit', 'pigeon', 'split', 'halfsplit'];
+    const INVERT = ['handstand', 'headstand', 'freeze', 'frogstand'];
+    if (ar.wrists && WRIST.indexOf(an) >= 0) return false;
+    if (ar.shoulders && (INVERT.indexOf(an) >= 0 || (regs.indexOf('shoulders') >= 0 && mi.lvl >= 2))) return false;
+    if (ar.back && (regs.indexOf('lowback') >= 0 || regs.indexOf('back') >= 0) && mi.lvl >= 2) return false;
+    if (ar.knees && (KNEE.indexOf(an) >= 0 || (mi.fam === 'legs' && mi.lvl >= 2))) return false;
+    if (sf.care && (INVERT.indexOf(an) >= 0 || mi.role === 'f' || mi.fam === 'freezes' || mi.lvl >= 3)) return false;
+    return true;
   }
   tricks() {
     return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%']];
@@ -104,7 +118,7 @@ class Component extends DCLogic {
   }
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
-    ['levels', 'history', 'log', 'rest', 'seenTricks', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
+    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -119,7 +133,7 @@ class Component extends DCLogic {
       r.onload = () => {
         try {
           const o = JSON.parse(r.result); if (!o || o.app !== 'noodle') throw new Error('x');
-          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
+          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
           if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels);
           keep.setMsg = 'Welcome back! Your progress is restored.'; this._pk = null; this.setState(keep);
         } catch (e) { this.setState({ setMsg: "That file isn't a Noodle backup." }); }
@@ -585,7 +599,7 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, new Date().getDate()]);
+    const key = JSON.stringify([s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.focus, s0.safe, new Date().getDate()]);
     if (this._pk === key) return this._pc;
     const target = s0.time * 60, extra = [0, 0, 0, 0];
     const order = s0.mood === 'Chill' ? [3, 2, 0] : [1, 2, 3, 1, 0];
@@ -616,7 +630,7 @@ class Component extends DCLogic {
     const choose = (cands0, k) => {
       let cands = cands0;
       if (s.focus) { const fz = cands0.filter((m) => { const mi = MIx[m.n]; return mi && mi.f.concat(mi.b).indexOf(s.focus) >= 0 && !used[m.n]; }); if (fz.length) cands = fz; }
-      const c = cands.filter((m) => !used[m.n]);
+      const c = cands.filter((m) => !used[m.n] && this.safeOK(m));
       if (!c.length) return null;
       const m = c[(this.hash(k) + s.seed * 3 + (s.swaps[k] || 0)) % c.length];
       used[m.n] = true;
@@ -710,9 +724,9 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state;
     const PHRASES = [
-      ["How's", 'your', 'body?'], ['Feeling', 'groovy?'], ["Let's get", 'noodly.'], ['Ready', 'to', 'wiggle?'],
-      ['Loosen up,', 'butter-', 'cup.'], ['Bend,', "don't", 'break.'], ['See you,', 'space', 'cowboy...'],
-      ['Whatever', 'happens,', 'happens.'], ['They say', 'hunger is', 'the best', 'spice.'], ['Wiener', 'takes', 'all.'],
+      ["How's", 'your', 'body?'], ['Feeling', 'bendy?'], ["Let's get", 'noodly.'], ['Ready', 'to', 'wiggle?'],
+      ['Loosen up,', 'butter-', 'cup.'], ['Bend,', "don't", 'break.'], ['Long dog,', 'long', 'stretch.'],
+      ['Every', 'body', 'counts.'], ['Move', 'now,', 'snack', 'later.'], ['Wiener', 'takes', 'all.'],
       ['Stretch', 'it out,', 'champ.'], ["Today's", 'vibe?']
     ];
     const ph = PHRASES[s.phrase % PHRASES.length];
@@ -1002,6 +1016,17 @@ class Component extends DCLogic {
         this._pk = null; this.setState({ levels: lv, history: {}, log: {}, tried: {}, seen: {}, seenTricks: {}, fb: 0, resetArm: false, selDay: null, setMsg: 'Fresh start. Noodle is ready when you are.' });
       },
       setMsg: s.setMsg,
+      showWelcome: !(s.safe && s.safe.done),
+      safeAreas: ['wrists', 'shoulders', 'back', 'knees'].map((k) => { const on = !!(s.safe.areas || {})[k]; return { t: k.replace(/^./, (c) => c.toUpperCase()), on: on ? 'true' : 'false', pick: () => { const areas = Object.assign({}, s.safe.areas); if (on) delete areas[k]; else areas[k] = true; this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { areas }) }); }, box: 'height:44px;padding:0 14px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
+      careYes: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: true }) }); },
+      careNo: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: false }) }); },
+      careYesBox: 'flex:1;height:48px;font:800 15px Inter Tight,sans-serif;border:3px solid #161616;' + (s.safe.care === true ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616'),
+      careNoBox: 'flex:1;height:48px;font:800 15px Inter Tight,sans-serif;border:3px solid #161616;' + (s.safe.care === false ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616'),
+      careNote: s.safe.care === true,
+      startBox: 'margin-top:18px;width:100%;height:58px;border:0;font:900 20px Inter Tight,sans-serif;' + (s.safe.care !== null && s.safe.care !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#8A8A8A'),
+      finishWelcome: () => { if (s.safe.care === null || s.safe.care === undefined) return; this.setState({ safe: Object.assign({}, s.safe, { done: true }), settingsOpen: false }); },
+      openSafety: () => this.setState({ safe: Object.assign({}, s.safe, { done: false }) }),
+      safetySummary: (() => { const ar = Object.keys(s.safe.areas || {}); const bits = []; if (ar.length) bits.push('Going easy on ' + ar.join(', ')); if (s.safe.care) bits.push('gentle mode on'); return bits.length ? bits.join(' · ') : 'Nothing to avoid'; })(),
       phraseLines: ph.map((l) => ({ t: l })),
       phEven: s.phrase % 2 === 0, phOdd: s.phrase % 2 === 1,
       phraseAria: ph.join(' ') + ' (tap for another)',
