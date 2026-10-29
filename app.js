@@ -2,15 +2,15 @@
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     this.timer = setInterval(() => this.tick(), 1000);
-    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { const raw = localStorage.getItem('noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem('noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -78,14 +78,15 @@ class Component extends DCLogic {
     const sf = this.state.safe || {}, ar = sf.areas || {}, mi = this.moveInfo()[m.n];
     if (!mi) return true;
     const an = mi.anim || 'stand', regs = mi.f.concat(mi.b);
-    const WRIST = ['wallpush', 'incline', 'kneepush', 'pushup', 'decline', 'dip', 'pike', 'handstand', 'plank', 'sideplank', 'shouldertap', 'frogstand', 'mountain', 'burpee', 'sixstep', 'freeze', 'catcow', 'headstand', 'bear', 'crab', 'birddog', 'lsit'];
-    const KNEE = ['pistol', 'bulgarian', 'lunge', 'nordic', 'cossack', 'skater', 'burpee', 'deepsquat', 'kneel', 'wallsit', 'pigeon', 'split', 'halfsplit'];
-    const INVERT = ['handstand', 'headstand', 'freeze', 'frogstand'];
+    const WRIST = ['wheel', 'handrelease', 'onearm', 'pseudo', 'downdog', 'pikebed', 'elevpike', 'wallwalk', 'turtle', 'chairfreeze', 'wallpush', 'incline', 'kneepush', 'pushup', 'decline', 'dip', 'pike', 'handstand', 'plank', 'sideplank', 'shouldertap', 'frogstand', 'mountain', 'burpee', 'sixstep', 'freeze', 'catcow', 'headstand', 'bear', 'crab', 'birddog', 'lsit'];
+    const KNEE = ['tuckjump', 'squatjump', 'warrior', 'chairpose', 'pistol', 'bulgarian', 'lunge', 'nordic', 'cossack', 'skater', 'burpee', 'deepsquat', 'kneel', 'wallsit', 'pigeon', 'split', 'halfsplit'];
+    const INVERT = ['handstand', 'headstand', 'freeze', 'frogstand', 'plow', 'shoulderstand', 'chairfreeze', 'turtle'];
     if (ar.wrists && WRIST.indexOf(an) >= 0) return false;
     if (ar.shoulders && (INVERT.indexOf(an) >= 0 || (regs.indexOf('shoulders') >= 0 && mi.lvl >= 2))) return false;
     if (ar.back && (regs.indexOf('lowback') >= 0 || regs.indexOf('back') >= 0) && mi.lvl >= 2) return false;
     if (ar.knees && (KNEE.indexOf(an) >= 0 || (mi.fam === 'legs' && mi.lvl >= 2))) return false;
-    if (sf.care && (INVERT.indexOf(an) >= 0 || mi.role === 'f' || mi.fam === 'freezes' || mi.lvl >= 3)) return false;
+    if (ar.back && ['wheel', 'plow', 'shoulderstand', 'dragonflag'].indexOf(an) >= 0) return false;
+    if (sf.care && (INVERT.indexOf(an) >= 0 || ['tuckjump', 'squatjump', 'wheel'].indexOf(an) >= 0 || mi.role === 'f' || mi.fam === 'freezes' || mi.lvl >= 3)) return false;
     return true;
   }
   outfits() { return [[3, 'bandana', 'a bandana'], [10, 'shades', 'sunglasses'], [25, 'party', 'a party hat'], [50, 'crown', 'a crown'], [100, 'cape', 'a cape']]; }
@@ -151,7 +152,34 @@ class Component extends DCLogic {
     };
     img.src = art.uri;
   }
-  lvSum() { const L = this.state.levels; return Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0); }
+  likesMap() {
+    return [
+      ['strength', 'Strength', ['push', 'pull', 'legs', 'core'], 'Strength', 'circle', '#E5282E'],
+      ['yoga', 'Yoga & stretching', ['stretch', 'mobility'], 'Stretch', 'arch', '#F6A5A9'],
+      ['dance', 'Dance', ['dance'], 'Dance', 'quarter', '#FFC20E'],
+      ['kicks', 'Boxing & kicks', ['strikes'], 'Strikes', 'tri', '#161616'],
+      ['skills', 'Handstands & balance', ['balance'], 'Surprise', 'diamond', '#6B3FA0'],
+      ['cardio', 'Getting sweaty', [], 'Surprise', 'square', '#F26A0F'],
+      ['chill', 'Just loosening up', ['mobility', 'stretch'], 'Chill', 'pill', '#0E8178']
+    ];
+  }
+  likedFams() { const lk = (this.state.profile || {}).likes || {}, o = {}; this.likesMap().forEach((r) => { if (lk[r[0]]) r[2].forEach((f) => { o[f] = 1; }); }); return o; }
+  applyProfile() {
+    const s = this.state, pr = s.profile, base = [0, 0, 1, 2][pr.active || 0];
+    const fresh = Object.keys(s.levels).every((k) => !s.levels[k]) && !(s.sessions || 0);
+    const upd = { profile: Object.assign({}, pr, { done: true }) };
+    if (fresh) {
+      const liked = this.likedFams(), F = this.fams(), lv = Object.assign({}, s.levels);
+      Object.keys(lv).forEach((k) => { if (F[k] && !F[k].hidden) lv[k] = Math.min(3, base + (liked[k] && pr.active >= 2 ? 1 : 0)); });
+      upd.levels = lv;
+      upd.profile.base = Object.keys(lv).reduce((x, k) => x + (lv[k] || 0), 0);
+      const first = this.likesMap().find((r) => pr.likes[r[0]]);
+      if (first) upd.mood = first[3];
+      if (pr.likes.cardio) upd.energy = 75; else if (pr.likes.chill) upd.energy = 25;
+    }
+    this._pk = null; this.setState(upd);
+  }
+  lvSum() { const L = this.state.levels; return Math.max(0, Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0) - ((this.state.profile && this.state.profile.base) || 0)); }
   tricks() {
     return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%'], ['Play dead', 30, 'trDead', 1.8, '50% 60%'], ['Zoomies', 34, 'trZoom', 1.4], ['Sneeze', 38, 'trSneeze', 0.9]];
   }
@@ -203,7 +231,7 @@ class Component extends DCLogic {
   }
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
-    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
+    ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -218,7 +246,7 @@ class Component extends DCLogic {
       r.onload = () => {
         try {
           const o = JSON.parse(r.result); if (!o || o.app !== 'noodle') throw new Error('x');
-          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
+          const keep = {}; ['levels', 'history', 'log', 'rest', 'seenTricks', 'safe', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
           if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels);
           keep.setMsg = 'Welcome back! Your progress is restored.'; this._pk = null; this.setState(keep);
         } catch (e) { this.setState({ setMsg: "That file isn't a Noodle backup." }); }
@@ -435,7 +463,85 @@ class Component extends DCLogic {
       ['Bob and weave', 'flow', 1, 'm', '2 rounds of 1 min', 'bobweave', 'Bend your knees to duck under.', 'Come up on the other side.'],
       ['Angle steps', 'flow', 2, 'm', '2 rounds of 1 min', 'skater', 'Pivot on your front foot.', 'Step out to a new angle and reset.'],
       ['Footwork with combos', 'flow', 3, 'm', '3 rounds of 2 min', 'jab', 'Move, then throw a combo.', 'Move again right after.'],
-      ['3-minute flow round', 'flow', 4, 'm', '3 rounds of 3 min', 'bobweave', 'Footwork, punches, slips and kicks.', 'Keep moving the whole round.']
+      ['3-minute flow round', 'flow', 4, 'm', '3 rounds of 3 min', 'bobweave', 'Footwork, punches, slips and kicks.', 'Keep moving the whole round.'],
+      // ---- added: yoga & stretch depth ----
+      ['Warrior I', 'stretch', 1, 'v', '30 s per side', 'warrior', 'Long lunge, back heel down and turned out.', 'Reach both arms overhead, hips facing forward.', ['legs', 'hips', 'shoulders'], []],
+      ['Warrior flow', 'stretch', 1, 'v', '5 slow rounds per side', 'warrior', 'Start in Warrior I with arms up.', 'Open your arms wide to Warrior II, then back, with your breath.', ['legs', 'hips', 'shoulders'], []],
+      ['Tree pose', 'stretch', 1, 'v', '30 s per side', 'tree', 'Foot on your calf or inner thigh, never on the knee.', 'Hands at your chest, or reach up like branches.', ['legs', 'core'], []],
+      ['Chair pose', 'stretch', 1, 'v', '3 × 20 s', 'chairpose', 'Sit back like a chair is behind you.', 'Arms by your ears, weight in your heels.', ['legs', 'shoulders'], ['glutes']],
+      ['Forward fold, hands clasped', 'stretch', 1, 'v', '30 s', 'fold', 'Interlace your hands behind your back.', 'Fold forward and let your arms fall toward the floor.', ['shoulders', 'chest'], ['hamstrings']],
+      ['Wide-leg forward fold', 'stretch', 2, 'v', '45 s', 'fold', 'Feet wide, toes turned slightly in.', 'Fold from the hips, hands to the floor.', [], ['hamstrings', 'lowback']],
+      ['Low lunge twist', 'stretch', 2, 'v', '30 s per side', 'lowlunge', 'From a low lunge, plant one hand inside your front foot.', 'Open the other arm to the ceiling.', ['hips', 'core'], ['back']],
+      ['Sun salutation', 'stretch', 2, 'v', '4 slow rounds', 'downdog', 'Reach up, fold, step back to plank, cobra, downward dog.', 'Move with your breath, one breath per shape.', ['shoulders', 'core'], ['hamstrings', 'back']],
+      ['Dancer pose', 'stretch', 2, 'v', '20 s per side', 'dancer', 'Hold one ankle behind you.', 'Kick into your hand and tip forward, other arm reaching.', ['legs', 'hips', 'shoulders'], []],
+      ['Boat pose', 'stretch', 2, 'v', '3 × 20 s', 'boat', 'Sit tall and lean back a little.', 'Lift your shins, arms reaching forward.', ['core', 'hips'], []],
+      ['Butterfly fold', 'stretch', 2, 'v', '45 s', 'butterfly', 'Soles of your feet together.', 'Fold forward from your hips, back long.', ['hips'], ['lowback']],
+      ['King pigeon prep', 'stretch', 3, 'v', '30 s per side', 'pigeon', 'From pigeon, bend your back knee.', 'Reach back for that foot only if it comes easily.', ['hips', 'legs'], ['glutes']],
+      ['Lizard with quad pull', 'stretch', 3, 'v', '30 s per side', 'lowlunge', 'From lizard, bend your back knee.', 'Reach back for the foot gently.', ['hips', 'legs'], []],
+      ['Plow pose', 'stretch', 3, 'v', '30 s', 'plow', 'On your back, roll your legs over your head.', 'Toes toward the floor behind you, neck relaxed.', [], ['back', 'lowback', 'hamstrings']],
+      ['Shoulder stand', 'stretch', 4, 'v', '30 s', 'shoulderstand', 'From plow, lift your legs straight up.', 'Hands on your back, weight on your shoulders, not your neck.', ['core'], ['back', 'shoulders']],
+      ['Wheel pose', 'stretch', 4, 'v', '3 × 10 s', 'wheel', 'Hands by your ears, fingers toward your shoulders.', 'Press up through hands and feet, chest lifting.', ['chest', 'shoulders'], ['back', 'glutes']],
+      ['Pancake with reach', 'stretch', 4, 'v', '45 s', 'seatedfold', 'Legs wide, sit tall.', 'Walk your hands forward and breathe into it.', ['hips'], ['hamstrings', 'lowback']],
+      // ---- added: hidden paths ----
+      ['Tuck to tripod', 'freezes', 1, 'v', '5 tries', 'headstand', 'Head and hands make a triangle, knees rest on your elbows.', 'Hold the tuck, then slowly come down.', ['shoulders', 'core'], ['shoulders']],
+      ['Turtle shuffle', 'freezes', 3, 'v', '3 tries', 'turtle', 'Hold the turtle.', 'Shift your weight hand to hand to turn in a circle.', ['shoulders', 'arms', 'core'], []],
+      ['Air chair prep', 'freezes', 4, 'v', '5 tries', 'chairfreeze', 'One hand down, that elbow tucked into your hip.', 'Lean back and lift your feet one at a time.', ['shoulders', 'arms', 'core'], ['lowback']],
+      ['Half split rocks', 'splits', 0, 'v', '10 per side', 'halfsplit', 'Back knee down, front leg straight.', 'Gently rock forward and back.', [], ['hamstrings']],
+      ['Frog rocks', 'splits', 1, 'v', '10 slow rocks', 'childpose', 'Knees wide, shins in line with each other.', 'Rock your hips back and forth.', ['hips'], []],
+      ['Pigeon to split slide', 'splits', 3, 'v', '45 s per side', 'split', 'Start in pigeon.', 'Slide the back leg long and the front leg straighter.', ['hips', 'legs'], ['hamstrings']],
+      ['Inchworm walk', 'crawls', 0, 'v', '5 slow reps', 'downdog', 'Fold down and walk your hands out to plank.', 'Walk your feet toward your hands.', ['shoulders', 'core'], ['hamstrings']],
+      ['Crab reach', 'crawls', 1, 'v', '6 per side', 'crab', 'From crab, lift your hips.', 'Reach one arm over to the opposite side.', ['shoulders', 'hips'], ['glutes']],
+      ['Gorilla shuffle', 'crawls', 2, 'v', '3 × 6', 'deepsquat', 'Deep squat, hands down in front.', 'Hop your feet sideways past your hands.', ['legs', 'shoulders'], ['glutes']],
+      ['Pendulum step', 'flow', 1, 'v', '2 rounds of 1 min', 'groove', 'Hands up, light on your feet.', 'Swing your weight front to back like a pendulum.', ['legs'], []],
+      ['Switch stance drill', 'flow', 2, 'v', '2 rounds of 1 min', 'skater', 'Small hop to swap your front foot.', 'Hands stay up as you switch.', ['legs'], ['glutes']],
+      ['Slip-slip-cross', 'flow', 3, 'v', '3 × 10', 'bobweave', 'Slip left, slip right.', 'Fire a cross as you come back to center.', ['core', 'shoulders'], []],
+      // ---- added: harder finishers (level-gated) ----
+      ['Plank jacks', 'cond', 1, 'f', '3 × 15', 'mountain', 'High plank.', 'Jump your feet wide and back, hips level.'],
+      ['Mountain climbers', 'cond', 1, 'f', '3 × 20 s', 'mountain', 'Knees drive toward your chest.', 'Fast, with hips steady.'],
+      ['Squat jumps', 'cond', 1, 'f', '3 × 10', 'squatjump', 'Squat down, then jump straight up.', 'Land soft with bent knees.'],
+      ['Skater hops', 'cond', 2, 'f', '3 × 10 per side', 'skater', 'Jump side to side.', 'Land softly on one leg.'],
+      ['Bear crawl sprints', 'cond', 2, 'f', '4 × 20 s', 'bear', 'Knees just off the floor.', 'Quick small steps forward and back.'],
+      ['Burpee', 'cond', 2, 'f', '3 × 8', 'burpee', 'Squat, hands down, jump back to plank.', 'Jump your feet in and hop up.'],
+      ['Tuck jumps', 'cond', 3, 'f', '3 × 6', 'tuckjump', 'Jump and pull your knees up.', 'Land soft and quiet.'],
+      ['Lunge jumps', 'cond', 3, 'f', '3 × 6 per side', 'lunge', 'Lunge low, jump, switch legs in the air.', 'Land soft with both knees bent.'],
+      ['Burpee tuck jump', 'cond', 4, 'f', '3 × 6', 'tuckjump', 'A full burpee.', 'Finish with a tuck jump instead of a hop.'],
+      // ---- added: pro tier + pull ----
+      ['Coffee grinder', 'dance', 4, 'v', '4 rounds per side', 'sixstep', 'Hands down, one leg straight out.', 'Sweep it in a circle and hop the other leg over it.', ['legs', 'shoulders', 'core'], []],
+      ['Footwork freestyle', 'dance', 4, 'v', '3 rounds of 1 min', 'sixstep', 'Mix six-step, three-step and kick-outs.', 'Change direction whenever you like.', ['legs', 'shoulders', 'core'], []],
+      ['Toprock freestyle', 'dance', 3, 'v', '2 rounds of 1 min', 'indianstep', 'Indian step and cross step.', 'Add your own arm style.', ['legs'], []],
+      ['Shuffle running man', 'dance', 2, 'v', '2 rounds of 1 min', 'march', 'Knee up, then slide that foot back as you land.', 'Keep it bouncy and light.', ['legs', 'core'], []],
+      ['Teep push kick', 'strikes', 1, 'v', '10 per side', 'frontkick', 'Lift the knee high.', 'Push the ball of your foot straight out.', ['hips', 'core'], []],
+      ['Switch kick combo', 'strikes', 4, 'v', '3 × 6 per side', 'roundkick', 'Jab, cross, quick switch.', 'Round kick off the back leg.', ['hips', 'legs', 'core'], []],
+      ['Slow spinning back kick', 'strikes', 4, 'v', '5 per side', 'roundkick', 'Turn your back and look over your shoulder.', 'Drive the heel straight back.', ['hips', 'legs', 'core'], ['glutes']],
+      ['Cossack flow', 'mobility', 3, 'v', '6 per side', 'cossack', 'Wide stance.', 'Glide low from one side to the other.', ['hips', 'legs'], ['hamstrings']],
+      ['Pancake good mornings', 'mobility', 4, 'v', '8 slow reps', 'seatedfold', 'Sit with legs wide, hands behind your head.', 'Hinge forward with a long back, then sit tall.', ['hips'], ['hamstrings', 'lowback']],
+      ['Bridge rotations', 'mobility', 4, 'v', '4 per side', 'wheel', 'From bridge, shift onto one hand.', 'Rotate through, then come back to bridge.', ['shoulders', 'chest'], ['back']],
+      ['Towel isometric pull', 'pull', 0, 'v', '5 × 10 s', 'pullapart', 'Stand on the middle of a towel.', 'Pull the ends up hard and hold.', ['arms'], ['back', 'shoulders']],
+      ['Prone swimmers', 'pull', 1, 'v', '3 × 8', 'superman', 'Lie face down, arms overhead.', 'Sweep your arms down to your hips and back.', [], ['back', 'shoulders']],
+      ['Doorframe row', 'pull', 1, 'v', '3 × 10', 'row', 'Hold both sides of a doorframe.', 'Lean back, then pull your chest to the frame.', ['arms'], ['back', 'shoulders']],
+      ['Scapular desk pulls', 'pull', 1, 'v', '3 × 10', 'row', 'Hang under the desk, arms straight.', 'Squeeze your shoulder blades without bending your arms.', [], ['back']],
+      ['Desk row pulses', 'pull', 2, 'v', '3 × 15', 'row', 'Top half of the row only.', 'Quick and controlled.', ['arms'], ['back']],
+      ['One-arm doorframe row', 'pull', 3, 'v', '3 × 6 per side', 'row', 'One hand on the doorframe edge.', 'Lean back and pull, hips square.', ['arms', 'core'], ['back']],
+      // ---- added: a few more everywhere ----
+      ['Staggered push-up', 'push', 2, 'v', '3 × 6 per side', 'pushup', 'One hand a little forward, one back.', 'Switch the stagger each set.'],
+      ['Push-up with shoulder taps', 'push', 2, 'v', '3 × 6', 'shouldertap', 'Do a push-up.', 'At the top, tap each shoulder without rocking.', ['chest', 'shoulders', 'core'], []],
+      ['Five-second push-up', 'push', 3, 'v', '3 × 4', 'pushup', 'Take five full seconds down.', 'Pause just above the floor, then press.'],
+      ['Sumo squat', 'legs', 1, 'v', '3 × 12', 'squat', 'Feet wide, toes out.', 'Knees track over your toes.', ['legs', 'hips'], ['glutes']],
+      ['Lateral lunge', 'legs', 2, 'v', '3 × 8 per side', 'cossack', 'Big step to the side.', 'Sit back into that hip, other leg straight.', ['legs', 'hips'], ['glutes']],
+      ['Wall sit march', 'legs', 2, 'v', '3 × 20 s', 'wallsit', 'Hold a wall sit.', 'Lift one foot at a time without sliding.', ['legs', 'core'], []],
+      ['Plank to downward dog', 'core', 1, 'v', '3 × 8', 'downdog', 'Start in a plank.', 'Push your hips up and back, then return.', ['core', 'shoulders'], ['hamstrings']],
+      ['Bear plank shoulder taps', 'core', 1, 'v', '3 × 8 per side', 'bear', 'Knees hover an inch off the floor.', 'Tap opposite shoulders, hips still.', ['core', 'shoulders'], []],
+      ['Single-leg reach', 'balance', 1, 'v', '8 per side', 'rdl', 'Stand on one leg.', 'Reach forward to tap the floor, then stand tall.', ['legs', 'core'], ['hamstrings', 'glutes']],
+      ['Tree pose, eyes closed', 'balance', 2, 'v', '20 s per side', 'tree', 'Find your tree pose.', 'Close your eyes and stay soft.', ['legs', 'core'], []],
+      ['Cat crawl', 'crawls', 1, 'v', '3 × 8 steps', 'bear', 'Hands and feet down, knees just off the floor.', 'Move opposite hand and foot together, quietly.', ['shoulders', 'core'], []],
+      ['Frog jumps', 'crawls', 2, 'v', '3 × 5', 'squatjump', 'Deep squat, hands touch the floor.', 'Jump forward and land back in the squat.', ['legs'], ['glutes']],
+      ['Crocodile crawl', 'crawls', 3, 'v', '3 × 6 steps', 'pushup', 'Hold the bottom of a push-up.', 'Crawl forward, knee toward elbow, staying low.', ['chest', 'shoulders', 'core'], []],
+      ['Neck isolations', 'dance', 0, 'v', '2 × 30 s', 'shoulderiso', 'Shoulders still.', 'Slide your head forward, back and side to side.', ['shoulders'], []],
+      ['Chest isolations', 'dance', 1, 'v', '2 × 30 s', 'bodyroll', 'Hips still.', 'Push your chest forward, then pull it back.', ['core', 'chest'], ['back']],
+      ['Cloud hands', 'mobility', 0, 'v', '2 min', 'wave', 'Soft knees, shift your weight side to side.', 'Arms float past your face like clouds, slow breath.', ['shoulders', 'core'], []],
+      ['Pelvic tilts', 'mobility', 0, 'v', '10 slow reps', 'glutebridge', 'On your back, knees bent.', 'Gently rock your low back flat, then arch a little.', ['core', 'hips'], ['lowback']],
+      ['Locomotion warm-up', 'cond', 0, 'w', '2 min', 'march', 'Skip, side-shuffle, walk backwards.', 'Change it up every 20 seconds.'],
+      ['Side crow', 'balance', 3, 'v', '5 tries, hold 5 s', 'frogstand', 'Twist and stack both knees on one arm.', 'Lean forward until your feet float.', ['shoulders', 'arms', 'core'], []],
     ];
   }
   animRows() {
@@ -525,6 +631,16 @@ class Component extends DCLogic {
       chairfreeze: ['H30,58 N38,62 P56,72 E44,76 W34,89 K64,68 F70,89 e46,64 w50,70 k68,70 f74,89', 'H30,62 N37,66 P55,74 E44,78 W34,89 K62,58 F78,54 e45,66 w50,72 k66,60 f82,58', 2.6, null],
       squatjab: ['H48,42 N49,50 P40,70 E58,50 W66,44 K58,72 F50,89 e56,50 w60,42 k60,72 f54,89', 'H50,14 N50,23 P50,49 E62,22 W74,21 K48,69 F47,89 e54,32 w58,22 k52,69 f53,89', 1.1, null],
       godown: ['H50,14 N50,23 P50,49 E48,36 W47,48 K48,69 F47,89 e52,36 w53,48 k52,69 f53,89', 'H67,46 N59,51 P44,72 E61,64 W63,75 K64,73 F52,89 e62,63 w64,75 k64,71 f56,89', 2.4, null],
+      warrior: ['H51,26 N51,35 P50,61 E55,23 W53,11 K68,69 F72,89 e56,23 w55,11 k41,79 f24,89', 'H50,28 N50,37 P49,63 E63,37 W75,37 K68,70 F73,89 e37,37 w25,37 k43,82 f24,89', 3.2],
+      tree: ['H50,14 N50,23 P50,49 E45,35 W57,34 K64,60 F46,68 e46,35 w58,35 k51,69 f52,89', 'H50,13 N50,22 P50,48 E54,10 W52,-2 K64,59 F46,67 e55,10 w54,-2 k51,68 f52,88', 3],
+      chairpose: ['H56,33 N52,41 P40,64 E59,30 W65,20 K59,70 F52,89 e60,31 w67,21 k59,69 f55,89', 'H55,35 N51,43 P39,66 E58,32 W64,22 K59,70 F52,89 e59,33 w66,23 k59,69 f55,89', 2.6],
+      boat: ['H33,54 N38,62 P50,84 E50,66 W62,64 K67,73 F84,66 e52,66 w64,64 k69,74 f86,67', 'H32,56 N37,64 P50,84 E49,68 W61,66 K66,70 F80,54 e51,68 w63,66 k68,71 f82,55', 3],
+      wheel: ['H26,76 N30,66 P54,56 E26,77 W24,89 K70,68 F74,89 e28,77 w26,89 k72,69 f76,89', 'H26,72 N31,63 P54,53 E27,76 W24,89 K71,66 F74,89 e29,76 w26,89 k73,67 f76,89', 3],
+      dancer: ['H54,14 N52,23 P50,49 E44,36 W38,48 K42,64 F34,48 e60,30 w70,24 k52,69 f53,89', 'H74,27 N66,32 P48,50 E54,39 W42,38 K30,52 F36,34 e78,28 w90,24 k51,69 f53,89', 3.2],
+      plow: ['H21,87 N30,86 P44,62 E42,88 W54,88 K28,66 F10,78 e44,88 w56,88 k30,67 f12,79', 'H21,87 N30,86 P43,61 E42,88 W54,88 K26,68 F8,84 e44,88 w56,88 k28,69 f10,85', 3],
+      shoulderstand: ['H21,87 N30,86 P36,61 E44,80 W40,70 K39,41 F41,21 e42,80 w40,70 k41,41 f43,21', 'H21,87 N30,86 P35,60 E43,79 W39,69 K37,40 F38,20 e45,79 w41,69 k39,40 f40,20', 3],
+      tuckjump: ['H48,42 N49,50 P40,70 E40,58 W36,66 K58,72 F50,89 e42,58 w38,66 k60,72 f54,89', 'H51,10 N50,19 P49,45 E58,10 W62,0 K66,40 F54,54 e60,10 w64,0 k68,41 f56,55', 0.9],
+      squatjump: ['H48,42 N49,50 P40,70 E40,58 W36,66 K58,72 F50,89 e42,58 w38,66 k60,72 f54,89', 'H50,4 N50,13 P50,39 E52,1 W53,-11 K49,59 F48,79 e54,1 w55,-11 k52,59 f53,79', 1.0],
       wave: ['H57,16 N53,25 P47,50 E51,38 W49,49 K51,70 F47,89 e52,38 w51,50 k53,69 f53,89', 'H46,16 N48,24 P53,50 E49,37 W50,49 K53,70 F47,89 e50,37 w52,49 k57,70 f53,89', 2.4],
       fold: ['H50,14 N50,23 P50,49 E48,36 W47,48 K49,69 F47,89 e49,36 w49,48 k52,69 f53,89', 'H63,80 N61,72 P48,49 E50,78 W57,88 K48,69 F47,89 e51,79 w59,88 k51,69 f53,89', 3],
       bridge: [LY + ' E18,78 W20,89 e20,78 w22,89 P46,86 K60,70 F70,89 k62,70 f72,89 H14,84 N22,85', 'H22,76 N26,66 P50,48 E22,78 W20,89 K66,64 F70,89 e24,78 w22,89 k68,64 f72,89', 3],
@@ -584,7 +700,7 @@ class Component extends DCLogic {
   }
   unlocked(levels) {
     const F = this.fams(), U = {};
-    Object.keys(F).forEach((k) => { if (F[k].hidden) { const p = F[k].parents; if ((levels[p[0]] || 0) >= 2 && (levels[p[1]] || 0) >= 2) U[k] = true; } });
+    Object.keys(F).forEach((k) => { if (F[k].hidden) { const p = F[k].parents; if ((levels[p[0]] || 0) >= 2 && (levels[p[1]] || 0) >= 2 && ((this.state && this.state.sessions) || 0) >= 3) U[k] = true; } });
     return U;
   }
   figure(name, calm) {
@@ -748,7 +864,7 @@ class Component extends DCLogic {
       Strength: { name: 'Extra strength', fams: rot.slice().reverse(), color: '#F26A0F', shape: 'square' },
       Stretch: { name: 'Extra stretch', fams: ['stretch'].concat(U.splits ? ['splits'] : []), color: '#F6A5A9', shape: 'arch', loose: true },
       Chill: { name: 'Easy mobility', fams: ['mobility'], color: '#0E8178', shape: 'pill', loose: true },
-      Surprise: { name: 'Surprise', fams: ['dance', 'strikes'].concat(Object.keys(U)), color: '#1556C2', shape: 'half' }
+      Surprise: { name: 'Surprise', fams: (() => { const lf = Object.keys(this.likedFams()).filter((k) => ['dance', 'strikes', 'balance', 'stretch', 'mobility'].indexOf(k) >= 0); return (lf.length ? lf.concat(lf) : []).concat(['dance', 'strikes']).concat(Object.keys(U)); })(), color: '#1556C2', shape: 'half' }
     };
     const pl = PLAY[s.mood] || PLAY.Surprise;
     const blocks = [];
@@ -757,7 +873,7 @@ class Component extends DCLogic {
     mk('warm', 'Warm up', '#0E8178', 'pill', Array.from({ length: n[0] }, (_, i) => choose(warmPool, 'warm' + i)));
     mk('strength', 'Strength', '#E5282E', 'circle', Array.from({ length: n[1] }, (_, i) => choose(atLevel(rot[(off + i) % rot.length]), 'strength' + i)));
     mk('play', pl.name, pl.color, pl.shape, Array.from({ length: n[2] }, (_, i) => { const fam = pl.fams[(s.seed + i) % pl.fams.length]; return choose(pl.loose ? upTo(fam) : atLevel(fam), 'play' + i); }));
-    if (s.energy >= 67 && s.mood !== 'Chill') mk('finish', 'Finisher', '#C08A00', 'square', [choose(BK.filter((m) => m.fam === 'cond' && m.role === 'f'), 'finish0')]);
+    if (s.energy >= 67 && s.mood !== 'Chill') mk('finish', 'Finisher', '#C08A00', 'square', [choose(BK.filter((m) => m.fam === 'cond' && m.role === 'f' && m.lvl <= Math.round((lv('push') + lv('pull') + lv('legs') + lv('core')) / 4)), 'finish0')]);
     const coolPool = upTo('stretch').concat(U.splits ? atLevel('splits') : []);
     mk('cool', 'Stretch & yoga', '#F6A5A9', 'arch', Array.from({ length: n[3] }, (_, i) => choose(coolPool, 'cool' + i)));
     return blocks.filter((b) => b.moves.length);
@@ -952,7 +1068,10 @@ class Component extends DCLogic {
     const q = s.query.trim().toLowerCase();
     const results = q ? allMoves.filter((n) => { const m = MI[n]; return n.toLowerCase().indexOf(q) >= 0 || F[m.fam].name.toLowerCase().indexOf(q) >= 0 || m.f.concat(m.b).some((r) => pretty[r].indexOf(q) >= 0); }).slice(0, 8) : [];
     const untried = allMoves.filter((n) => !s.tried[n]);
-    const picks = [0, 1, 2].map((i) => untried[(s.seed * 3 + i * 7) % Math.max(1, untried.length)]).filter((n, i, a) => n && a.indexOf(n) === i);
+    const likedF = this.likedFams();
+    const reachable = untried.filter((n) => { const m = MI[n]; return m.fam !== 'cond' && !(F[m.fam].hidden && !U[m.fam]) && m.lvl <= (s.levels[m.fam] || 0) && this.safeOK({ n }); });
+    const pool = reachable.filter((n) => likedF[MI[n].fam]).length >= 3 ? reachable.filter((n) => likedF[MI[n].fam]) : reachable.length >= 3 ? reachable : untried;
+    const picks = [0, 1, 2].map((i) => pool[(s.seed * 3 + i * 7) % Math.max(1, pool.length)]).filter((n, i, a) => n && a.indexOf(n) === i);
     const now = new Date(), Y = now.getFullYear(), Mo = now.getMonth(), today = now.getDate();
     const firstDow = new Date(Y, Mo, 1).getDay(), dim = new Date(Y, Mo + 1, 0).getDate();
     const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -982,7 +1101,9 @@ class Component extends DCLogic {
     if (se) dayLine = [se.m ? se.m + ' min' : '', se.mv.length ? se.mv.length + (se.mv.length === 1 ? ' move' : ' moves') : '', se.nw.length ? se.nw.length + ' new' : ''].filter(Boolean).join(' · ') || 'You moved.';
     else dayLine = selD > today ? "Hasn't happened yet." : selD === today ? 'Nothing yet today. Whenever you are ready.' : 'A rest day. Those count too.';
     const dayFams = se ? Object.keys(se.f).filter((k) => F[k]).sort((p, q) => se.f[q] - se.f[p]).map((k) => ({ name: F[k].name, shape: this.shp(F[k].shape, F[k].color, 12) })) : [];
-    const dayMoves = se ? se.mv.slice(0, 12).map((n) => { const nw = se.nw.indexOf(n) >= 0; return { n: (nw ? '★ ' : '') + n, open: () => this.openMove(n, 'you'), box: 'border:0;padding:4px 8px;font:700 12px Inter Tight,sans-serif;cursor:pointer;' + (nw ? 'background:#FFC20E;color:#161616' : 'background:#F4F4F4;color:#161616') }; }) : [];
+    const dayOrder = se ? se.nw.concat(se.mv.filter((n) => se.nw.indexOf(n) < 0)) : [];
+    const dayMore = dayOrder.length > 4 ? '+' + (dayOrder.length - 4) + ' more' : '';
+    const dayMoves = se ? dayOrder.slice(0, 4).map((n) => { const nw = se.nw.indexOf(n) >= 0; return { n: (nw ? '★ ' : '') + n, open: () => this.openMove(n, 'you'), box: 'border:0;padding:4px 8px;font:700 12px Inter Tight,sans-serif;cursor:pointer;' + (nw ? 'background:#FFC20E;color:#161616' : 'background:#F4F4F4;color:#161616') }; }) : [];
     const reg = {}; let daysMoved = 0;
     for (let k = 0; k < 7; k++) {
       const dt = new Date(Y, Mo, today - k), e = this.dayLog(this.dayKey(dt)); if (!e) continue; daysMoved++;
@@ -1021,14 +1142,22 @@ class Component extends DCLogic {
         count: got.length + '/' + ms.length, open, openAttr: open ? 'true' : 'false',
         toggle: () => this.setState({ collOpen: open ? null : fk }),
         segs: ms.map((n) => ({ s: 'flex:1;height:8px;background:' + (s.tried[n] ? F[fk].color : '#EAEAEA') })),
-        moves: got.map((n) => ({ n, open: () => this.openMove(n, 'you'), box: 'border:0;padding:4px 8px;font:700 12px Inter Tight,sans-serif;background:#F4F4F4;color:#161616;cursor:pointer' }))
-          .concat(ms.length > got.length ? [{ n: (ms.length - got.length) + ' still hiding', open: () => {}, box: 'border:2px dashed #D0D0D0;padding:2px 8px;font:700 12px Inter Tight,sans-serif;background:#FFFFFF;color:#8A8A8A' }] : [])
+        moves: got.map((n) => ({ n, open: () => this.openMove(n, 'you'), box: 'border:0;padding:4px 8px;font:700 12px Inter Tight,sans-serif;background:#F4F4F4;color:#161616;cursor:pointer' })),
+        ready: locked ? [] : ms.filter((n) => !s.tried[n] && MI[n].lvl <= (s.levels[fk] || 0)).slice(0, 6).map((n) => ({ n, open: () => this.openMove(n, 'you'), box: 'border:2px solid ' + F[fk].color + ';padding:2px 8px;font:700 12px Inter Tight,sans-serif;background:#FFFFFF;color:#161616;cursor:pointer' })),
+        ahead: ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)),
+        peekOpen: s.peek === fk && !locked,
+        peekLabel: (() => { const n = ms.filter((x) => !s.tried[x] && MI[x].lvl > (s.levels[fk] || 0)).length; return locked ? n + ' moves unlock with this path' : n ? (s.peek === fk ? 'Hide harder moves' : 'Peek at ' + n + ' harder ' + (n === 1 ? 'move' : 'moves')) : 'Nothing harder left. Wow.'; })(),
+        peekGo: () => { if (!locked) this.setState({ peek: s.peek === fk ? null : fk }); },
+        peekMoves: ms.filter((n) => !s.tried[n] && MI[n].lvl > (s.levels[fk] || 0)).map((n) => ({ n, lvl: ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'][MI[n].lvl], open: () => this.openMove(n, 'you') })),
+        hasReady: !locked && ms.some((n) => !s.tried[n] && MI[n].lvl <= (s.levels[fk] || 0)),
+        readyMore: (() => { const n = ms.filter((x) => !s.tried[x] && MI[x].lvl <= (s.levels[fk] || 0)).length - 6; return n > 0 ? '+' + n + ' more at your level' : ''; })(),
+        hasGot: got.length > 0
       };
     }).filter(Boolean);
-    const lvSum = Object.keys(s.levels).reduce((x, k) => x + (s.levels[k] || 0), 0);
+    const lvSum = this.lvSum();
     const TR = this.tricks(), openT = TR.filter((t) => lvSum >= t[1]), nextT = TR.find((t) => lvSum < t[1]);
     const curT = TR.find((t) => t[0] === s.trickName);
-    const tricks = TR.map((t) => {
+    const tricks = TR.filter((t) => lvSum >= t[1] || t === nextT).map((t) => {
       const on = lvSum >= t[1];
       return { t: on ? t[0] : '?', aria: on ? 'Trick: ' + t[0] : 'Locked trick', isNew: on && t[1] > 0 && !s.seenTricks[t[0]], go: () => (on ? this.doTrick(t[0]) : null),
         box: 'position:relative;height:26px;min-width:26px;padding:0 7px;border:0;font:800 11px Inter Tight,sans-serif;cursor:pointer;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#EFEFEF;color:#B0B0B0') };
@@ -1105,7 +1234,7 @@ class Component extends DCLogic {
       picks: picks.map((n) => ({ n, shape: this.shp(F[MI[n].fam].shape, F[MI[n].fam].color, 18), open: () => this.openMove(n, 'paths') })),
       monthName: MONTHS[Mo] + ' ' + Y,
       dow: ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((x) => ({ t: x })),
-      calCells, dayTitle, dayLine, dayFams, dayMoves,
+      calCells, dayTitle, dayLine, dayFams, dayMoves, dayMore,
       savePoster: () => this.savePoster(),
       bodyFlip: 'position:relative;width:120px;height:236px;animation:' + (side === 'f' ? 'flipA' : 'flipB') + ' .45s cubic-bezier(.2,.9,.3,1.1) both',
       bodyParts, flipBody: () => this.setState({ bodySide: side === 'f' ? 'b' : 'f', region: null }),
@@ -1113,6 +1242,11 @@ class Component extends DCLogic {
       regionName: pretty[region].replace(/^./, (c) => c.toUpperCase()), regionLine,
       regionGoLabel: 'Give your ' + pretty[region] + ' some love · 15 min',
       regionGo: go('session', '#1556C2', { focus: region, mood: 'Surprise', time: 15, energy: 50, swaps: {}, idx: 0, visited: true }),
+      sheetBody: s.sheet === 'body', sheetMoves: s.sheet === 'moves',
+      openBody: () => this.setState({ sheet: 'body' }), openMoves: () => this.setState({ sheet: 'moves' }), closeSheet: () => this.setState({ sheet: null }),
+      foundN, foundTotal: collection.length,
+      bodyBars: ['shoulders', 'chest', 'arms', 'core', 'back', 'hips', 'legs', 'glutes'].map((r) => ({ s: 'flex:1;background:' + (reg[r] ? '#E5282E' : '#E4E4E4') + ';height:' + Math.max(4, Math.min(34, (reg[r] || 0) * 6)) + 'px' })),
+      bodyTileLine: (() => { const ks = Object.keys(reg); if (!ks.length) return 'Nothing yet this week'; const top = ks.sort((p, q) => reg[q] - reg[p])[0]; return 'Most love: ' + pretty[top]; })(),
       collection, collFams, foundCount: foundN + ' of ' + collection.length,
       foundBar: 'display:block;height:100%;background:#161616;width:' + Math.round(foundN / Math.max(1, collection.length) * 100) + '%',
       collectHint: 'Every move you try fills in a bar. Tap a family to see what you found.',
@@ -1140,7 +1274,15 @@ class Component extends DCLogic {
       chFace: this.face('smirk', 34), chFaceDone: this.face('grin', 34),
       shareSession: () => this.shareCard(),
       showWelcome: !(s.safe && s.safe.done),
-      showGuide: !!(s.safe && s.safe.done) && !s.guideDone,
+      showProfile: !!(s.safe && s.safe.done) && !(s.profile && s.profile.done),
+      showGuide: !!(s.safe && s.safe.done) && !!(s.profile && s.profile.done) && !s.guideDone,
+      likeChips: this.likesMap().map((r) => { const on = !!(s.profile.likes || {})[r[0]]; return { t: r[1], on: on ? 'true' : 'false', shape: this.shp(r[4], on ? '#FFFFFF' : r[5], 16), pick: () => { const likes = Object.assign({}, s.profile.likes); if (on) delete likes[r[0]]; else likes[r[0]] = true; this.setState({ profile: Object.assign({}, s.profile, { likes }) }); }, box: 'height:44px;padding:0 12px;display:flex;align-items:center;gap:8px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
+      activeOpts: [['Just starting', 'New to this, or back after a long break'], ['Sometimes', 'I move a few times a month'], ['Most weeks', 'I work out or play sports regularly'], ['A lot', 'Training is part of my life']].map((o, i) => { const on = s.profile.active === i; return { t: o[0], d: o[1], on: on ? 'true' : 'false', pick: () => this.setState({ profile: Object.assign({}, s.profile, { active: i }) }), box: 'width:100%;min-height:52px;padding:6px 12px;text-align:left;font-family:Inter Tight,sans-serif;border:3px solid #161616;display:flex;flex-direction:column;justify-content:center;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
+      profileReady: s.profile.active !== null && s.profile.active !== undefined,
+      profileBtn: 'margin-top:16px;width:100%;height:58px;flex:none;border:0;font:900 20px Inter Tight,sans-serif;' + (s.profile.active !== null && s.profile.active !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#8A8A8A'),
+      profileGo: () => { if (s.profile.active === null || s.profile.active === undefined) return; this.applyProfile(); },
+      editProfile: () => this.setState({ profile: Object.assign({}, s.profile, { done: false }), settingsOpen: false }),
+      profileSummary: (() => { const lk = this.likesMap().filter((r) => (s.profile.likes || {})[r[0]]).map((r) => r[1].toLowerCase()); return lk.length ? 'Into ' + lk.join(', ') : 'Anything goes'; })(),
       g0: (s.guideStep || 0) === 0, g1: s.guideStep === 1, g2: s.guideStep === 2,
       guideDots: [0, 1, 2].map((i) => ({ s: 'display:block;width:' + (i === (s.guideStep || 0) ? 22 : 8) + 'px;height:8px;border-radius:4px;transition:width .3s;background:' + (i === (s.guideStep || 0) ? '#161616' : '#D0D0D0') })),
       guideNext: () => { if ((s.guideStep || 0) >= 2) this.setState({ guideDone: true, guideStep: 0 }); else this.setState({ guideStep: (s.guideStep || 0) + 1 }); },
