@@ -88,6 +88,69 @@ class Component extends DCLogic {
     if (sf.care && (INVERT.indexOf(an) >= 0 || mi.role === 'f' || mi.fam === 'freezes' || mi.lvl >= 3)) return false;
     return true;
   }
+  outfits() { return [[3, 'bandana', 'a bandana'], [10, 'shades', 'sunglasses'], [25, 'party', 'a party hat'], [50, 'crown', 'a crown'], [100, 'cape', 'a cape']]; }
+  noodleSvg(sessions) {
+    const L = Math.min(60, Math.round((sessions || 0) * 1.2)), X = (v) => v + L;
+    const got = this.outfits().filter((o) => (sessions || 0) >= o[0]).map((o) => o[1]);
+    let s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -14 ' + (230 + L) + ' 144">';
+    if (got.indexOf('cape') >= 0) s += '<path d="M' + X(150) + ' 52 L60 40 L48 92 L' + X(140) + ' 74 Z" fill="#FFC20E"/>';
+    s += '<path d="M44 62 L14 34 L50 52 Z" fill="#161616"/><rect x="56" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="78" y="84" width="12" height="26" rx="6" fill="#161616"/>';
+    s += '<rect x="' + X(138) + '" y="84" width="12" height="26" rx="6" fill="#161616"/><rect x="' + X(160) + '" y="84" width="12" height="26" rx="6" fill="#161616"/>';
+    s += '<rect x="40" y="50" width="' + (140 + L) + '" height="44" rx="22" fill="#E5282E"/><rect x="' + X(148) + '" y="50" width="10" height="44" fill="#FFC20E"/>';
+    s += '<circle cx="' + X(176) + '" cy="46" r="24" fill="#E5282E"/><path d="M' + X(188) + ' 38 h22 a10 10 0 0 1 0 20 h-22 z" fill="#E5282E"/><circle cx="' + X(211) + '" cy="46" r="5" fill="#161616"/>';
+    if (got.indexOf('bandana') >= 0) s += '<path d="M' + X(156) + ' 62 L' + X(190) + ' 64 L' + X(170) + ' 84 Z" fill="#1556C2"/>';
+    s += '<ellipse cx="' + X(166) + '" cy="56" rx="8" ry="16" fill="#161616"/>';
+    if (got.indexOf('shades') >= 0) s += '<rect x="' + X(176) + '" y="32" width="18" height="11" rx="3" fill="#161616"/><rect x="' + X(170) + '" y="35" width="8" height="3" fill="#161616"/>';
+    else s += '<circle cx="' + X(184) + '" cy="38" r="3.5" fill="#161616"/>';
+    if (got.indexOf('crown') >= 0) s += '<path d="M' + X(162) + ' 24 L' + X(164) + ' 4 L' + X(171) + ' 14 L' + X(177) + ' 0 L' + X(183) + ' 14 L' + X(190) + ' 4 L' + X(190) + ' 24 Z" fill="#FFC20E" stroke="#161616" stroke-width="3" stroke-linejoin="round"/>';
+    else if (got.indexOf('party') >= 0) s += '<path d="M' + X(166) + ' 24 L' + X(188) + ' 24 L' + X(178) + ' -8 Z" fill="#1556C2"/><circle cx="' + X(178) + '" cy="-9" r="5" fill="#FFC20E"/>';
+    s += '</svg>';
+    return { uri: 'data:image/svg+xml,' + encodeURIComponent(s), w: 230 + L, L };
+  }
+  weekKey(dt) { const d = new Date(dt || new Date()); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+  challenge() {
+    const s = this.state, F = this.fams(), start = this.weekKey();
+    const CH = [
+      { id: 'new', t: 'Try 3 moves you have never done', goal: 3, mood: 'Surprise', count: (e) => e.nw.length },
+      { id: 'dance', t: 'Sneak in 4 dance moves', goal: 4, mood: 'Dance', count: (e) => (e.f.dance || 0) + (e.f.freezes || 0) + (e.f.flow || 0) },
+      { id: 'stretch', t: 'Give stretching some love: 5 stretches', goal: 5, mood: 'Stretch', count: (e) => (e.f.stretch || 0) + (e.f.splits || 0) },
+      { id: 'mix', t: 'Move in 5 different families', goal: 5, mood: 'Surprise', distinct: true },
+      { id: 'kick', t: 'Throw 4 strike moves', goal: 4, mood: 'Strikes', count: (e) => (e.f.strikes || 0) + (e.f.flow || 0) },
+      { id: 'days', t: 'Move on 2 different days', goal: 2, mood: null, days: true }
+    ];
+    const wk = Math.floor(start.getTime() / 6048e5);
+    const c = CH[((wk % CH.length) + CH.length) % CH.length];
+    let n = 0; const fams = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start); d.setDate(d.getDate() + i);
+      const e = this.dayLog(this.dayKey(d)); if (!e) continue;
+      if (c.days) n++; else if (c.distinct) Object.keys(e.f).forEach((k) => { if (F[k]) fams[k] = 1; }); else n += c.count(e);
+    }
+    if (c.distinct) n = Object.keys(fams).length;
+    return Object.assign({}, c, { n: Math.min(n, c.goal), done: n >= c.goal });
+  }
+  shareCard() {
+    const s = this.state, flat = this.flat(), art = this.noodleSvg(s.sessions);
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1350; const g = c.getContext('2d');
+    g.fillStyle = '#FFC20E'; g.fillRect(0, 0, 1080, 1350);
+    g.fillStyle = '#1556C2'; g.beginPath(); g.arc(540, 1350, 380, Math.PI, 0); g.fill();
+    g.fillStyle = '#E5282E'; g.beginPath(); g.arc(1010, 70, 150, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#161616'; g.font = '900 170px "Inter Tight", sans-serif'; g.fillText('NICE', 80, 330); g.fillText('WORK!', 80, 480);
+    g.font = '800 44px "Inter Tight", sans-serif'; g.fillText(s.time + ' MIN  ·  ' + flat.length + ' MOVES', 86, 570);
+    g.font = '700 38px "Inter Tight", sans-serif'; const words = (s.doneNote || '').split(' '); let line = '', y = 650;
+    words.forEach((w) => { if ((line + w).length > 34) { g.fillText(line, 86, y); y += 50; line = ''; } line += w + ' '; }); g.fillText(line, 86, y);
+    g.fillStyle = '#FFFFFF'; g.font = '900 54px "Inter Tight", sans-serif'; g.textAlign = 'center'; g.fillText('Noodle It Out', 540, 1290);
+    const img = new Image();
+    img.onload = () => {
+      const w = 620, h = w * 144 / art.w; g.drawImage(img, 540 - w / 2, 1000 - h, w, h);
+      c.toBlob((blob) => {
+        if (!blob) return; const name = 'noodle-session.png';
+        try { const file = new File([blob], name, { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).catch(() => {}); return; } } catch (e) {}
+        const u = URL.createObjectURL(blob), l = document.createElement('a'); l.href = u; l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+      }, 'image/png');
+    };
+    img.src = art.uri;
+  }
   lvSum() { const L = this.state.levels; return Object.keys(L).reduce((x, k) => x + (L[k] || 0), 0); }
   tricks() {
     return [['Sit', 0, 'trSit', 0.9], ['Wag', 1, 'trWag', 0.8], ['Hop', 2, 'trHop', 1.0], ['Spin', 4, 'trSpin', 0.9], ['Roll over', 6, 'trRoll', 1.1], ['Bow', 9, 'trBow', 1.2], ['Dance', 12, 'trDance', 1.4], ['Handstand', 16, 'trHand', 1.8, '82% 96%'], ['Moonwalk', 20, 'trMoon', 1.6], ['Backflip', 26, 'trFlip', 1.2, '50% 55%'], ['Play dead', 30, 'trDead', 1.8, '50% 60%'], ['Zoomies', 34, 'trZoom', 1.4], ['Sneeze', 38, 'trSneeze', 0.9]];
@@ -1071,6 +1134,11 @@ class Component extends DCLogic {
         this._pk = null; this.setState({ levels: lv, history: {}, log: {}, tried: {}, seen: {}, seenTricks: {}, fb: 0, resetArm: false, selDay: null, setMsg: 'Fresh start. Noodle is ready when you are.' });
       },
       setMsg: s.setMsg,
+      noodleArt: (() => { const n = this.noodleSvg(s.sessions); const w = Math.round(104 * n.w / 230); return 'display:block;width:' + w + 'px;height:' + Math.round(w * 144 / n.w) + 'px;background:url("' + n.uri + '") center/contain no-repeat'; })(),
+      growLine: (() => { const n = this.noodleSvg(s.sessions), next = this.outfits().find((o) => (s.sessions || 0) < o[0]); const pct = Math.round(n.L / 140 * 100); return (pct ? 'Noodle is ' + pct + '% longer than when you met. ' : 'Noodle grows a little every session. ') + (next ? 'Next: ' + next[2] + ' at ' + next[0] + ' sessions.' : 'Fully dressed. Iconic.'); })(),
+      ch: (() => { const c = this.challenge(); return { t: c.t, count: c.n + ' of ' + c.goal, done: c.done, todo: !c.done, segs: Array.from({ length: c.goal }, (_, i) => ({ s: 'flex:1;height:8px;background:' + (i < c.n ? '#0B7A3E' : '#E4E4E4') })), go: () => this.transitionTo('session', '#1556C2', Object.assign({ swaps: {}, idx: 0, visited: true, focus: null }, c.mood ? { mood: c.mood } : {})) }; })(),
+      chFace: this.face('smirk', 34), chFaceDone: this.face('grin', 34),
+      shareSession: () => this.shareCard(),
       showWelcome: !(s.safe && s.safe.done),
       showGuide: !!(s.safe && s.safe.done) && !s.guideDone,
       g0: (s.guideStep || 0) === 0, g1: s.guideStep === 1, g2: s.guideStep === 2,
