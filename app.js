@@ -5,6 +5,7 @@ class Component extends DCLogic {
     this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
     const unlock = () => { this.ensureAudio(); };
     ['pointerdown', 'touchend', 'keydown'].forEach((ev) => document.addEventListener(ev, unlock, { passive: true }));
     this.timer = setInterval(() => this.tick(), 1000);
@@ -197,6 +198,8 @@ class Component extends DCLogic {
       const first = this.likesMap().find((r) => pr.likes[r[0]]);
       if (first) upd.mood = first[3];
       if (pr.likes.cardio) upd.energy = 75; else if (pr.likes.chill) upd.energy = 25;
+      upd.time = [10, 15, 20, 25][pr.active || 0];
+      if (!pr.active) upd.energy = Math.min(upd.energy || 50, 35);
     }
     this._pk = null; this.setState(upd);
   }
@@ -1020,7 +1023,7 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.stones, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
+    const key = JSON.stringify([s0.tiny, this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.stones, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
     if (this._pk === key) return this._pc;
     const R = this.recipe(), target = this.sessTime() * 60, extra = R.map(() => 0);
     const order = [];
@@ -1043,7 +1046,8 @@ class Component extends DCLogic {
       b.moves.pop(); out = out.filter((x) => x.moves.length);
     }
     const over = this.planSecs(out);
-    if (over > target * 1.15) { const f = Math.max(0.55, target / over); out.forEach((b) => b.moves.forEach((m) => { m.secs = Math.max(20, Math.round(m.secs * f / 5) * 5); })); }
+    if (over > target * 1.15) { const f = Math.max(0.55, target / over); out.forEach((b) => b.moves.forEach((m) => { m.secs = Math.max(20, Math.round(m.secs * f / 5) * 5); m.rx = m.secs + ' s, easy pace'; })); }
+    if (s0.tiny) out.forEach((b) => b.moves.forEach((m) => { m.secs = 35; m.rx = m.secs + ' s, easy pace'; }));
     const tot = this.planSecs(out);
     if (tot < target * 0.92) { const f = Math.min(1.6, target / tot); out.forEach((b) => b.moves.forEach((m) => { m.secs = Math.round(m.secs * f / 5) * 5; })); }
     this._pk = key; this._pc = out;
@@ -1054,8 +1058,13 @@ class Component extends DCLogic {
     const h = new Date().getHours();
     return h >= 5 && h < 10 ? 'morning' : h >= 21 || h < 5 ? 'evening' : 'main';
   }
-  sessTime() { const m = this.moment(); return m === 'morning' ? 8 : m === 'midday' ? 6 : m === 'evening' ? 12 : this.state.time; }
+  sessTime() { if (this.state.tiny) return 2; const m = this.moment(); return m === 'morning' ? 8 : m === 'midday' ? 6 : m === 'evening' ? 12 : this.state.time; }
   recipe() {
+    if (this.state.tiny) return [
+      { key: 'tloose', name: 'Loosen up', kind: 'tinyLoose', n: 1, grow: 0 },
+      { key: 'tmove', name: 'One easy move', kind: 'tinyMove', n: 1, grow: 0 },
+      { key: 'tbreathe', name: 'Breathe out', kind: 'gentle', n: 1, grow: 0 }
+    ];
     const mo = this.moment();
     if (mo === 'morning') return [
       { key: 'wake', name: 'Wake up', kind: 'mobility', n: 2, grow: 1 },
@@ -1159,6 +1168,8 @@ class Component extends DCLogic {
         case 'yogaStand': return choose(withAnim(upTo('stretch'), STAND), k, true);
         case 'yogaBalance': return choose(BK.filter((m) => (m.fam === 'balance' && ['singleleg', 'tree'].indexOf(m.anim) >= 0) || m.anim === 'tree' || m.anim === 'dancer').filter((m) => m.lvl <= lv(m.fam) + 1), k);
         case 'yogaFloor': return choose(upTo('stretch').filter((m) => STAND.indexOf(m.anim) < 0).concat(U.splits ? upTo('splits') : []), k, true);
+        case 'tinyLoose': return choose(BK.filter((m) => m.fam === 'mobility' && m.lvl === 0), k);
+        case 'tinyMove': return choose(BK.filter((m) => ['legs', 'push', 'dance', 'core'].indexOf(m.fam) >= 0 && m.lvl === 0 && m.role !== 'f'), k);
         case 'gentle': return choose(BK.filter((m) => m.fam === 'stretch' && m.lvl <= Math.min(1, lv('stretch'))), k, true);
         case 'deskMob': return choose(BK.filter((m) => m.fam === 'mobility' && m.lvl <= 1 && ['jointcircles', 'twistlie', 'catcow', 'wave', 'hipcircle'].indexOf(m.anim) >= 0), k);
         case 'deskStretch': return choose(BK.filter((m) => m.fam === 'stretch' && m.lvl <= 1 && ['armstretch', 'quad', 'calfwall', 'fold', 'lowlunge'].indexOf(m.anim) >= 0), k);
@@ -1520,7 +1531,7 @@ class Component extends DCLogic {
         const shown = p > 0;
         return { l: d[0], v: Math.round(val * p), box: 'display:flex;flex-direction:column;align-items:center;justify-content:center;height:74px;margin:0 ' + (i < 3 ? 3 : 0) + 'px 0 0;background:' + d[1] + ';color:' + d[2] + ';transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s;opacity:' + (shown ? 1 : 0.15) + ';transform:scale(' + (p >= 1 ? 1 : shown ? 1.12 : 0.85) + ')' };
       }),
-      doneNote: s.doneNote || 'That was a good wiggle.', doneFaceSt: this.face(s.doneFace || 'grin', 44),
+      doneNote: (() => { try { const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); const inst = navigator.standalone || matchMedia('(display-mode: standalone)').matches; if (ios && !inst && (s.sessions || 0) <= 3) return 'Tip: tap Share, then Add to Home Screen, so your progress stays safe.'; } catch (e) {} return s.doneNote || 'That was a good wiggle.'; })(), doneFaceSt: this.face(s.doneFace || 'grin', 44),
       showUpNext: !s.askFb && !s.fbMsg,
       askFb: s.askFb, hasFbMsg: !!s.fbMsg && !s.askFb, fbMsg: s.fbMsg,
       lastMove: cur.n,
@@ -1682,7 +1693,8 @@ class Component extends DCLogic {
       energyWrap: 'position:relative;height:44px;--th:' + eCol,
       energyTri: 'display:block;clip-path:polygon(50% 0,100% 100%,0 100%);transition:width .15s,height .15s,background .3s;background:' + eCol + ';height:' + triH + 'px;width:' + Math.round(triH * 1.1) + 'px',
       energyTrack: track(ep, eCol),
-      go: () => this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null }),
+      go: () => this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null, tiny: false }),
+      tinyGo: () => { this._pk = null; this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null, tiny: true }); },
       petHome: () => { this.ensureAudio(); this.sfx('bark'); clearTimeout(this.pt); this.setState({ homePets: s.homePets + 1, petting: true }); this.pt = setTimeout(() => this.setState({ petting: false }), 1300); },
       petting: s.petting,
       petWiggle: 'display:block;transform-origin:50% 100%;' + (s.homePets ? 'animation:' + (s.homePets % 2 ? 'wiggleA' : 'wiggleB') + ' .7s cubic-bezier(.3,.7,.4,1) both' : ''),
@@ -1697,7 +1709,7 @@ class Component extends DCLogic {
       petStyle: s.pets ? 'animation:' + (s.pets % 2 ? 'hop' : 'hopB') + ' .7s cubic-bezier(.3,.7,.4,1) both' : '',
       home: () => this.transitionTo('checkin', '#FFFFFF', { idx: 0 }),
       shuffle: () => this.setState({ seed: s.seed + 1, swaps: {} }),
-      summary: (this.moment() !== 'main' ? { morning: 'Morning wake-up', midday: 'Midday reset', evening: 'Evening wind-down' }[this.moment()] : s.focus ? pretty[s.focus] + ' focus' : s.mood === 'Chill' ? 'Chill day' : energyLabel + ' energy') + ' · ' + flat.length + ' moves' + (s.focus ? '' : ' · ' + (s.mood === 'Surprise' ? 'surprise' : s.mood.toLowerCase())),
+      summary: (s.tiny ? 'Just 2 minutes' : this.moment() !== 'main' ? { morning: 'Morning wake-up', midday: 'Midday reset', evening: 'Evening wind-down' }[this.moment()] : s.focus ? pretty[s.focus] + ' focus' : s.mood === 'Chill' ? 'Chill day' : energyLabel + ' energy') + ' · ' + flat.length + ' moves' + (s.focus ? '' : ' · ' + (s.mood === 'Surprise' ? 'surprise' : s.mood.toLowerCase())),
       blocks,
       start: () => { this.ensureAudio(); this.sfx('start'); }, startGo: () => this.transitionTo('player', '#161616', { lvAtStart: this.lvSum(), triedAtStart: Object.assign({}, s.tried), idx: 0, remaining: per0, paused: false, resting: false, askFb: false, fbMsg: '' }),
       stage: 'position:relative;height:500px;flex:none;overflow:hidden;color:' + (s.resting ? '#161616' : cur.ink) + ';background:' + (s.resting ? '#EDEDED' : cur.color) + ';transition:background .5s,color .5s',
