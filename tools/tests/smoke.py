@@ -4,7 +4,7 @@ import json, os, re, subprocess, sys, time
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 html = open(os.path.join(ROOT, 'app.js')).read()
-KEY = re.search(r"localStorage\.getItem\('([^']+)'\)", html).group(1)
+KEY = re.search(r"'(noodle[^']*-v1)'", html).group(1)
 import socket, urllib.request
 _s = socket.socket(); _s.bind(('127.0.0.1', 0)); PORT = _s.getsockname()[1]; _s.close()
 URL = 'http://127.0.0.1:%d/index.html' % PORT

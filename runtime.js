@@ -76,6 +76,7 @@
     render(h('div', { id: 'dc-root' }, tree), stage);
     if (!mounted) { mounted = true; if (comp.componentDidMount) comp.componentDidMount(); }
     else if (comp.componentDidUpdate) comp.componentDidUpdate();
+    bleedSoon();
   }
   window.bootNoodle = function (Component) { comp = new Component({}); window.__noodle = comp; draw(); };
 
@@ -116,6 +117,37 @@
     stage.style.transform = 'scale(' + s + ')';
     stage.style.left = (sl + Math.max(0, (aw - W * s) / 2)) + 'px';
     stage.style.top = Math.max(0, (window.innerHeight - H * s) / 2) + 'px';
+    var left = parseFloat(stage.style.left), top = parseFloat(stage.style.top);
+    gap = { l: left / s, r: (window.innerWidth - left - W * s) / s, t: top / s, b: (window.innerHeight - top - H * s) / s };
+    bleedSoon();
+  }
+  // Phones are not exactly the app's shape, so the scaled app leaves thin strips at the screen edges.
+  // Colored shapes and bars that touch an edge of the app get pushed or stretched to the real screen edge.
+  var gap = { l: 0, r: 0, t: 0, b: 0 }, bleedQ = false;
+  function bleedSoon() { if (bleedQ) return; bleedQ = true; requestAnimationFrame(function () { bleedQ = false; bleed(); }); }
+  function solid(c) { var m = c && c.match(/rgba?\(([^)]+)\)/); if (!m) return false; var v = m[1].split(',').map(parseFloat); if (v.length > 3 && v[3] < 0.05) return false; return !(v[0] > 250 && v[1] > 250 && v[2] > 250); }
+  function bleed() {
+    var W = stage.offsetWidth, H = stage.offsetHeight, any = gap.l > 0.5 || gap.r > 0.5 || gap.t > 0.5 || gap.b > 0.5;
+    var els = stage.querySelectorAll('#dc-root *');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.offsetParent === null || el.closest('svg') && el.tagName.toLowerCase() !== 'svg') continue;
+      var x = 0, y = 0, n = el;
+      while (n && n !== stage) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+      var w = el.offsetWidth, hh = el.offsetHeight;
+      var L = x <= 1, R = x + w >= W - 1, T = y <= 1, B = y + hh >= H - 1;
+      var key = any && (L || R || T || B) ? [L, R, T, B, gap.l, gap.r, gap.t, gap.b].join() : '';
+      if (el._bk === key) continue;
+      if (!key) { if (el._bk) { el.style.translate = ''; if (el._bs) el.style.boxShadow = ''; el._bs = false; } el._bk = ''; continue; }
+      var cs = getComputedStyle(el), bg = cs.backgroundColor;
+      if (!solid(bg) || w < 8 || hh < 8) { el._bk = key; continue; }
+      if (L && R) {
+        if (cs.boxShadow === 'none' || el._bs) { el.style.boxShadow = (-gap.l) + 'px 0 0 0 ' + bg + ',' + gap.r + 'px 0 0 0 ' + bg + (T ? ',0 ' + (-gap.t) + 'px 0 0 ' + bg : '') + (B ? ',0 ' + gap.b + 'px 0 0 ' + bg : ''); el._bs = true; }
+      } else {
+        el.style.translate = ((L ? -gap.l : R ? gap.r : 0) | 0) + 'px ' + ((T ? -gap.t : B ? gap.b : 0) | 0) + 'px';
+      }
+      el._bk = key;
+    }
   }
   window.addEventListener('resize', fit);window.addEventListener('orientationchange', function(){setTimeout(fit,200);});
   fit();
