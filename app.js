@@ -1614,7 +1614,7 @@ class Component extends DCLogic {
       moCard: (() => {
         const M = { morning: ['Morning wake-up', 'Gentle joints, a little blood flow, one big stretch.', '#FFC20E', '#161616'], midday: ['Midday reset', 'Unstick from the desk. Neck, back, hips, legs.', '#F26A0F', '#161616'], evening: ['Evening wind-down', 'Slow floor stretches to help you sleep.', '#1556C2', '#FFFFFF'] }[this.moment()] || ['', '', '#FFFFFF', '#161616'];
         const fl = this.flat();
-        return { title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], moves: fl.slice(0, 4).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, this.fams()[m.fam].color, 9) })).concat(fl.length > 4 ? [{ n: '+' + (fl.length - 4) + ' more', shape: 'display:none' }] : []) };
+        return { tint: { morning: '#FFF8E2', midday: '#FFF0E6', evening: '#E9F0FC' }[this.moment()] || '#F4F4F4', title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], moves: fl.slice(0, 4).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, this.fams()[m.fam].color, 9) })).concat(fl.length > 4 ? [{ n: '+' + (fl.length - 4) + ' more', shape: 'display:none' }] : []) };
       })(),
       onTime: (e) => this.setState({ time: Number(e.target.value) }),
       onEnergy: (e) => this.setState({ energy: Number(e.target.value) }),
