@@ -1571,21 +1571,27 @@ class Component extends DCLogic {
     });
     const U = this.unlocked(s.levels);
     const LAYOUT = [['push', 0, 0, 170, 150], ['pull', 170, 0, 100, 90], ['freezes', 270, 0, 80, 90], ['dance', 170, 90, 180, 60], ['legs', 0, 150, 110, 150], ['core', 110, 150, 130, 90], ['splits', 240, 150, 110, 90], ['crawls', 110, 240, 90, 60], ['strikes', 200, 240, 150, 60], ['stretch', 0, 300, 150, 170], ['balance', 150, 300, 110, 90], ['flow', 260, 300, 90, 90], ['mobility', 150, 390, 200, 80]];
+    const mine = this.myPaths();
     const cells = LAYOUT.map(([k, x, y, w, h]) => {
-      const box = 'position:absolute;left:' + (x + 3) + 'px;top:' + (y + 3) + 'px;width:' + (w - 6) + 'px;height:' + (h - 6) + 'px;background:#FFFFFF;border:0;padding:0;overflow:hidden;text-align:left;cursor:pointer;font-family:Inter Tight,sans-serif';
-      if (F[k].hidden && !U[k]) return { open: () => this.setState({ hint: 'Something is hiding in here. It smells like ' + F[F[k].parents[0]].name + ' and ' + F[F[k].parents[1]].name + '.' }), aria: 'Locked hidden path', box, fill: 'display:none', shape: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6', name: '', label: 'display:none', lvl: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#D0D0D0', lvlName: '?' };
-      if (!F[k].hidden && F[k].ladder && F[k].ladder.length && !F[k].ladder.some((n) => { const m = this.bank().find((x) => x.n === n); return m && this.safeOK(m); })) return { open: () => this.setState({ hint: 'Resting for now. Nothing in ' + F[k].name + ' fits what you told me is sore.' }), aria: F[k].name + ' is resting', box, fill: 'display:none', shape: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6', name: '', label: 'display:none', lvl: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#D0D0D0', lvlName: '?' };
-      const fm = F[k], lv = s.levels[k], frac = fm.ladder.length ? (this.stone(k) + 1) / fm.ladder.length : (lv + 1) / 5, full = frac >= 1;
+      const pc = (n, t) => (Math.round(n / t * 10000) / 100) + '%';
+      const base = 'position:absolute;left:' + pc(x, 350) + ';top:' + pc(y, 470) + ';width:' + pc(w, 350) + ';height:' + pc(h, 470) + ';box-sizing:border-box;border:3px solid #161616;padding:0;overflow:hidden;text-align:left;cursor:pointer;font-family:Inter Tight,sans-serif;';
+      const box = base + 'background:#FFFFFF';
+      const lock = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6';
+      if (F[k].hidden && !U[k]) return { open: () => this.setState({ hint: 'Something is hiding in here. It smells like ' + F[F[k].parents[0]].name + ' and ' + F[F[k].parents[1]].name + '.' }), aria: 'Locked hidden path', box, shape: lock, name: '', label: 'display:none', stone: 'display:none', stoneName: '' };
+      if (!F[k].hidden && F[k].ladder && F[k].ladder.length && !F[k].ladder.some((n) => { const m = this.bank().find((x) => x.n === n); return m && this.safeOK(m); })) return { open: () => this.setState({ hint: 'Resting for now. Nothing in ' + F[k].name + ' fits what you told me is sore.' }), aria: F[k].name + ' is resting', box, shape: lock, name: '', label: 'display:none', stone: 'display:none', stoneName: '' };
+      const fm = F[k], own = mine.indexOf(k) >= 0, stoneName = own ? (fm.ladder[this.stone(k)] || '') : '';
+      const small = w < 100;
+      const bg = own ? fm.color : 'linear-gradient(' + fm.color + '24,' + fm.color + '24),#FFFFFF';
+      const ink = own ? fm.ink : '#161616';
       return {
         open: () => { const seen = Object.assign({}, s.seen); seen[k] = true; this.setState({ pathOpen: k, seen, hint: '', allStones: false }); this.scrollStone(); },
-        aria: fm.name + ' path',
-        box: box + (fm.hidden && !s.seen[k] ? ';animation:flipIn .7s cubic-bezier(.2,.9,.3,1.2) both' : ''),
-        fill: 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(frac * 100) + '%;background:' + fm.color + ';transition:height .7s cubic-bezier(.3,1.4,.5,1)',
-        shape: 'position:absolute;left:9px;top:9px;' + this.shp(fm.shape, full ? fm.ink : fm.color, 18),
-        name: w < 100 ? ({ crawls: 'Crawls', flow: 'Footwork' }[k] || fm.name) : fm.name,
-        label: (w < 100 ? 'position:absolute;left:9px;right:4px;top:31px;font-size:10px;letter-spacing:.04em;' : 'position:absolute;left:34px;right:6px;top:10px;font-size:11px;letter-spacing:.08em;') + 'font-weight:800;text-transform:uppercase;line-height:1.1;color:' + (full ? fm.ink : '#161616'),
-        lvl: 'position:absolute;left:9px;bottom:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:' + ((frac * h) >= 26 ? fm.ink : '#161616') + ';opacity:' + (h > 70 ? 1 : 0),
-        lvlName: ''
+        aria: fm.name + ' path' + (own ? ', now ' + stoneName : ''),
+        box: base + 'background:' + bg + (fm.hidden && !s.seen[k] ? ';animation:flipIn .7s cubic-bezier(.2,.9,.3,1.2) both' : ''),
+        shape: 'position:absolute;left:9px;top:9px;' + this.shp(fm.shape, own ? fm.ink : fm.color, 18),
+        name: small ? ({ crawls: 'Crawls', flow: 'Footwork' }[k] || fm.name) : fm.name,
+        label: (small ? 'position:absolute;left:9px;right:4px;top:31px;font-size:10px;letter-spacing:.04em;' : 'position:absolute;left:34px;right:6px;top:11px;font-size:11px;letter-spacing:.08em;') + 'font-weight:800;text-transform:uppercase;line-height:1.1;color:' + ink,
+        stone: 'position:absolute;left:9px;right:6px;bottom:8px;font-size:' + (small ? 12 : 16) + 'px;font-weight:900;line-height:1.1;letter-spacing:-.01em;color:' + ink + ';display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:' + (small ? 2 : 3) + ';overflow:hidden;' + (own ? '' : 'display:none'),
+        stoneName
       };
     });
     const pk = s.pathOpen && F[s.pathOpen] ? s.pathOpen : 'push';
@@ -1801,9 +1807,7 @@ class Component extends DCLogic {
       mvFamShape: this.shp(mf.shape, mf.color, 22),
       mvOpenPath: go('paths', '#161616', { pathOpen: mi.fam }),
       closeMove: go(s.moveFrom, s.moveFrom === 'session' ? '#1556C2' : '#FFFFFF'),
-      shelf: this.myPaths().map((k) => { const fm = F[k], i = this.stone(k), fr = fm.ladder.length ? (i + 1) / fm.ladder.length : 0; return { name: fm.name, stone: fm.ladder[i] || '', aria: fm.name + ' path, now ' + (fm.ladder[i] || ''), open: () => { const seen = Object.assign({}, s.seen); seen[k] = true; this.setState({ pathOpen: k, seen, hint: '', allStones: false }); this.scrollStone(); }, shape: this.shp(fm.shape, fm.color, 16), bar: 'display:block;height:5px;background:' + fm.color + ';width:' + Math.max(8, Math.round(fr * 100)) + '%' }; }),
-      hasShelf: this.myPaths().length > 0,
-      moreLabel: s.morePaths ? 'Fewer paths' : 'More paths', moreArrow: s.morePaths ? '–' : '+', toggleMore: () => this.setState({ morePaths: !s.morePaths }), showGrid: !!s.morePaths && !q,
+      showGrid: !q,
       searchOpen: !!s.searchOpen || !!q, toggleSearch: () => this.setState({ searchOpen: !s.searchOpen, query: s.searchOpen ? '' : s.query }),
       query: s.query, onQuery: (e) => this.setState({ query: e.target.value }),
       hasQuery: !!q,
