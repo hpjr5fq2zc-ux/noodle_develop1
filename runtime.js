@@ -113,6 +113,9 @@
     var cs = getComputedStyle(probe), sl = parseFloat(cs.paddingLeft) || 0, sr = parseFloat(cs.paddingRight) || 0;
     var aw = window.innerWidth - sl - sr;
     var s = Math.min(aw / W, window.innerHeight / H);
+    // a taller screen than the app's shape: grow the canvas downward instead of leaving strips above and below
+    H = Math.max(H, Math.floor(window.innerHeight / s));
+    stage.style.setProperty('--sh', H + 'px');
     stage.style.width = W + 'px'; stage.style.height = H + 'px';
     stage.style.transform = 'scale(' + s + ')';
     stage.style.left = (sl + Math.max(0, (aw - W * s) / 2)) + 'px';
@@ -132,29 +135,43 @@
     var els = stage.querySelectorAll('#dc-root *');
     for (var i = 0; i < els.length; i++) {
       var el = els[i];
-      if (el.offsetParent === null || el.closest('svg') && el.tagName.toLowerCase() !== 'svg') continue;
+      if (el.offsetParent === null || (el.closest('svg') && el.tagName.toLowerCase() !== 'svg')) continue;
       var x = 0, y = 0, n = el;
       while (n && n !== stage) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
       var w = el.offsetWidth, hh = el.offsetHeight;
       var L = x <= 1, R = x + w >= W - 1, T = y <= 1, B = y + hh >= H - 1;
-      var key = any && (L || R || T || B) ? [L, R, T, B, gap.l, gap.r, gap.t, gap.b].join() : '';
-      if (el._bk === key) continue;
-      if (!key) { if (el._bk) { el.style.translate = ''; if (el._bs) el.style.boxShadow = ''; el._bs = false; } el._bk = ''; continue; }
-      var cs = getComputedStyle(el), bg = cs.backgroundColor;
-      if (!solid(bg) || w < 8 || hh < 8) { el._bk = key; continue; }
-      // Small decorative shapes slide out to the real edge. Panels, bars and buttons stay put and stretch their color out instead.
-      var deco = el.getAttribute('aria-hidden') === 'true' && w < W * 0.7 && hh < H * 0.7;
-      if (deco) {
-        // shapes that already hang past the edge far enough stay where they are
-        var dx = L ? Math.max(0, gap.l + x) : R ? Math.max(0, gap.r - (x + w - W)) : 0, dy = T ? Math.max(0, gap.t + y) : B ? Math.max(0, gap.b - (y + hh - H)) : 0;
-        el.style.translate = Math.round(L ? -dx : dx) + 'px ' + Math.round(T ? -dy : dy) + 'px';
-      } else if (cs.boxShadow === 'none' || el._bs) {
-        var xs = [0], ys = [0], sh = [];
-        if (L) xs.push(-gap.l); if (R) xs.push(gap.r); if (T) ys.push(-gap.t); if (B) ys.push(gap.b);
-        xs.forEach(function (dx) { ys.forEach(function (dy) { if ((dx || dy) && (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5)) sh.push(Math.round(dx) + 'px ' + Math.round(dy) + 'px 0 0 ' + bg); }); });
-        el.style.boxShadow = sh.join(','); el._bs = true;
+      var want = { translate: '', boxShadow: '', scale: '', transformOrigin: '' };
+      if (any && (L || R || T || B) && w >= 8 && hh >= 8) {
+        var cs = getComputedStyle(el), bg = cs.backgroundColor;
+        if (solid(bg)) {
+          var deco = el.getAttribute('aria-hidden') === 'true' && w < W * 0.7 && hh < H * 0.7;
+          var rounded = ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius'].some(function (k) { return parseFloat(cs[k]) > 2; });
+          if (deco) {
+            // small shapes slide to the real edge (big ones that already hang past it stay put)
+            var dx = L ? Math.max(0, gap.l + x) : R ? Math.max(0, gap.r - (x + w - W)) : 0, dy = T ? Math.max(0, gap.t + y) : B ? Math.max(0, gap.b - (y + hh - H)) : 0;
+            if (dx > 0.5 || dy > 0.5) want.translate = Math.round(L ? -dx : dx) + 'px ' + Math.round(T ? -dy : dy) + 'px';
+          } else if (rounded) {
+            // rounded shapes (the GO dome) stretch a little toward the edge, so no copy shows
+            var ex = (L ? gap.l : 0) + (R ? gap.r : 0), ey = (T ? gap.t : 0) + (B ? gap.b : 0);
+            if (ex > 0.5 || ey > 0.5) {
+              want.scale = (1 + ex / w).toFixed(4) + ' ' + (1 + ey / hh).toFixed(4);
+              want.transformOrigin = (L && R ? '50%' : L ? '100%' : R ? '0' : '50%') + ' ' + (T && B ? '50%' : T ? '100%' : B ? '0' : '50%');
+            }
+          } else if (cs.boxShadow === 'none' || el._bs) {
+            // flat bars and panels paint their color out into the strip
+            var xs = [0], ys = [0], sh = [];
+            if (L) xs.push(-gap.l); if (R) xs.push(gap.r); if (T) ys.push(-gap.t); if (B) ys.push(gap.b);
+            xs.forEach(function (a) { ys.forEach(function (b) { if (Math.abs(a) > 0.5 || Math.abs(b) > 0.5) sh.push(Math.round(a) + 'px ' + Math.round(b) + 'px 0 0 ' + bg); }); });
+            want.boxShadow = sh.join(',');
+          }
+        }
       }
-      el._bk = key;
+      var mine = el._set || {};
+      for (var k in want) {
+        if (want[k]) { if (el.style[k] !== want[k]) el.style[k] = want[k]; mine[k] = 1; }
+        else if (mine[k]) { el.style[k] = ''; delete mine[k]; }
+      }
+      el._set = mine; el._bs = !!want.boxShadow;
     }
   }
   window.addEventListener('resize', fit);window.addEventListener('orientationchange', function(){setTimeout(fit,200);});

@@ -172,7 +172,8 @@ html,body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-w
 button{cursor:pointer}
 body.wide::before{content:"";z-index:-1;position:fixed;left:0;bottom:0;width:18vh;height:9vh;border-radius:18vh 18vh 0 0;background:#1556C2}
 body.wide::after{content:"";z-index:-1;position:fixed;right:0;top:0;width:14vh;height:14vh;border-bottom-left-radius:100%;background:#FFC20E}
-body.wide #dc-root>div{width:844px!important;height:390px!important}
+#dc-root>div:first-child{height:var(--sh,844px)!important}
+body.wide #dc-root>div{width:844px!important;height:var(--sh,390px)!important}
 body.wide .nav{flex-direction:column!important;top:8px!important}
 /* check-in */
 body.wide .ck-red{width:200px!important;height:200px!important;right:-90px!important;top:-110px!important}
@@ -192,7 +193,7 @@ body.wide .ck-mood{left:432px!important;right:auto!important;top:294px!important
 body.wide .ck-tiny{left:80px!important;right:auto!important;width:300px;top:140px!important;text-align:left!important}
 body.wide .ck-go{left:110px!important;width:260px!important;height:130px!important;border-radius:130px 130px 0 0!important;padding-bottom:24px!important}
 body.wide .ck-go span:first-child{font-size:46px!important}
-body.wide .ck-pet{left:192px!important;top:202px!important}
+body.wide .ck-pet{left:192px!important;top:auto!important;bottom:126px!important}
 /* session */
 body.wide .ss{flex-direction:row!important}
 body.wide .ss-head{width:380px;height:100%!important}
@@ -355,7 +356,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <span style="font-size: 56px; font-weight: 900; line-height: .9; letter-spacing: -.03em">GO</span>
     <span style="font-size: 13px; font-weight: 600; margin-top: 4px; color: #DDE7FA">build my session</span>
   </button>
-  <button class="pet ck-pet" onClick="{{petHome}}" aria-label="Pet Noodle" style="position: absolute; left: 147px; top: 640px; width: 96px; height: 62px">
+  <button class="pet ck-pet" onClick="{{petHome}}" aria-label="Pet Noodle" style="position: absolute; left: 147px; bottom: 142px; width: 96px; height: 62px">
    <span style="{{petWiggle}}">
    <svg class="a-peek" width="96" height="62" viewBox="0 0 100 64" aria-hidden="true" style="display: block; overflow: visible">
     <ellipse cx="27" cy="34" rx="8" ry="16" fill="#161616" style="{{earL}}"/>
@@ -931,8 +932,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=58"></script>
-<script src="app.js?v=58"></script>
+<script src="runtime.js?v=59"></script>
+<script src="app.js?v=59"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
