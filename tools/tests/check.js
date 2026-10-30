@@ -97,5 +97,68 @@ if (fs.existsSync(path.join(ROOT, 'gallery.html'))) { const g = fs.readFileSync(
 ok(html.indexOf('fonts.googleapis') < 0, 'no Google Fonts (font is bundled)');
 (sw.match(/'[^']+\.(js|html|png|woff2|webmanifest)'/g) || []).forEach((f) => { const p = f.slice(1, -1); ok(fs.existsSync(path.join(ROOT, p)), 'offline file exists: ' + p); });
 
+
+// ---- 6. comfort stages, hide settings and saved data (batch 1 of v2: the safety net) ----
+section('6. Stages, doorway stones and old saves');
+const visibleFams = Object.keys(F).filter((k) => k !== 'cond' && !F[k].hidden);
+// every visible path has something doable at every comfort stage, also with a sore area or gentle mode
+const SORE = [{}, { wrists: true }, { knees: true }, { back: true }, { shoulders: true }];
+visibleFams.forEach((k) => {
+  for (let stage = 1; stage <= 4; stage++) for (const sf of SORE) for (const care of [false, true]) {
+    const c = fresh({ safe: { done: true, areas: sf, care } });
+    const doable = F[k].ladder.map((n) => BK.find((m) => m.n === n)).filter((m) => m && c.stageOK(m, stage) && c.safeOK(m));
+    // known gap: every push-up variant loads the wrists, so with sore wrists the Push path has no safe stone. The stage rules (next batch) must hide it for those users.
+    if (k === 'push' && sf.wrists) { ok(doable.length === 0, 'known gap (expected): Push has no doable stone with sore wrists'); continue; }
+    ok(doable.length >= 1, k + ': a doable stone at stage ' + stage + (care ? ' (gentle)' : '') + (Object.keys(sf).length ? ' with ' + Object.keys(sf)[0] + ' sore' : ''));
+  }
+  ok(c0.pos(BK.find((m) => m.n === F[k].ladder[0])) === 'up', k + ': first stone is a standing, wall or chair move (no floor)');
+});
+// every Home session still builds for each stage, gentle on and off, and with one whole family hidden (the stage and hide rules are wired in later; this guards them)
+const HIDE = [null].concat(visibleFams);
+let sc = 0;
+for (let stage = 1; stage <= 4; stage++) for (const care of [false, true]) for (const hide of HIDE) for (const mo of ['main', 'morning', 'midday', 'evening']) {
+  const hidden = { fams: {}, moves: {} }; if (hide) hidden.fams[hide] = true;
+  const c = fresh({ stage, hidden, safe: { done: true, areas: {}, care }, moment: mo, sessions: 5 });
+  const tag = 'stage ' + stage + (care ? ' gentle' : '') + ' ' + mo + (hide ? ' hiding ' + hide : '');
+  let fl = []; try { fl = c.flat(); } catch (err) { ok(false, tag + ': building threw ' + err.message); continue; }
+  sc++; ok(fl.length >= 2, tag + ': session has at least 2 moves'); ok(fl.every((m) => c.safeOK(m)), tag + ': session respects the safety check');
+}
+console.log('  built ' + sc + ' stage and hide sessions');
+// an old save (before the ladder change) loads and keeps each saved stone on the same move
+{
+  const oldStones = { core: 4, legs: 2, pull: 3, push: 5, dance: 7 };
+  const m0 = new Comp({}); const got = m0.migrateSave({ stones: Object.assign({}, oldStones), levels: { core: 1 } });
+  ok(F.core.ladder[got.stones.core] === 'Plank', 'old save: core stone stays on Plank');
+  ok(F.legs.ladder[got.stones.legs] === 'Chair squat', 'old save: legs stone stays on Chair squat');
+  ok(F.pull.ladder[got.stones.pull] === 'Towel isometric pull', 'old save: pull stone stays on Towel isometric pull');
+  ok(got.stones.push === 5 && got.stones.dance === 7, 'old save: unchanged paths keep their stones');
+  ok(got.ladV === 2, 'old save is marked as migrated');
+  const again = m0.migrateSave(JSON.parse(JSON.stringify(got)));
+  ok(JSON.stringify(again.stones) === JSON.stringify(got.stones), 'a migrated save is not migrated twice');
+  const noStones = m0.migrateSave({ levels: {} }); ok(noStones.ladV === 2, 'old save with no stones still loads');
+  store['noodle-dev-v1'] = JSON.stringify({ stones: oldStones, levels: { push: 1, core: 1 }, sessions: 4, safe: { done: true, areas: {}, care: false }, guideDone: true, profile: { done: true, likes: {}, active: 1 } });
+  const lc = new Comp({}); let thrown = null; try { lc.componentDidMount(); } catch (e) { thrown = e; }
+  ok(!thrown, 'an old saved file loads without errors'); ok(F.core.ladder[lc.stone('core')] === 'Plank' && lc.state.sessions === 4, 'an old saved file keeps its place after loading');
+  delete store['noodle-dev-v1'];
+}
+
+// ---- 7. report only: lookalike animations and joint limits (listed, never failing) ----
+section('7. Report only (does not fail the checks)');
+{
+  const byAnim = {}; BK.forEach((m) => { (byAnim[m.anim] = byAnim[m.anim] || new Set()).add(m.fam); });
+  const looks = Object.keys(byAnim).filter((a) => byAnim[a].size > 1).map((a) => a + ' (' + [...byAnim[a]].join('+') + ')');
+  console.log('  Animations shared across families: ' + (looks.length ? looks.length + ' -> ' + looks.join(', ') : 'none'));
+  const P = (s) => { const d = {}; (s.match(/[A-Za-z]-?[\d.]+,-?[\d.]+/g) || []).forEach((x) => { const [px, py] = x.slice(1).split(',').map(Number); d[x[0]] = [px, py]; }); return d; };
+  const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
+  const BONES = [['N', 'E', 'upper arm'], ['E', 'W', 'forearm'], ['P', 'K', 'thigh'], ['K', 'F', 'shin'], ['N', 'e', 'upper arm (far)'], ['e', 'w', 'forearm (far)'], ['P', 'k', 'thigh (far)'], ['k', 'f', 'shin (far)']];
+  const probs = [];
+  Object.keys(AN).forEach((k) => {
+    const poses = [AN[k][0], AN[k][1], typeof AN[k][2] === 'string' ? AN[k][2] : null].filter(Boolean).map(P);
+    BONES.forEach(([a, b, nm]) => { const L = poses.filter((d) => d[a] && d[b]).map((d) => dist(d[a], d[b])); if (L.length > 1) { const lo = Math.min(...L), hi = Math.max(...L); if (lo > 3 && hi / lo > 1.3) probs.push(k + ': ' + nm + ' changes length (' + lo.toFixed(0) + ' to ' + hi.toFixed(0) + ')'); } });
+    poses.forEach((d, i) => { if (d.H && d.P && d.K && d.F && Math.abs(d.P[1] - d.F[1]) > 2 * Math.abs(d.P[0] - d.F[0]) && d.H[1] < d.P[1]) { const face = Math.sign((d.N ? d.N[0] : d.H[0]) - d.P[0]) || 0; const t = (d.K[1] - d.P[1]) / (d.F[1] - d.P[1] || 1), lx = d.P[0] + t * (d.F[0] - d.P[0]); if (face && (d.K[0] - lx) * face < -4) probs.push(k + ': knee may bend backward in pose ' + (i + 1)); } });
+  });
+  console.log('  Joint-limit notes: ' + (probs.length ? probs.length + '\n    ' + probs.join('\n    ') : 'none'));
+}
+
 console.log('\n' + (fails ? 'FAILED: ' + fails + ' problems, ' : 'ALL GOOD: ') + passes + ' checks passed');
 process.exit(fails ? 1 : 0);

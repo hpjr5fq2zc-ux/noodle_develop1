@@ -1,8 +1,18 @@
 
+// Keys saved to the phone, backed up and restored. ladV = which version of the path ladders the saved stones refer to.
+const KEEP = ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood', 'ladV'];
+const LAD_VERSION = 2;
+// The ladders as they were at ladV 1: only the paths that changed. Used to keep a saved stone on the same move.
+const LAD_V1 = {
+  pull: ['Prone Y-T-W raises', 'Superman hold', 'Towel pull-apart', 'Towel isometric pull'],
+  legs: ['Glute bridge', 'Calf raise', 'Chair squat', 'Wall sit'],
+  core: ['Dead bug', 'Bird-dog', 'Knee plank', 'Knee side plank', 'Plank', 'Tucked hollow hold', 'Bear plank shoulder taps', 'Side plank', 'Plank shoulder taps', 'Hollow hold', 'Hollow rocks', 'Tuck L-sit on chairs', 'One-leg L-sit on chairs', 'L-sit']
+};
+
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { ladV: LAD_VERSION, hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
@@ -11,11 +21,11 @@ class Component extends DCLogic {
     this.timer = setInterval(() => this.tick(), 1000);
     try { this.demo = /[?&]demo=full/.test(location.search); } catch (e) {}
     if (this.demo) { this.setState(this.demoState()); return; }
-    try { const raw = localStorage.getItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.setState(keep); } } catch (e) {}
+    try { const raw = localStorage.getItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1'); if (raw) { const o = JSON.parse(raw); const keep = {}; KEEP.forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; }); if (keep.history) keep.history = this.cleanHistory(keep.history); if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels); this.migrateSave(keep); this.setState(keep); } } catch (e) {}
   }
   componentDidUpdate() {
     const s = this.state;
-    try { const o = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1', str); this._saved = str; } } catch (e) {}
+    try { const o = {}; KEEP.forEach((k) => { o[k] = s[k]; }); const str = JSON.stringify(o); if (str !== this._saved) { localStorage.setItem(this.demo ? 'noodle-demo-full' : 'noodle-dev-v1', str); this._saved = str; } } catch (e) {}
     const want = s.screen === 'player' && !s.paused;
     try {
       if (want && !this.lock && !this.locking && navigator.wakeLock) { this.locking = true; navigator.wakeLock.request('screen').then((l) => { this.lock = l; this.locking = false; l.addEventListener('release', () => { this.lock = null; }); }).catch(() => { this.locking = false; }); }
@@ -97,6 +107,36 @@ class Component extends DCLogic {
     let top = null; Object.keys(e.f).forEach((x) => { if (!top || e.f[x] > e.f[top]) top = x; });
     const history = Object.assign({}, s.history); if (top) history[k] = top;
     this.setState({ log, history });
+  }
+  // Old saves point at stones by number. When a path's ladder changes, move each saved stone to the same move.
+  migrateSave(keep) {
+    if ((keep.ladV || 1) >= LAD_VERSION) return keep;
+    if (keep.stones) {
+      const F = this.fams(), stones = Object.assign({}, keep.stones);
+      Object.keys(LAD_V1).forEach((k) => {
+        const i = stones[k]; if (i === undefined || i === null || !F[k]) return;
+        const nm = LAD_V1[k][i]; if (!nm) return;
+        const ni = F[k].ladder.indexOf(nm); if (ni >= 0) stones[k] = ni;
+      });
+      keep.stones = stones;
+    }
+    keep.ladV = LAD_VERSION; return keep;
+  }
+  // Where a move is done: 'floor' (lying, kneeling, hands on the floor, upside down) or 'up' (standing, wall, chair, bed edge).
+  pos(m) {
+    const n = m.n || '', an = m.anim || 'stand';
+    if (/^Doorframe row/.test(n)) return 'up';
+    if (/desk row|Desk row|Under-desk|Scapular desk|One-arm row/.test(n)) return 'floor';
+    const FLOOR = ['deadbug', 'birddog', 'plank', 'sideplank', 'kneepush', 'pushup', 'handrelease', 'decline', 'pike', 'ytw', 'superman', 'glutebridge', 'hollow', 'hollowtuck', 'hollowrock', 'lsit', 'bear', 'crab', 'childpose', 'butterfly', 'seatedfold', 'happybaby', 'twistlie', 'catcow', 'pelvictilt', 'pigeon', 'split', 'halfsplit', 'wheel', 'bridge', 'cobra', 'kneel', 'downdog', 'mountain', 'burpee', 'shouldertap', 'frogstand', 'handstand', 'headstand', 'tripodrest', 'tucktripod', 'hsfreeze', 'freeze', 'chairfreeze', 'turtle', 'legup', 'boat', 'lowlunge', 'pikebed', 'wallwalk', 'onearm', 'wristrock', 'sixstep', 'godown', 'hip9090', 'deepsquat', 'row'];
+    return FLOOR.indexOf(an) >= 0 ? 'floor' : 'up';
+  }
+  // Test hook for comfort stages (the stage rules are wired into planning in the next batch). 1 = no floor and Foundation only, 4 = everything.
+  stageOK(m, stage) {
+    const st = stage || 4, mi = this.moveInfo()[m.n]; if (!mi) return true;
+    if (st >= 4) return true;
+    if (st === 1) return mi.lvl === 0 && this.pos(mi) === 'up';
+    if (st === 2) return mi.lvl <= 1;
+    return mi.lvl <= 2 || mi.fam === 'dance' || mi.fam === 'flow';
   }
   safeOK(m) {
     const sf = this.state.safe || {}, ar = sf.areas || {}, mi = this.moveInfo()[m.n];
@@ -418,7 +458,7 @@ class Component extends DCLogic {
   }
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
-    ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { o[k] = s[k]; });
+    KEEP.forEach((k) => { o[k] = s[k]; });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -453,8 +493,9 @@ class Component extends DCLogic {
       r.onload = () => {
         try {
           const o = JSON.parse(r.result); if (!o || o.app !== 'noodle') throw new Error('x');
-          const keep = {}; ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood'].forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
+          const keep = {}; KEEP.forEach((k) => { if (o[k] !== undefined) keep[k] = o[k]; });
           if (keep.levels) keep.levels = Object.assign({}, this.state.levels, keep.levels);
+          this.migrateSave(keep);
           keep.setMsg = 'Welcome back! Your progress is restored.'; this._pk = null; this.setState(keep);
         } catch (e) { this.setState({ setMsg: "That file isn't a Noodle backup." }); }
       };
@@ -544,7 +585,7 @@ class Component extends DCLogic {
       ['Side plank', 'core', 2, 'v', '3 × 30 s per side', 'sideplank', 'Feet stacked, hips high.', 'Hold one straight line.'],
       ['Russian twist', 'core', 2, 'v', '3 × 20', 'twist', 'Lean back about 45 degrees, chest up.', 'Rotate your hands side to side.'],
       ['Plank shoulder taps', 'core', 2, 'v', '3 × 10 per side', 'shouldertap', 'High plank, feet wide.', 'Tap the opposite shoulder without rocking.', ['core', 'shoulders'], []],
-      ['Woodchop', 'core', 2, 'v', '3 × 12 per side', 'woodchop', 'Hands clasped high on one side.', 'Chop down across your body and pivot the back foot.'],
+      ['Woodchop', 'core', 0, 'v', '3 × 12 per side', 'woodchop', 'Hands clasped high on one side.', 'Chop down across your body and pivot the back foot.'],
       ['Tuck L-sit on chairs', 'core', 3, 'm', '3 × 10 s', 'lsit', 'Hands on two chairs, arms locked.', 'Push down and lift your tucked knees.', ['core', 'hips', 'arms'], []],
       ['Bent-knee windshield wipers', 'core', 3, 'v', '3 × 8 per side', 'wipers', 'On your back, arms out, knees up.', 'Lower both knees to one side and back.'],
       ['Hollow rocks', 'core', 3, 'v', '3 × 15', 'hollowrock', 'Hold the hollow shape.', 'Rock gently from shoulders to hips.'],
@@ -905,9 +946,9 @@ class Component extends DCLogic {
     };
     const LAD = {
       push: ['Wall push-up', 'Wide wall push-up', 'Close-hand wall push-up', 'Bed-height incline push-up', 'Incline push-up', 'Knee push-up', 'Push-up negative', 'Push-up', 'Wide push-up', 'Hand-release push-up', 'Diamond push-up', 'Decline push-up', 'Pike push-up', 'Archer push-up', 'Incline one-arm push-up', 'One-arm push-up'],
-      pull: ['Prone Y-T-W raises', 'Superman hold', 'Towel pull-apart', 'Towel isometric pull', 'Reverse snow angel', 'Prone swimmers', 'Doorframe row', 'Under-desk row, knees bent', 'Under-desk row, legs straight', 'Paused desk row', 'Slow-negative desk row', 'Feet-up desk row', 'Archer desk row', 'One-arm row negative', 'One-arm desk row'],
-      legs: ['Glute bridge', 'Calf raise', 'Chair squat', 'Wall sit', 'Bodyweight squat', 'Reverse lunge', 'Split squat', 'Single-leg glute bridge', 'Lateral lunge', 'Bulgarian split squat', 'Cossack squat', 'Pistol squat to the bed', 'Assisted shrimp squat', 'Pistol squat', 'Shrimp squat'],
-      core: ['Dead bug', 'Bird-dog', 'Knee plank', 'Knee side plank', 'Plank', 'Tucked hollow hold', 'Bear plank shoulder taps', 'Side plank', 'Plank shoulder taps', 'Hollow hold', 'Hollow rocks', 'Tuck L-sit on chairs', 'One-leg L-sit on chairs', 'L-sit'],
+      pull: ['Towel pull-apart', 'Towel isometric pull', 'Prone Y-T-W raises', 'Superman hold', 'Reverse snow angel', 'Prone swimmers', 'Doorframe row', 'Under-desk row, knees bent', 'Under-desk row, legs straight', 'Paused desk row', 'Slow-negative desk row', 'Feet-up desk row', 'Archer desk row', 'One-arm row negative', 'One-arm desk row'],
+      legs: ['Chair squat', 'Calf raise', 'Wall sit', 'Glute bridge', 'Bodyweight squat', 'Reverse lunge', 'Split squat', 'Single-leg glute bridge', 'Lateral lunge', 'Bulgarian split squat', 'Cossack squat', 'Pistol squat to the bed', 'Assisted shrimp squat', 'Pistol squat', 'Shrimp squat'],
+      core: ['Woodchop', 'Dead bug', 'Bird-dog', 'Knee plank', 'Knee side plank', 'Plank', 'Tucked hollow hold', 'Bear plank shoulder taps', 'Side plank', 'Plank shoulder taps', 'Hollow hold', 'Hollow rocks', 'Tuck L-sit on chairs', 'One-leg L-sit on chairs', 'L-sit'],
       balance: ['Single-leg stand', 'Heel-to-toe walk', 'Tiptoe balance', 'Eyes-closed single-leg stand', 'Single-leg reach', 'Wall plank walk', 'Frog stand, toes down', 'Frog stand', 'Pike hold on the bed', 'Wall walk-up', 'Wall handstand', 'Wall shoulder taps', 'Wall handstand, 60 s', 'Heel pulls off the wall', 'Kick-up practice', 'Freestanding handstand'],
       dance: ['Bounce and rock', 'Two-step', 'Shoulder isolations', 'Body roll', 'Indian step', 'Cross step', 'Low-impact running man', 'Shuffle running man', 'Controlled go-down', 'Three-step', 'Six-step', 'Kick-outs', 'Baby freeze, toes down', 'Baby freeze', 'Footwork into baby freeze', 'Chair freeze'],
       strikes: ['Stance and jab', 'Guard bounce', 'Jab-cross', 'Hooks and uppercuts', 'Slip and roll', 'Teep push kick', 'Knee strikes', 'Front and round kick', 'Side kick', 'Elbow strikes', 'Kick-punch combo', 'Combos with slips', 'Low switch kick', 'Switch kick combo', 'Full 3-minute rounds'],
