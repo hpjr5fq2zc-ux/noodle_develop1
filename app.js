@@ -1458,7 +1458,7 @@ class Component extends DCLogic {
         box: box + (fm.hidden && !s.seen[k] ? ';animation:flipIn .7s cubic-bezier(.2,.9,.3,1.2) both' : ''),
         fill: 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(frac * 100) + '%;background:' + fm.color + ';transition:height .7s cubic-bezier(.3,1.4,.5,1)',
         shape: 'position:absolute;left:9px;top:9px;' + this.shp(fm.shape, full ? fm.ink : fm.color, 18),
-        name: w < 100 ? ({ crawls: 'Crawls', flow: 'Flow' }[k] || fm.name) : fm.name,
+        name: w < 100 ? ({ crawls: 'Crawls', flow: 'Footwork' }[k] || fm.name) : fm.name,
         label: (w < 100 ? 'position:absolute;left:9px;right:4px;top:31px;font-size:10px;letter-spacing:.04em;' : 'position:absolute;left:34px;right:6px;top:10px;font-size:11px;letter-spacing:.08em;') + 'font-weight:800;text-transform:uppercase;line-height:1.1;color:' + (full ? fm.ink : '#161616'),
         lvl: 'position:absolute;left:9px;bottom:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:' + ((frac * h) >= 26 ? fm.ink : '#161616') + ';opacity:' + (h > 70 ? 1 : 0),
         lvlName: LVL[lv]
