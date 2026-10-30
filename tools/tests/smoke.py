@@ -32,14 +32,8 @@ try:
             step(pg, 'interests', lambda: (pg.locator('.intro').get_by_role('button', name=re.compile('Strength')).first.click(), pg.locator('.intro').get_by_role('button', name=re.compile('Just starting')).first.click(), pg.locator('.intro').get_by_role('button', name='Sounds good').click()))
             for _ in range(5): pg.keyboard.press('Escape')
             pg.evaluate("v=>{const o=JSON.parse(localStorage.getItem(v)||'{}');o.guideDone=true;localStorage.setItem(v,JSON.stringify(o))}", KEY); pg.reload(); pg.wait_for_timeout(800)
-            step(pg, 'change it up', lambda: pg.locator('.ck-tiny').click())
-            for mo in ['Morning', 'Midday', 'Evening', 'Workout']:
-                step(pg, 'session ' + mo, lambda mo=mo: pg.locator('.ck-sheet').get_by_role('button', name=mo, exact=True).click())
-            step(pg, 'where: Desk', lambda: pg.locator('.ck-sheet').get_by_role('button', name='Desk', exact=True).click())
-            step(pg, 'length 5 min', lambda: pg.locator('.ck-sheet').get_by_role('button', name='5 min', exact=True).click())
-            step(pg, 'tune it', lambda: pg.locator('.ck-sheet').get_by_role('button', name=re.compile('^Tune it')).click())
-            step(pg, 'shuffle', lambda: pg.locator('.ck-sheet').get_by_role('button', name='Shuffle', exact=True).click())
-            step(pg, 'close sheet', lambda: pg.locator('.ck-sheet').get_by_role('button', name='Done', exact=True).click())
+            for mo in ['Morning', 'Midday', 'Evening', 'Main']:
+                step(pg, 'session ' + mo, lambda mo=mo: pg.get_by_role('tab', name=mo).click())
             step(pg, 'build session', lambda: pg.locator('.ck-go').click())
             step(pg, 'start player', lambda: pg.get_by_role('button', name=re.compile('^start$', re.I)).click())
             step(pg, 'steps', lambda: (pg.get_by_role('button', name='How', exact=True).first.click(), pg.get_by_role('button', name='Got it').click()))
@@ -48,10 +42,7 @@ try:
             step(pg, 'answer how it felt', lambda: [pg.get_by_role('button', name='Just right').first.click() for _ in [0] if pg.get_by_role('button', name='Just right').count()])
             step(pg, 'end workout', lambda: pg.get_by_role('button', name='End workout').click())
             pg.goto(URL); pg.wait_for_timeout(800)
-            step(pg, 'open sheet', lambda: pg.locator('.ck-tiny').click())
-            step(pg, 'length 2 min', lambda: pg.locator('.ck-sheet').get_by_role('button', name='2 min', exact=True).click())
-            step(pg, 'close sheet', lambda: pg.locator('.ck-sheet').get_by_role('button', name='Done', exact=True).click())
-            step(pg, 'build 2-minute session', lambda: pg.locator('.ck-go').click())
+            step(pg, 'just 2 minutes', lambda: pg.locator('.ck-tiny').click())
             pg.goto(URL); pg.wait_for_timeout(800)
             step(pg, 'paths tab', lambda: pg.get_by_role('button', name='Paths').first.click())
             step(pg, 'open Push path', lambda: pg.get_by_role('button', name=re.compile('^Push path')).click())
@@ -60,7 +51,7 @@ try:
             pg.goto(URL); pg.wait_for_timeout(800)
             step(pg, 'you tab', lambda: pg.get_by_role('button', name='You').first.click())
             for t in ['Month', 'Body', 'Moves', 'Noodle']:
-                step(pg, 'You ' + t, lambda t=t: pg.get_by_role('tab', name=t).click())
+                step(pg, 'You ' + t, lambda t=t: (pg.get_by_role('button', name=t, exact=True).first.click(), pg.get_by_role('button', name='Back to You').click()))
             step(pg, 'settings', lambda: pg.locator('[aria-label*="ettings"]').first.click())
             if errs: problems += [f'{w}x{h} page error: {e}' for e in errs]
             pg.close()

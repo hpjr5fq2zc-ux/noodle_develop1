@@ -82,7 +82,9 @@ const tryRender = (tag, st) => { const c = fresh(st); let v; try { v = c.renderV
 ['checkin', 'session', 'player', 'done', 'paths', 'you'].forEach((sc) => tryRender('screen ' + sc, { screen: sc }));
 ['morning', 'midday', 'main', 'evening'].forEach((mo) => tryRender('check-in ' + mo, { screen: 'checkin', moment: mo }));
 Object.keys(F).forEach((k) => tryRender('path ' + k, { screen: 'paths', pathOpen: k, sessions: 10 }));
-[0, 1, 2, 3].forEach((p) => tryRender('You panel ' + p, { screen: 'you', yPanel: p }));
+[0, 1, 2, 3].forEach((p) => tryRender('You page ' + p, { screen: 'you', yPanel: p, yMenu: false }));
+tryRender('You menu', { screen: 'you' });
+tryRender('You Moves family open', { screen: 'you', yPanel: 3, yMenu: false, collOpen: 'push' });
 tryRender('settings', { screen: 'you', settingsOpen: true });
 tryRender('first launch', { safe: { done: false, areas: {}, care: null }, profile: { done: false, likes: {} } });
 names.forEach((n) => tryRender('move card ' + n, { screen: 'move', moveOpen: n }));
@@ -171,7 +173,7 @@ section('8. Move screen options');
   // time of day
   const t0 = global.Date; const at = (h) => { global.Date = class extends t0 { constructor(...a) { if (a.length) super(...a); else super(2026, 5, 10, h, 0, 0); } }; return fresh({}).moment(); };
   const r = [at(7), at(12), at(16), at(22), at(3)]; global.Date = t0;
-  ok(r.join() === 'morning,midday,main,evening,evening', 'session by time of day (' + r.join() + ')');
+  ok(r.join() === 'morning,main,main,evening,evening', 'session by time of day (' + r.join() + ')');
 }
 
 // ---- 9. Paths and You (batch 4): progress moment, shelf, saved ratings ----
