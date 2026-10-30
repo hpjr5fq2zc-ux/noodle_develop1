@@ -40,6 +40,7 @@ try:
             step(pg, 'answer how it felt', lambda: [pg.get_by_role('button', name='Just right').first.click() for _ in [0] if pg.get_by_role('button', name='Just right').count()])
             step(pg, 'end workout', lambda: pg.get_by_role('button', name='End workout').click())
             pg.goto(URL); pg.wait_for_timeout(800)
+            step(pg, 'main tab', lambda: pg.get_by_role('tab', name='Main').click())
             step(pg, 'just 2 minutes', lambda: pg.locator('.ck-tiny').click())
             pg.goto(URL); pg.wait_for_timeout(800)
             step(pg, 'paths tab', lambda: pg.get_by_role('button', name='Paths').first.click())

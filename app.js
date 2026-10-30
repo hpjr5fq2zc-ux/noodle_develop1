@@ -169,7 +169,7 @@ class Component extends DCLogic {
     g.fillStyle = '#1556C2'; g.beginPath(); g.arc(540, 1350, 380, Math.PI, 0); g.fill();
     g.fillStyle = '#E5282E'; g.beginPath(); g.arc(1010, 70, 150, 0, Math.PI * 2); g.fill();
     g.fillStyle = '#161616'; g.font = '900 170px "Inter Tight", sans-serif'; g.fillText('NICE', 80, 330); g.fillText('WORK!', 80, 480);
-    g.font = '800 44px "Inter Tight", sans-serif'; g.fillText(s.time + ' MIN  ·  ' + flat.length + ' MOVES', 86, 570);
+    g.font = '800 44px "Inter Tight", sans-serif'; const dv = s.doneVals || [this.sessTime(), flat.length]; g.fillText(dv[0] + ' MIN  ·  ' + dv[1] + (dv[1] === 1 ? ' MOVE' : ' MOVES'), 86, 570);
     g.font = '700 38px "Inter Tight", sans-serif'; const words = (s.doneNote || '').split(' '); let line = '', y = 650;
     words.forEach((w) => { if ((line + w).length > 34) { g.fillText(line, 86, y); y += 50; line = ''; } line += w + ' '; }); g.fillText(line, 86, y);
     g.fillStyle = '#FFFFFF'; g.font = '900 54px "Inter Tight", sans-serif'; g.textAlign = 'center'; g.fillText('Noodle It Out', 540, 1290);

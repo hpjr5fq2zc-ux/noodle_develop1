@@ -31,6 +31,8 @@ svg[viewBox="0 0 100 100"][role="img"],.pf{pointer-events:none}
 .anone{opacity:0}.afall1{animation:afA 1.1s cubic-bezier(.5,0,.8,.6) both}.afall2{animation:afB 1.1s cubic-bezier(.5,0,.8,.6) both}
 @keyframes bbA{0%,100%{transform:translateY(0)}30%{transform:translateY(-46px)}55%{transform:translateY(0)}75%{transform:translateY(-14px)}}@keyframes bbB{0%,100%{transform:translateY(0)}30%{transform:translateY(-46px)}55%{transform:translateY(0)}75%{transform:translateY(-14px)}}
 .bbounce1{animation:bbA .9s ease-out}.bbounce2{animation:bbB .9s ease-out}
+/* the app frame clips at the real screen edge, not at its own edge, so colors can reach the corners */
+#dc-root>div:first-child{overflow:visible!important;clip-path:inset(calc(-1*var(--gt,0px)) calc(-1*var(--gr,0px)) calc(-1*var(--gb,0px)) calc(-1*var(--gl,0px)))}
 @keyframes nhopA{0%{transform:translateY(0)}35%{transform:translateY(-9px) rotate(-6deg)}70%{transform:translateY(0) rotate(3deg)}100%{transform:none}}
 @keyframes nhopB{0%{transform:translateY(0)}35%{transform:translateY(-9px) rotate(6deg)}70%{transform:translateY(0) rotate(-3deg)}100%{transform:none}}
 .nhop1{animation:nhopA .45s cubic-bezier(.3,1.4,.5,1)}.nhop2{animation:nhopB .45s cubic-bezier(.3,1.4,.5,1)}
@@ -929,8 +931,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=57"></script>
-<script src="app.js?v=57"></script>
+<script src="runtime.js?v=58"></script>
+<script src="app.js?v=58"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};

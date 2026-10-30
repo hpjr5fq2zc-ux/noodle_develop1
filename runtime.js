@@ -119,6 +119,7 @@
     stage.style.top = Math.max(0, (window.innerHeight - H * s) / 2) + 'px';
     var left = parseFloat(stage.style.left), top = parseFloat(stage.style.top);
     gap = { l: left / s, r: (window.innerWidth - left - W * s) / s, t: top / s, b: (window.innerHeight - top - H * s) / s };
+    ['l', 'r', 't', 'b'].forEach(function (k) { stage.style.setProperty('--g' + k, Math.ceil(gap[k] + 1) + 'px'); });
     bleedSoon();
   }
   // Phones are not exactly the app's shape, so the scaled app leaves thin strips at the screen edges.
@@ -141,10 +142,17 @@
       if (!key) { if (el._bk) { el.style.translate = ''; if (el._bs) el.style.boxShadow = ''; el._bs = false; } el._bk = ''; continue; }
       var cs = getComputedStyle(el), bg = cs.backgroundColor;
       if (!solid(bg) || w < 8 || hh < 8) { el._bk = key; continue; }
-      if (L && R) {
-        if (cs.boxShadow === 'none' || el._bs) { el.style.boxShadow = (-gap.l) + 'px 0 0 0 ' + bg + ',' + gap.r + 'px 0 0 0 ' + bg + (T ? ',0 ' + (-gap.t) + 'px 0 0 ' + bg : '') + (B ? ',0 ' + gap.b + 'px 0 0 ' + bg : ''); el._bs = true; }
-      } else {
-        el.style.translate = ((L ? -gap.l : R ? gap.r : 0) | 0) + 'px ' + ((T ? -gap.t : B ? gap.b : 0) | 0) + 'px';
+      // Small decorative shapes slide out to the real edge. Panels, bars and buttons stay put and stretch their color out instead.
+      var deco = el.getAttribute('aria-hidden') === 'true' && w < W * 0.7 && hh < H * 0.7;
+      if (deco) {
+        // shapes that already hang past the edge far enough stay where they are
+        var dx = L ? Math.max(0, gap.l + x) : R ? Math.max(0, gap.r - (x + w - W)) : 0, dy = T ? Math.max(0, gap.t + y) : B ? Math.max(0, gap.b - (y + hh - H)) : 0;
+        el.style.translate = Math.round(L ? -dx : dx) + 'px ' + Math.round(T ? -dy : dy) + 'px';
+      } else if (cs.boxShadow === 'none' || el._bs) {
+        var xs = [0], ys = [0], sh = [];
+        if (L) xs.push(-gap.l); if (R) xs.push(gap.r); if (T) ys.push(-gap.t); if (B) ys.push(gap.b);
+        xs.forEach(function (dx) { ys.forEach(function (dy) { if ((dx || dy) && (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5)) sh.push(Math.round(dx) + 'px ' + Math.round(dy) + 'px 0 0 ' + bg); }); });
+        el.style.boxShadow = sh.join(','); el._bs = true;
       }
       el._bk = key;
     }
