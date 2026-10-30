@@ -241,13 +241,21 @@ body.wide .pd-btns button:first-child{border-width:2px!important}
 body.wide .mc{flex-direction:row!important}
 body.wide .mc-stage{width:420px;height:100%!important}
 body.wide .yo-scroll{left:84px!important;top:84px!important;padding:0 24px 24px 0!important}
-body.wide .gd{padding:18px 28px 18px 28px!important}
-body.wide .gd-step{display:grid;grid-template-columns:330px 1fr;grid-template-rows:auto auto;column-gap:30px;align-content:center}
-body.wide .gd-step h1{align-self:end}
-body.wide .gd-step p{align-self:start}
-body.wide .gd-art{grid-row:1/3;height:250px!important}
-body.wide .gd-step h1{margin-top:0!important}
 body.wide .wl{padding:20px 28px 24px 96px!important}
+body.wide .wsafe{display:grid!important;grid-template-columns:230px 1fr;column-gap:32px;align-items:center}
+body.wide .wsafe .ws-l h1{font-size:40px!important}
+body.wide .wsafe .ws-r>h2:first-child{margin-top:0!important}
+body.wide .intro.wsafe .ws-l h1{margin-top:0!important;font-size:40px!important}
+body.wide .intro.wsafe .ws-r>div:first-child{margin-top:0!important}
+body.wide .intro.wsafe .ws-r button{min-height:0!important}
+body.wide .intro.wsafe .ws-r>div:first-child button{height:34px!important;font-size:13px!important}
+body.wide .intro.wsafe .ws-r>div:first-child{gap:5px!important}
+body.wide .intro.wsafe .ws-r>div:nth-child(3) button{min-height:44px!important;padding:3px 10px!important}
+body.wide .intro.wsafe .ws-r>p{display:none}
+body.wide .intro.wsafe .ws-r>button:last-child{margin-top:10px!important;height:48px!important}
+body.wide .intro.wsafe .ws-r h2{margin-top:12px!important}
+body.wide .intro.wsafe .ws-r p{margin-top:6px!important}
+body.wide .wsafe .ws-r button:last-child{margin-top:12px!important;height:52px!important}
 body.wide .yo-gear{right:auto!important;left:200px!important;top:24px!important}
 body.wide .yo-cal>button{height:30px!important}
 body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px}
@@ -415,6 +423,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
   </header>
 
   <div class="scroll" style="flex: 1; overflow-y: auto; padding: 8px 0 160px; scrollbar-width: none">
+    <sc-if value="{{hasHideNote}}" hint-placeholder-val="{{ false }}"><p class="a-up" style="margin: 0 20px 4px; font-size: 14px; font-weight: 700">{{hideNote}}</p></sc-if>
     <sc-for list="{{blocks}}" as="b" hint-placeholder-count="4">
       <section class="a-right" style="{{b.delay}}">
         <div style="display: flex; align-items: center; gap: 10px; margin: 8px 20px 0; padding: 12px 0 6px; border-top: 3px solid #161616">
@@ -427,7 +436,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
             <span style="width: 22px; flex: none; display: flex; justify-content: center"><span style="{{mv.shape}}"></span></span>
             <div style="flex: 1; min-width: 0">
               <button onClick="{{mv.open}}" style="border: 0; background: transparent; padding: 0; text-align: left; font: 700 17px Inter Tight, sans-serif; color: #161616; text-decoration: underline; text-decoration-color: #E2E2E2; text-decoration-thickness: 2px; text-underline-offset: 4px">{{mv.n}}</button>
-              <p style="margin: 1px 0 0; font-size: 13px; color: #595959">{{mv.rx}}</p>
+              <p style="margin: 1px 0 0; font-size: 13px; color: #595959">{{mv.rx}} <sc-if value="{{mv.canHide}}" hint-placeholder-val="{{ true }}"><button onClick="{{mv.hide}}" aria-label="Hide {{mv.n}}: not for me" style="border: 0; background: transparent; padding: 8px 0 8px 8px; font: 700 12px Inter Tight, sans-serif; color: #595959; text-decoration: underline; text-underline-offset: 3px">Not for me</button></sc-if></p>
             </div>
             <button class="quiet" onClick="{{mv.swap}}" aria-label="{{mv.swapLabel}}" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #E2E2E2; background: #FFFFFF; color: #161616; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></button>
           </div>
@@ -505,6 +514,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <sc-if value="{{askFb}}" hint-placeholder-val="{{ false }}">
       <div class="a-up" style="display: flex; flex-direction: column; align-items: center; gap: 8px">
         <p style="margin: 0; font-size: 14px; font-weight: 700">How was {{lastMove}}?</p>
+        <sc-if value="{{fbHint}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 12px; color: #595959; text-align: center">Easy moves you up a step. Hard eases off. I remember.</p></sc-if>
         <div style="display: flex; gap: 8px">
           <button onClick="{{fbEasy}}" style="height: 44px; padding: 0 12px 0 8px; border: 3px solid #161616; background: #FFFFFF; font: 800 14px Inter Tight, sans-serif; color: #161616; display: flex; align-items: center; gap: 6px"><span style="{{faceEasy}}"></span>Easy</button>
           <button onClick="{{fbRight}}" style="height: 44px; padding: 0 12px 0 8px; border: 3px solid #161616; background: #FFC20E; font: 800 14px Inter Tight, sans-serif; color: #161616; display: flex; align-items: center; gap: 6px"><span style="{{faceRight}}"></span>Just right</button>
@@ -671,6 +681,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
       <sc-if value="{{hasEasier}}" hint-placeholder-val="{{ true }}"><button onClick="{{openEasier}}" style="min-height: 60px; border: 3px solid #161616; background: #FFFFFF; padding: 8px 10px; text-align: left; display: flex; flex-direction: column; gap: 2px; font-family: Inter Tight, sans-serif; color: #161616"><span style="font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #595959">Easier</span><span style="font-size: 14px; font-weight: 800; line-height: 1.15">{{mvEasier}}</span></button></sc-if>
       <sc-if value="{{hasHarder}}" hint-placeholder-val="{{ true }}"><button onClick="{{openHarder}}" style="min-height: 60px; border: 3px solid #161616; background: #161616; padding: 8px 10px; text-align: left; display: flex; flex-direction: column; gap: 2px; font-family: Inter Tight, sans-serif; color: #FFFFFF"><span style="font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #757575">Harder</span><span style="font-size: 14px; font-weight: 800; line-height: 1.15">{{mvHarder}}</span></button></sc-if>
     </div>
+    <sc-if value="{{canHideThis}}" hint-placeholder-val="{{ true }}"><button onClick="{{hideThis}}" style="margin-top: 10px; border: 0; background: transparent; padding: 10px 0; font: 700 13px Inter Tight, sans-serif; color: #595959; text-decoration: underline; text-underline-offset: 3px">Not for me</button></sc-if>
     <button onClick="{{mvOpenPath}}" style="margin-top: 16px; width: 100%; height: 54px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 12px; padding: 0 14px; font: 800 15px Inter Tight, sans-serif; color: #161616"><span style="{{mvFamShape}}"></span>See the {{mvFam.name}} path</button>
     </div></sc-if>
   </div>
@@ -806,34 +817,45 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
       <h1 style="margin: 0; font-size: 44px; font-weight: 900; letter-spacing: -.04em">Settings</h1>
       <button onClick="{{closeSettings}}" aria-label="Close settings" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: #161616; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <div style="margin-top: 14px; border-top: 3px solid #161616">
-      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Calm mode (less motion)</span><button role="switch" aria-checked="{{calmOn}}" aria-label="Calm mode (less motion)" onClick="{{toggleCalm}}" style="{{calmTrack}}"><span style="{{calmKnob}}"></span></button></div>
-      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds <button onClick="{{testSound}}" style="margin-left: 8px; border: 0; background: #F4F4F4; padding: 4px 8px; font: 800 11px Inter Tight, sans-serif; color: #161616">Test</button></span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
-      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Noodle chatter</span><button role="switch" aria-checked="{{chatterOn}}" aria-label="Noodle chatter" onClick="{{toggleChatter}}" style="{{chatterTrack}}"><span style="{{chatterKnob}}"></span></button></div>
-      <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
-        <span style="font-size: 16px; font-weight: 700">Daily reminder in your calendar</span>
-        <div style="margin-top: 8px; display: flex; gap: 6px">
-          <sc-for list="{{calOpts}}" as="co" hint-placeholder-count="3"><button onClick="{{co.pick}}" style="{{co.box}}">{{co.t}}</button></sc-for>
-        </div>
+    <h2 style="margin: 24px 0 0; padding-top: 12px; border-top: 3px solid #161616; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Comfort and safety</h2>
+    <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
+      <span style="font-size: 16px; font-weight: 700">Comfort stage</span>
+      <div style="margin-top: 8px; display: flex; gap: 6px">
+        <sc-for list="{{stageOpts}}" as="so" hint-placeholder-count="4"><button onClick="{{so.pick}}" aria-pressed="{{so.on}}" style="{{so.box}}">{{so.t}}</button></sc-for>
       </div>
+      <p style="margin: 8px 0 0; font-size: 12px; color: #595959; line-height: 1.4">{{stageNote}}</p>
+    </div>
+    <button onClick="{{openSafety}}" style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Safety check<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{safetySummary}}</span></span><span aria-hidden="true">→</span></button>
+    <button onClick="{{editProfile}}" style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Your interests<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{profileSummary}}</span></span><span aria-hidden="true">→</span></button>
+    <button onClick="{{toggleHidden}}" aria-expanded="{{hiddenOpen}}" style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 52px; border: 0; border-bottom: 2px solid #EFEFEF; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Hidden<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{hiddenSummary}}</span></span><span aria-hidden="true">{{hiddenArrow}}</span></button>
+    <sc-if value="{{hiddenShow}}" hint-placeholder-val="{{ false }}"><div class="a-up" style="padding: 4px 0 6px; border-bottom: 2px solid #EFEFEF">
+      <sc-for list="{{hiddenList}}" as="hm" hint-placeholder-count="2"><div style="display: flex; align-items: center; justify-content: space-between; min-height: 44px"><span style="font-size: 15px; font-weight: 700">{{hm.n}}</span><button onClick="{{hm.back}}" style="height: 36px; padding: 0 12px; border: 3px solid #161616; background: #FFFFFF; font: 800 13px Inter Tight, sans-serif; color: #161616">Bring back</button></div></sc-for>
+    </div></sc-if>
+    <h2 style="margin: 24px 0 0; padding-top: 12px; border-top: 3px solid #161616; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Sessions</h2>
       <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
         <span style="font-size: 16px; font-weight: 700">Rest between moves</span>
         <div style="margin-top: 8px; display: flex; gap: 6px">
           <sc-for list="{{restOpts}}" as="ro" hint-placeholder-count="4"><button onClick="{{ro.pick}}" aria-pressed="{{ro.on}}" style="{{ro.box}}">{{ro.t}}</button></sc-for>
         </div>
       </div>
-    </div>
-    <h2 style="margin: 22px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Your progress</h2>
-    <p style="margin: 4px 0 0; font-size: 13px; color: #595959; line-height: 1.35">It lives only on this phone. Save a backup now and then so you never lose it.</p>
+      <div style="padding: 12px 0; border-bottom: 2px solid #EFEFEF">
+        <span style="font-size: 16px; font-weight: 700">Add a daily reminder to your calendar</span>
+        <div style="margin-top: 8px; display: flex; gap: 6px">
+          <sc-for list="{{calOpts}}" as="co" hint-placeholder-count="3"><button onClick="{{co.pick}}" style="{{co.box}}">{{co.t}}</button></sc-for>
+        </div>
+      </div>
+    <h2 style="margin: 24px 0 0; padding-top: 12px; border-top: 3px solid #161616; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Look and sound</h2>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Calm mode (less motion)</span><button role="switch" aria-checked="{{calmOn}}" aria-label="Calm mode (less motion)" onClick="{{toggleCalm}}" style="{{calmTrack}}"><span style="{{calmKnob}}"></span></button></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Sounds <button onClick="{{testSound}}" style="margin-left: 8px; border: 0; background: #F4F4F4; padding: 4px 8px; font: 800 11px Inter Tight, sans-serif; color: #161616">Test</button></span><button role="switch" aria-checked="{{soundOn}}" aria-label="Sounds" onClick="{{toggleSound}}" style="{{soundTrack}}"><span style="{{soundKnob}}"></span></button></div>
+      <div style="display: flex; align-items: center; justify-content: space-between; height: 52px; border-bottom: 2px solid #EFEFEF"><span style="font-size: 16px; font-weight: 700">Noodle chatter</span><button role="switch" aria-checked="{{chatterOn}}" aria-label="Noodle chatter" onClick="{{toggleChatter}}" style="{{chatterTrack}}"><span style="{{chatterKnob}}"></span></button></div>
+    <h2 style="margin: 24px 0 0; padding-top: 12px; border-top: 3px solid #161616; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Your data</h2>
+    <p style="margin: 8px 0 0; font-size: 13px; color: #595959; line-height: 1.35">It lives only on this phone. {{backupNote}}</p>
     <div style="margin-top: 10px; display: flex; gap: 8px">
       <button onClick="{{backup}}" style="flex: 1; height: 50px; border: 0; background: #1556C2; color: #FFFFFF; font: 800 14px Inter Tight, sans-serif">Save backup</button>
       <button onClick="{{restore}}" style="flex: 1; height: 50px; border: 3px solid #161616; background: #FFFFFF; color: #161616; font: 800 14px Inter Tight, sans-serif">Restore</button>
     </div>
     <button onClick="{{resetAll}}" style="{{resetBox}}">{{resetLabel}}</button>
     <p style="margin: 10px 0 0; font-size: 13px; font-weight: 700; min-height: 18px">{{setMsg}}</p>
-    <button onClick="{{editProfile}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 56px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Your interests<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{profileSummary}}</span></span><span aria-hidden="true">→</span></button>
-    <button onClick="{{replayGuide}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; height: 50px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left">How Noodle works<span aria-hidden="true">→</span></button>
-    <button onClick="{{openSafety}}" style="margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: space-between; min-height: 56px; border: 0; border-top: 3px solid #161616; background: #FFFFFF; padding: 6px 0; font: 800 15px Inter Tight, sans-serif; color: #161616; text-align: left"><span>Safety check<span style="display: block; font-size: 12px; font-weight: 600; color: #595959; margin-top: 2px">{{safetySummary}}</span></span><span aria-hidden="true">→</span></button>
     <p style="margin: 6px 0 0; font-size: 12px; color: #595959; line-height: 1.4">Noodle is for general fitness and fun, not medical advice. A little soreness the next day is normal. Stop if anything hurts, feels sharp, or makes you dizzy.</p>
     <a href="gallery.html" style="margin-top: 14px; display: flex; align-items: center; justify-content: space-between; height: 50px; border-top: 3px solid #161616; font: 800 15px Inter Tight, sans-serif; color: #161616; text-decoration: none">Check all animations<span aria-hidden="true">→</span></a>
   </div>
@@ -842,10 +864,13 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </sc-if>
 
 <sc-if value="{{showProfile}}" hint-placeholder-val="{{ false }}">
-  <div class="a-right wl intro" style="position: absolute; inset: 0; z-index: 29; background: #FFFFFF; overflow-y: auto; overflow-x: hidden; padding: 28px 22px 30px; box-sizing: border-box">
+  <div class="a-right wl intro wsafe" style="position: absolute; inset: 0; z-index: 29; background: #FFFFFF; overflow-y: auto; overflow-x: hidden; padding: 28px 22px 30px; box-sizing: border-box">
     <div aria-hidden="true" style="position: absolute; left: -50px; top: -60px; width: 160px; height: 160px; border-radius: 50%; background: #1556C2"></div>
+    <div class="ws-l">
     <h1 style="position: relative; margin: 70px 0 0; font-size: 44px; font-weight: 900; line-height: .9; letter-spacing: -.045em">What are<br>you into?</h1>
     <p style="margin: 10px 0 0; font-size: 15px; line-height: 1.4">Pick any. Or none!</p>
+    </div>
+    <div class="ws-r">
     <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px">
       <sc-for list="{{likeChips}}" as="lc" hint-placeholder-count="7"><button onClick="{{lc.pick}}" aria-pressed="{{lc.on}}" style="{{lc.box}}"><span style="{{lc.shape}}"></span>{{lc.t}}</button></sc-for>
     </div>
@@ -855,69 +880,25 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     </div>
     <p style="margin: 10px 0 0; font-size: 12px; color: #595959; line-height: 1.4">You can change this later.</p>
     <button onClick="{{profileGo}}" style="{{profileBtn}}">Sounds good</button>
-  </div>
-</sc-if>
-
-<sc-if value="{{showGuide}}" hint-placeholder-val="{{ false }}">
-  <div class="a-screen gd" style="position: absolute; inset: 0; z-index: 29; background: #FFFFFF; display: flex; flex-direction: column; padding: 26px 24px 26px; box-sizing: border-box; overflow: hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center">
-      <div style="display: flex; gap: 6px"><sc-for list="{{guideDots}}" as="gdd" hint-placeholder-count="3"><span style="{{gdd.s}}"></span></sc-for></div>
-      <button onClick="{{guideSkip}}" style="border: 0; background: transparent; padding: 8px 0; font: 800 14px Inter Tight, sans-serif; color: #595959">Skip</button>
     </div>
-    <div class="gd-body" style="flex: 1; display: flex; flex-direction: column; justify-content: center">
-    <sc-if value="{{g0}}" hint-placeholder-val="{{ true }}">
-      <div class="a-right gd-step">
-        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; overflow: hidden">
-          <div style="position: absolute; left: 22px; top: 26px; right: 22px"><span style="display: block; font-size: 30px; font-weight: 900">30 <small style="font-size: 12px; color: #595959">min</small></span><span style="display: block; margin-top: 6px; height: 8px; border-radius: 4px; background: linear-gradient(to right,#E5282E 45%,#DADADA 45%)"></span></div>
-          <div style="position: absolute; left: 22px; top: 96px; display: flex; gap: 10px; align-items: flex-end"><span style="display: block; width: 30px; height: 15px; border-radius: 15px 15px 0 0; background: #1556C2"></span><span style="display: block; width: 26px; height: 26px; border-radius: 50%; background: #E5282E"></span><span style="display: block; width: 26px; height: 26px; border-top-right-radius: 100%; background: #FFC20E"></span><span style="display: block; width: 26px; height: 26px; clip-path: polygon(0 100%,100% 0,100% 100%); background: #161616"></span></div>
-          <div class="gd-go" style="position: absolute; left: 50%; bottom: 0; width: 170px; height: 85px; margin-left: -85px; border-radius: 85px 85px 0 0; background: #1556C2; color: #FFFFFF; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px; box-sizing: border-box; font-size: 34px; font-weight: 900">GO</div>
-        </div>
-        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tell me how<br>you feel.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Slide, pick a mood, press GO. I pick the moves!</p>
-      </div>
-    </sc-if>
-    <sc-if value="{{g1}}" hint-placeholder-val="{{ false }}">
-      <div class="a-right gd-step">
-        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px">
-          <p style="margin: 0; font-size: 15px; font-weight: 800">How was Push-up?</p>
-          <div style="display: flex; gap: 8px">
-            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gEasy}}"></span>Easy</span>
-            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFC20E; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gRight}}"></span>Just right</span>
-            <span style="height: 46px; padding: 0 10px 0 6px; border: 3px solid #161616; background: #FFFFFF; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px"><span style="{{gHard}}"></span>Hard</span>
-          </div>
-          <p class="gd-up" style="margin: 0; font-size: 14px; font-weight: 800; color: #0B7A3E">▲ Push moves up a step</p>
-        </div>
-        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Tap, and I<br>level you up.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">After a move, tell me how it felt. I remember.</p>
-      </div>
-    </sc-if>
-    <sc-if value="{{g2}}" hint-placeholder-val="{{ false }}">
-      <div class="a-right gd-step">
-        <div class="gd-art" style="position: relative; height: 230px; background: #F4F4F4; display: flex; align-items: center; justify-content: center; gap: 26px">
-          <div style="width: 120px; height: 150px; background: #161616; display: grid; grid-template-columns: 3fr 2fr; grid-template-rows: 1fr 1fr 1fr; gap: 4px; padding: 4px; box-sizing: border-box"><span style="background: #E5282E; grid-row: span 2"></span><span style="background: #1556C2"></span><span style="background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #C8C8C8; font-size: 20px">?</span><span style="background: #FFC20E"></span><span style="background: #F26A0F"></span></div>
-          <span style="{{gGrin}}"></span>
-        </div>
-        <h1 style="margin: 22px 0 0; font-size: 38px; font-weight: 900; line-height: .95; letter-spacing: -.04em">Paths, secrets<br>and tricks.</h1>
-        <p style="margin: 10px 0 0; font-size: 16px; line-height: 1.4">Paths are where moves get harder, one stone at a time. Some are hidden! And when you level up, I learn tricks.</p>
-      </div>
-    </sc-if>
-    </div>
-    <button onClick="{{guideNext}}" style="height: 58px; flex: none; border: 0; background: #161616; color: #FFFFFF; font: 900 20px Inter Tight, sans-serif">{{guideNextLabel}}</button>
   </div>
 </sc-if>
 
 <sc-if value="{{showWelcome}}" hint-placeholder-val="{{ false }}">
-  <div class="a-screen wl" style="position: absolute; inset: 0; z-index: 30; background: #FFFFFF; overflow-y: auto; overflow-x: hidden; padding: 28px 22px 30px; box-sizing: border-box">
+  <div class="a-screen wl wsafe" style="position: absolute; inset: 0; z-index: 30; background: #FFFFFF; overflow-y: auto; overflow-x: hidden; padding: 28px 22px 30px; box-sizing: border-box">
     <div aria-hidden="true" style="position: absolute; right: -60px; top: -70px; width: 200px; height: 200px; border-radius: 50%; background: #FFC20E"></div>
+    <div class="ws-l">
     <svg width="96" height="62" viewBox="0 0 100 64" aria-hidden="true" style="position: relative; display: block; overflow: visible"><ellipse cx="27" cy="34" rx="8" ry="16" fill="#161616"/><ellipse cx="73" cy="34" rx="8" ry="16" fill="#161616"/><circle cx="50" cy="30" r="24" fill="#E5282E"/><circle cx="33" cy="36" r="4" fill="#F6A5A9"/><circle cx="67" cy="36" r="4" fill="#F6A5A9"/><ellipse cx="50" cy="42" rx="12" ry="9" fill="#FFC20E"/><circle cx="50" cy="37" r="4.5" fill="#161616"/><circle cx="41" cy="25" r="3.5" fill="#161616"/><circle cx="59" cy="25" r="3.5" fill="#161616"/></svg>
     <h1 style="position: relative; margin: 14px 0 0; font-size: 48px; font-weight: 900; line-height: .9; letter-spacing: -.045em">Hi, I'm<br>Noodle.</h1>
-    <p style="position: relative; margin: 12px 0 0; font-size: 15px; line-height: 1.4">Hi! Anything I should know before we wiggle?</p>
-    <h2 style="margin: 22px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Anything sore or injured right now?</h2>
+    <p style="position: relative; margin: 12px 0 0; font-size: 15px; line-height: 1.4">Anything I should know before we wiggle?</p>
+    </div>
+    <div class="ws-r">
+    <h2 style="margin: 22px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959">Anything sore right now?</h2>
     <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px">
       <sc-for list="{{safeAreas}}" as="sa" hint-placeholder-count="4"><button onClick="{{sa.pick}}" aria-pressed="{{sa.on}}" style="{{sa.box}}">{{sa.t}}</button></sc-for>
     </div>
     <p style="margin: 6px 0 0; font-size: 12px; color: #595959">Tap any that apply. Skip if you feel fine.</p>
-    <h2 style="margin: 20px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959; line-height: 1.5">Pregnant, or a heart, blood pressure or other condition a doctor keeps an eye on?</h2>
+    <h2 style="margin: 20px 0 0; font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: #595959; line-height: 1.5">Pregnant, or a health condition your doctor watches?</h2>
     <div style="margin-top: 8px; display: flex; gap: 8px">
       <button onClick="{{careYes}}" style="{{careYesBox}}">Yes</button>
       <button onClick="{{careNo}}" style="{{careNoBox}}">No</button>
@@ -925,6 +906,7 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
     <sc-if value="{{careNote}}" hint-placeholder-val="{{ false }}"><p class="a-up" style="margin: 10px 0 0; padding: 10px 12px; background: #FFF4D1; font-size: 14px; font-weight: 600; line-height: 1.4">Please check with your doctor before starting. I'll keep things gentle: no upside-down moves, no all-out finishers, nothing past Intermediate.</p></sc-if>
     <p style="margin: 20px 0 0; padding-top: 12px; border-top: 3px solid #161616; font-size: 12px; color: #595959; line-height: 1.45">Noodle is for general fitness and fun, not medical advice. Stop if anything hurts, feels sharp, or makes you dizzy, and talk to a doctor if you're unsure a move is right for you.</p>
     <button onClick="{{finishWelcome}}" style="{{startBox}}">Let's move</button>
+    </div>
   </div>
 </sc-if>
 
@@ -934,8 +916,8 @@ body.wide .yo-month{display:grid;grid-template-columns:330px 1fr;column-gap:28px
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=63"></script>
-<script src="app.js?v=63"></script>
+<script src="runtime.js?v=64"></script>
+<script src="app.js?v=64"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};

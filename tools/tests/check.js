@@ -121,9 +121,18 @@ for (let stage = 1; stage <= 4; stage++) for (const care of [false, true]) for (
   const c = fresh({ stage, hidden, safe: { done: true, areas: {}, care }, moment: mo, sessions: 5 });
   const tag = 'stage ' + stage + (care ? ' gentle' : '') + ' ' + mo + (hide ? ' hiding ' + hide : '');
   let fl = []; try { fl = c.flat(); } catch (err) { ok(false, tag + ': building threw ' + err.message); continue; }
+  if (hide && !['mobility', 'stretch', 'cond'].includes(hide)) ok(fl.every((m) => m.fam !== hide), tag + ': hidden family does not appear');
+  if (stage === 1) ok(fl.every((m) => ['mobility', 'stretch', 'cond'].includes(m.fam) || c.stageOK(m, 1) || m.fam === hide), tag + ': stage 1 keeps to standing, wall and chair moves outside warm-up and cool-down');
+  if (stage === 1 && !care && !hide && mo === 'main') ok(c.stageNow() === 1, 'stageNow reads the saved stage');
   sc++; ok(fl.length >= 2, tag + ': session has at least 2 moves'); ok(fl.every((m) => c.safeOK(m)), tag + ': session respects the safety check');
 }
 console.log('  built ' + sc + ' stage and hide sessions');
+{
+  const c1 = fresh({ stage: 4, sessions: 5, moment: 'main' }); const first = c1.flat().find((m) => !['mobility', 'stretch', 'cond'].includes(m.fam));
+  const c2 = fresh({ stage: 4, sessions: 5, moment: 'main', hidden: { fams: {}, moves: { [first.n]: true } } });
+  ok(!c2.flat().some((m) => m.n === first.n), 'a hidden move is left out of the session (' + first.n + ')');
+  ok(c2.flat().length >= 2, 'session still builds with a move hidden');
+}
 // an old save (before the ladder change) loads and keeps each saved stone on the same move
 {
   const oldStones = { core: 4, legs: 2, pull: 3, push: 5, dance: 7 };

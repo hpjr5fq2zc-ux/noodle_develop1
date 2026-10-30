@@ -1,6 +1,6 @@
 
 // Keys saved to the phone, backed up and restored. ladV = which version of the path ladders the saved stones refer to.
-const KEEP = ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood', 'ladV'];
+const KEEP = ['levels', 'stones', 'history', 'log', 'rest', 'seenTricks', 'safe', 'chBonus', 'guideDone', 'sessions', 'profile', 'tried', 'seen', 'fb', 'calm', 'sound', 'chatter', 'time', 'energy', 'mood', 'ladV', 'stage', 'hidden', 'taught', 'backupAt'];
 const LAD_VERSION = 2;
 // The ladders as they were at ladV 1: only the paths that changed. Used to keep a saved stone on the same move.
 const LAD_V1 = {
@@ -12,7 +12,7 @@ const LAD_V1 = {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { ladV: LAD_VERSION, hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
+    this.state = { ladV: LAD_VERSION, stage: 0, hidden: { fams: {}, moves: {} }, taught: false, backupAt: '', hint: '', seen: {}, levels: { push: 0, pull: 0, legs: 0, core: 0, balance: 0, dance: 0, strikes: 0, stretch: 0, mobility: 0, freezes: 0, splits: 0, crawls: 0, flow: 0 }, stones: {}, fb: 0, pathOpen: null, celebrate: false, moveOpen: null, moveFrom: 'session', query: '', tried: {}, history: {}, log: {}, safe: { done: false, areas: {}, care: null }, guideDone: false, guideStep: 0, sessions: 0, profile: { done: false, likes: {}, active: null }, peek: null, lvAtStart: 0, doneNote: '', doneFace: 'grin', rest: 15, seenTricks: {}, trickN: 0, trickName: '', selDay: null, bodySide: 'f', region: null, settingsOpen: false, resetArm: false, setMsg: '', collectHint: '', focus: null, triedAtStart: {}, calm: false, sound: true, chatter: true, resting: false, askFb: false, fbMsg: '', phrase: 0, visited: false, pets: 0, homePets: 0, petting: false, screen: 'checkin', time: 20, energy: 50, mood: 'Surprise', seed: 0, swaps: {}, idx: 0, remaining: 0, paused: false, expanding: false, expandColor: '#1556C2' };
   }
   componentDidMount() {
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) {}
@@ -138,6 +138,23 @@ class Component extends DCLogic {
     if (st === 2) return mi.lvl <= 1;
     return mi.lvl <= 2 || mi.fam === 'dance' || mi.fam === 'flow';
   }
+  // Comfort stage 1 to 4. A new save stores it; an older save keeps everything open once it has a few sessions behind it.
+  hideMove(n, leave) {
+    const h = this.hiddenNow(), moves = Object.assign({}, h.moves); moves[n] = true;
+    this._pk = null;
+    this.setState({ hidden: { fams: h.fams, moves }, hideNote: 'Okay, no more ' + n + '.' });
+    if (leave) setTimeout(() => this.setState({ screen: this.state.moveFrom || 'checkin' }), 0);
+  }
+  unhide(kind, k) {
+    const h = this.hiddenNow(), o = { fams: Object.assign({}, h.fams), moves: Object.assign({}, h.moves) };
+    delete o[kind][k]; this._pk = null; this.setState({ hidden: o });
+  }
+  stageNow() {
+    const s = this.state; if (s.stage) return s.stage;
+    const a = (s.profile || {}).active; if (a === null || a === undefined || (s.sessions || 0) >= 3) return 4;
+    return Math.max(1, Math.min(4, a + 1));
+  }
+  hiddenNow() { const h = this.state.hidden || {}; return { fams: h.fams || {}, moves: h.moves || {} }; }
   safeOK(m) {
     const sf = this.state.safe || {}, ar = sf.areas || {}, mi = this.moveInfo()[m.n];
     if (!mi) return true;
@@ -243,7 +260,7 @@ class Component extends DCLogic {
     if (fresh) {
       const liked = this.likedFams(), F = this.fams(), lv = Object.assign({}, s.levels);
       Object.keys(lv).forEach((k) => { if (F[k] && !F[k].hidden) lv[k] = Math.min(3, base + (liked[k] && pr.active >= 2 ? 1 : 0)); });
-      upd.levels = lv; upd.stones = {};
+      upd.levels = lv; upd.stones = {}; upd.stage = (pr.active || 0) + 1;
       upd.profile.base = Object.keys(lv).reduce((x, k) => x + (lv[k] || 0), 0);
       const first = this.likesMap().find((r) => pr.likes[r[0]]);
       if (first) upd.mood = first[3];
@@ -251,7 +268,9 @@ class Component extends DCLogic {
       upd.time = [10, 15, 20, 25][pr.active || 0];
       if (!pr.active) upd.energy = Math.min(upd.energy || 50, 35);
     }
-    this._pk = null; this.setState(upd);
+    this._pk = null;
+    if (fresh) { this.setState(upd); this.transitionTo('session', '#1556C2', { swaps: {}, visited: true, focus: null, tiny: true }); return; } // first launch: straight into a short first session
+    this.setState(upd);
   }
   cardSwipe(dir) {
     const p = (this.state.mCard || 0) + dir;
@@ -459,6 +478,7 @@ class Component extends DCLogic {
   backup() {
     const s = this.state, o = { app: 'noodle', v: 1, saved: new Date().toISOString() };
     KEEP.forEach((k) => { o[k] = s[k]; });
+    o.backupAt = o.saved; this.setState({ backupAt: o.saved });
     const name = 'noodle-backup-' + this.dayKey() + '.json';
     const blob = new Blob([JSON.stringify(o)], { type: 'application/json' });
     try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file] }).then(() => this.setState({ setMsg: 'Backup saved.' })).catch(() => {}); return; } } catch (e) {}
@@ -1157,7 +1177,7 @@ class Component extends DCLogic {
   planSecs(blocks) { return blocks.reduce((a, b) => a + b.moves.reduce((x, m) => x + m.secs + 15, 0), 0); }
   plan() {
     const s0 = this.state;
-    const key = JSON.stringify([s0.tiny, this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.stones, s0.focus, s0.safe, s0.profile, new Date().getDate()]);
+    const key = JSON.stringify([s0.tiny, this.moment(), s0.time, s0.energy, s0.mood, s0.seed, s0.swaps, s0.levels, s0.stones, s0.focus, s0.safe, s0.profile, s0.stage, s0.hidden, s0.sessions >= 3, new Date().getDate()]);
     if (this._pk === key) return this._pc;
     const R = this.recipe(), target = this.sessTime() * 60, extra = R.map(() => 0);
     const order = [];
@@ -1261,12 +1281,17 @@ class Component extends DCLogic {
     const ease = s.mood === 'Chill' || s.energy < 34 ? 1 : 0;
     const lv = (k) => Math.max(0, (s.levels[k] || 0) - ease);
     const used = {};
+    const stg = this.stageNow(), hid = this.hiddenNow();
+    let prot = false, reach = 0;
     const choose = (cands0, k, again) => {
       let cands = cands0;
       if (s.focus) { const fz = cands0.filter((m) => { const mi = MIx[m.n]; return mi && mi.f.concat(mi.b).indexOf(s.focus) >= 0 && !used[m.n]; }); if (fz.length) cands = fz; }
       const ok = (m) => this.safeOK(m) && !(F[m.fam].hidden && !U[m.fam]);
-      let c = cands.filter((m) => !used[m.n] && ok(m));
-      if (!c.length && again) c = cands.filter((m) => ok(m) && (used[m.n] || 0) < 2); // rounds and flows can repeat a move once
+      // Comfort stage and hidden things narrow the pool. Warm-ups, cool-downs and finishers ignore both, and a session still builds when they would empty a slot.
+      const inStage = (m) => prot || (this.stageOK(m, stg + reach) && !hid.fams[m.fam] && !hid.moves[m.n]);
+      const notHid = (m) => prot || (!hid.fams[m.fam] && !hid.moves[m.n]);
+      let c = [inStage, notHid].reduce((r, f) => r.length ? r : cands.filter((m) => !used[m.n] && ok(m) && f(m)), []);
+      if (!c.length && again) c = [inStage, notHid].reduce((r, f) => r.length ? r : cands.filter((m) => ok(m) && f(m) && (used[m.n] || 0) < 2), []); // rounds and flows can repeat a move once
       if (!c.length) return null;
       const m = c[(this.hash(k) + s.seed * 3 + (s.swaps[k] || 0)) % c.length];
       used[m.n] = (used[m.n] || 0) + 1;
@@ -1313,13 +1338,15 @@ class Component extends DCLogic {
       }
       return null;
     };
-    const blocks = [];
+    const PROT = ['warm', 'cool', 'danceWarm', 'fightWarm', 'finish', 'tinyLoose', 'gentle'];
+    const pickP = (kind, i, k) => { prot = PROT.indexOf(kind) >= 0; reach = kind === 'surprise' ? 1 : 0; let r = pick(kind, i, k); for (let j = 1; !r && j < 5; j++) r = pick(kind, i + j, k + 'r' + j); if (r && prot) protN[r.n] = 1; return r; };
+    const protN = {}, blocks = [];
     R.forEach((b, bi) => {
       const count = b.n + (extra[bi] || 0);
-      const picks = Array.from({ length: count }, (_, i) => pick(b.kind, i, b.key + i)).filter(Boolean);
+      const picks = Array.from({ length: count }, (_, i) => pickP(b.kind, i, b.key + i)).filter(Boolean);
       if (!picks.length) return;
       const lead = F[picks[0].fam] || F.push;
-      blocks.push({ key: b.key, name: b.name, color: lead.color, shape: lead.shape, moves: picks.map((m, i) => ({ id: b.key + i, n: m.n, rx: m.rx, block: b.name, fam: m.fam, color: F[m.fam].color, ink: F[m.fam].ink, pose: 'walk', secs: this.dur(m.rx), swapCount: s.swaps[b.key + i] || 0 })) });
+      blocks.push({ key: b.key, name: b.name, color: lead.color, shape: lead.shape, moves: picks.map((m, i) => ({ id: b.key + i, prot: !!protN[m.n], n: m.n, rx: m.rx, block: b.name, fam: m.fam, color: F[m.fam].color, ink: F[m.fam].ink, pose: 'walk', secs: this.dur(m.rx), swapCount: s.swaps[b.key + i] || 0 })) });
     });
     return blocks;
   }
@@ -1404,7 +1431,7 @@ class Component extends DCLogic {
     const was = this.unlocked(s.levels), now = this.unlocked(levels);
     if (Object.keys(now).some((k) => !was[k])) msg += ' Wait... I smell a hidden path!';
     if (msg.indexOf('Nice') === 0) this.sfx('level');
-    this.setState({ levels, stones, fb: s.fb + 1, askFb: false, fbMsg: msg });
+    this.setState({ levels, stones, fb: s.fb + 1, askFb: false, fbMsg: msg, taught: true });
   }
   scrollStone() { setTimeout(() => { try { const el = document.querySelector('.pd-trail .hopper'); if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }, 60); }
   openMove(name, from) { this.setState({ moveOpen: name, moveFrom: from, mCard: 0, mDir: '' }); this.transitionTo('move', '#FFFFFF'); }
@@ -1461,7 +1488,7 @@ class Component extends DCLogic {
       moves: b.moves.map((m) => ({
         n: m.n, rx: m.rx, swapLabel: 'Swap ' + m.n, open: () => this.openMove(m.n, 'session'), shape: this.shp(this.fams()[m.fam].shape, this.fams()[m.fam].color, 14),
         row: 'display:flex;align-items:center;gap:10px;padding:8px 20px;border-left:0;animation:' + (m.swapCount % 2 ? 'swapA' : 'swapB') + ' .35s ease-out both',
-        swap: () => { const sw = Object.assign({}, this.state.swaps); sw[m.id] = (sw[m.id] || 0) + 1; this.setState({ swaps: sw }); }
+        swap: () => { const sw = Object.assign({}, this.state.swaps); sw[m.id] = (sw[m.id] || 0) + 1; this.setState({ swaps: sw, hideNote: '' }); }, hide: () => this.hideMove(m.n, false), canHide: !m.prot
       }))
     }));
     const flat = plan.reduce((a, b) => a.concat(b.moves), []);
@@ -1492,6 +1519,7 @@ class Component extends DCLogic {
     const cells = LAYOUT.map(([k, x, y, w, h]) => {
       const box = 'position:absolute;left:' + (x + 3) + 'px;top:' + (y + 3) + 'px;width:' + (w - 6) + 'px;height:' + (h - 6) + 'px;background:#FFFFFF;border:0;padding:0;overflow:hidden;text-align:left;cursor:pointer;font-family:Inter Tight,sans-serif';
       if (F[k].hidden && !U[k]) return { open: () => this.setState({ hint: 'Something is hiding in here. It smells like ' + F[F[k].parents[0]].name + ' and ' + F[F[k].parents[1]].name + '.' }), aria: 'Locked hidden path', box, fill: 'display:none', shape: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6', name: '', label: 'display:none', lvl: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#D0D0D0', lvlName: '?' };
+      if (!F[k].hidden && F[k].ladder && F[k].ladder.length && !F[k].ladder.some((n) => { const m = this.bank().find((x) => x.n === n); return m && this.safeOK(m); })) return { open: () => this.setState({ hint: 'Resting for now. Nothing in ' + F[k].name + ' fits what you told me is sore.' }), aria: F[k].name + ' is resting', box, fill: 'display:none', shape: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#D6D6D6', name: '', label: 'display:none', lvl: 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#D0D0D0', lvlName: '?' };
       const fm = F[k], lv = s.levels[k], frac = fm.ladder.length ? (this.stone(k) + 1) / fm.ladder.length : (lv + 1) / 5, full = frac >= 1;
       return {
         open: () => { const seen = Object.assign({}, s.seen); seen[k] = true; this.setState({ pathOpen: k, seen, hint: '' }); this.scrollStone(); },
@@ -1779,7 +1807,6 @@ class Component extends DCLogic {
       shareSession: () => this.shareCard(),
       showWelcome: !(s.safe && s.safe.done),
       showProfile: !!(s.safe && s.safe.done) && !(s.profile && s.profile.done),
-      showGuide: !!(s.safe && s.safe.done) && !!(s.profile && s.profile.done) && !s.guideDone,
       likeChips: this.likesMap().map((r) => { const on = !!(s.profile.likes || {})[r[0]]; return { t: r[1], on: on ? 'true' : 'false', shape: this.shp(r[4], on ? '#FFFFFF' : r[5], 16), pick: () => { const likes = Object.assign({}, s.profile.likes); if (on) delete likes[r[0]]; else likes[r[0]] = true; this.setState({ profile: Object.assign({}, s.profile, { likes }) }); }, box: 'height:44px;padding:0 12px;display:flex;align-items:center;gap:8px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       activeOpts: [['Just starting', 'New to this, or back after a long break'], ['Sometimes', 'I move a few times a month'], ['Most weeks', 'I work out or play sports regularly'], ['A lot', 'Training is part of my life']].map((o, i) => { const on = s.profile.active === i; return { t: o[0], d: o[1], on: on ? 'true' : 'false', pick: () => this.setState({ profile: Object.assign({}, s.profile, { active: i }) }), box: 'width:100%;min-height:52px;padding:6px 12px;text-align:left;font-family:Inter Tight,sans-serif;border:3px solid #161616;display:flex;flex-direction:column;justify-content:center;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       profileReady: s.profile.active !== null && s.profile.active !== undefined,
@@ -1787,13 +1814,15 @@ class Component extends DCLogic {
       profileGo: () => { if (s.profile.active === null || s.profile.active === undefined) return; this.applyProfile(); },
       editProfile: () => this.setState({ profile: Object.assign({}, s.profile, { done: false }), settingsOpen: false }),
       profileSummary: (() => { const lk = this.likesMap().filter((r) => (s.profile.likes || {})[r[0]]).map((r) => r[1].toLowerCase()); return lk.length ? 'Into ' + lk.join(', ') : 'Anything goes'; })(),
-      g0: (s.guideStep || 0) === 0, g1: s.guideStep === 1, g2: s.guideStep === 2,
-      guideDots: [0, 1, 2].map((i) => ({ s: 'display:block;width:' + (i === (s.guideStep || 0) ? 22 : 8) + 'px;height:8px;border-radius:4px;transition:width .3s;background:' + (i === (s.guideStep || 0) ? '#161616' : '#D0D0D0') })),
-      guideNext: () => { if ((s.guideStep || 0) >= 2) this.setState({ guideDone: true, guideStep: 0 }); else this.setState({ guideStep: (s.guideStep || 0) + 1 }); },
-      guideNextLabel: (s.guideStep || 0) >= 2 ? "Let's go!" : 'Next',
-      guideSkip: () => this.setState({ guideDone: true, guideStep: 0 }),
-      replayGuide: () => this.setState({ guideDone: false, guideStep: 0, settingsOpen: false }),
-      gEasy: this.face('smirk', 30), gRight: this.face('smile', 30), gHard: this.face('oof', 30), gGrin: this.face('grin', 40),
+      stageOpts: [1, 2, 3, 4].map((i) => { const on = this.stageNow() === i; return { t: String(i), on: on ? 'true' : 'false', pick: () => { this._pk = null; this.setState({ stage: i }); }, box: 'flex:1;height:44px;font:800 15px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
+      stageNote: ['Standing, wall and chair moves. No floor.', 'Adds gentle floor moves.', 'The regular paths, plus dance and footwork.', 'Everything you have unlocked.'][this.stageNow() - 1] + ' Change it any time.',
+      hiddenOpen: s.hiddenOpen ? 'true' : 'false', hiddenShow: !!s.hiddenOpen, hiddenArrow: s.hiddenOpen ? '–' : '+',
+      toggleHidden: () => this.setState({ hiddenOpen: !s.hiddenOpen }),
+      hiddenSummary: (() => { const h = this.hiddenNow(), n = Object.keys(h.moves).length + Object.keys(h.fams).length; return n ? n + (n === 1 ? ' thing' : ' things') + ' you chose not to see' : 'Nothing hidden'; })(),
+      hiddenList: (() => { const h = this.hiddenNow(), F = this.fams(); return Object.keys(h.fams).map((k) => ({ n: (F[k] ? F[k].name : k) + ' (all moves)', back: () => this.unhide('fams', k) })).concat(Object.keys(h.moves).map((n) => ({ n, back: () => this.unhide('moves', n) }))); })(),
+      backupNote: s.backupAt ? 'Last backup: ' + new Date(s.backupAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + '.' : 'Save a backup now and then so you never lose it.',
+      fbHint: !s.taught, hideNote: s.hideNote || '', hasHideNote: !!s.hideNote,
+      hideThis: () => this.hideMove(s.moveOpen, true), canHideThis: !!(this.moveInfo()[s.moveOpen]) && ['mobility', 'stretch', 'cond'].indexOf(this.moveInfo()[s.moveOpen].fam) < 0,
       safeAreas: ['wrists', 'shoulders', 'back', 'knees'].map((k) => { const on = !!(s.safe.areas || {})[k]; return { t: k.replace(/^./, (c) => c.toUpperCase()), on: on ? 'true' : 'false', pick: () => { const areas = Object.assign({}, s.safe.areas); if (on) delete areas[k]; else areas[k] = true; this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { areas }) }); }, box: 'height:44px;padding:0 14px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       careYes: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: true }) }); },
       careNo: () => { this._pk = null; this.setState({ safe: Object.assign({}, s.safe, { care: false }) }); },
