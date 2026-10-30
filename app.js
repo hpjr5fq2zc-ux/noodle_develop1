@@ -1638,8 +1638,8 @@ class Component extends DCLogic {
     const DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dark = { '#161616': 1, '#1556C2': 1, '#E5282E': 1, '#0B7A3E': 1, '#6B3FA0': 1, '#0E8178': 1 };
     const selD = s.selDay || today;
-    const calCells = [];
-    for (let i = 0; i < firstDow; i++) calCells.push({ n: '', aria: 'empty', pick: () => {}, box: 'height:44px;border:0;padding:0;background:#F4F4F4', num: 'display:none' });
+    const calCells = []; let movedDays = 0;
+    for (let i = 0; i < firstDow; i++) calCells.push({ n: '', aria: 'empty', pick: () => {}, box: 'height:44px;border:0;padding:0;background:#F4F4F4', num: 'display:none', bgc: '#F4F4F4' });
     for (let d = 1; d <= dim; d++) {
       const e = this.dayLog(Y + '-' + (Mo + 1) + '-' + d);
       const fs = e ? Object.keys(e.f).filter((k) => F[k]).sort((p, q) => e.f[q] - e.f[p]).slice(0, 3) : [];
@@ -1648,7 +1648,9 @@ class Component extends DCLogic {
       if (fs.length === 2) bg = 'linear-gradient(90deg,' + F[fs[0]].color + ' 0 60%,#161616 60% calc(60% + 3px),' + F[fs[1]].color + ' calc(60% + 3px))';
       if (fs.length === 3) bg = 'linear-gradient(90deg,' + F[fs[0]].color + ' 0 60%,#161616 60% calc(60% + 3px),transparent calc(60% + 3px)),linear-gradient(180deg,' + F[fs[1]].color + ' 0 50%,#161616 50% calc(50% + 3px),' + F[fs[2]].color + ' calc(50% + 3px))';
       const sel = d === selD, isT = d === today;
+      if (fs.length) movedDays++;
       calCells.push({
+        bgc: fs.length ? F[fs[0]].color : (d > today ? '#F4F4F4' : '#FFFFFF'),
         n: d, aria: MONTHS[Mo] + ' ' + d + (fs.length ? ', moved' : ''),
         pick: () => this.setState({ selDay: d }),
         box: 'position:relative;height:44px;border:0;padding:0;background:' + bg + ';cursor:pointer;' + (sel ? 'box-shadow:inset 0 0 0 3px ' + (fs.length ? '#FFFFFF' : '#161616') + ',inset 0 0 0 5px #161616;' : isT ? 'box-shadow:inset 0 0 0 2px #161616;' : ''),
@@ -1837,6 +1839,9 @@ class Component extends DCLogic {
       mc0: (s.mCard || 0) === 0, mc1: s.mCard === 1, mc2: s.mCard === 2, mSlide: s.mDir || 'a-up',
       yMenu: s.yMenu !== false, yPage: s.yMenu === false, yTitle: s.yMenu !== false ? 'You' : ['Noodle', 'Month', 'Body', 'Moves'][s.yPanel || 0],
       yBack: () => (s.collOpen ? this.setState({ collOpen: null }) : this.setState({ yMenu: true })),
+      goMonth: () => this.setState({ yMenu: false, yPanel: 1, yDir: 'a-up', collOpen: null }), goBody: () => this.setState({ yMenu: false, yPanel: 2, yDir: 'a-up', collOpen: null }), goMoves: () => this.setState({ yMenu: false, yPanel: 3, yDir: 'a-up', collOpen: null }), goNoodle: () => this.setState({ yMenu: false, yPanel: 0, yDir: 'a-up', collOpen: null }),
+      monthSub: movedDays === 0 ? 'Nothing yet this month' : movedDays + (movedDays === 1 ? ' day' : ' days') + ' moved in ' + MONTHS[Mo], miniCal: calCells.filter((c) => c.aria !== 'empty').map((c) => ({ s: 'background:' + c.bgc })),
+      miniFams: collFams.map((c) => ({ s: c.tfill.replace(/^.*background:/, 'background:') })), movesSub: foundN + ' of ' + collection.length + ' found', noodleSub: openT.length + ' of ' + TR.length + ' tricks learned',
       yTiles: [[1, 'Month', 'square', '#1556C2', '#FFFFFF', 'Your days'], [2, 'Body', 'peak', '#F26A0F', '#161616', 'This week'], [3, 'Moves', 'diamond', '#6B3FA0', '#FFFFFF', foundN + ' of ' + collection.length + ' found'], [0, 'Noodle', 'circle', '#E5282E', '#FFFFFF', 'Tricks and park']].map((t) => ({ t: t[1], sub: t[5], aria: t[1], go: () => this.setState({ yMenu: false, yPanel: t[0], yDir: 'a-up', collOpen: null }), box: 'position:relative;border:3px solid #161616;padding:0;overflow:hidden;text-align:left;cursor:pointer;font-family:Inter Tight,sans-serif;color:' + t[4] + ';background:' + t[3], shape: 'position:absolute;left:16px;top:16px;' + this.shp(t[2], t[4], 34) })),
       hasOpenFam: !!openFam, noOpenFam: !openFam, openFam: openFam || { title: '', foundLine: '', hasGot: false, moves: [], hasReady: false, ready: [], readyMore: '', peekGo: () => {}, peekLabel: '', peekOpen: false, nextLvl: '', peekMoves: [], laterLine: '' },
       yp0: s.yMenu === false && (s.yPanel || 0) === 0, yp1: s.yMenu === false && s.yPanel === 1, yp2: s.yMenu === false && s.yPanel === 2, yp3: s.yMenu === false && s.yPanel === 3,
