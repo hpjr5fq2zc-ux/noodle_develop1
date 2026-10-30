@@ -152,10 +152,33 @@ console.log('  built ' + sc + ' stage and hide sessions');
 }
 
 // ---- 7. report only: lookalike animations and joint limits (listed, never failing) ----
+// ---- 8. the Move screen: where are you, length, quiet, easier, evening without floor ----
+section('8. Move screen options');
+{
+  let n = 0;
+  for (const where of [null, 'bed', 'desk', 'floor', 'standing', 'out']) for (const len of ['2', '5', 'full']) for (const mo of ['morning', 'midday', 'main', 'evening']) for (const stage of [1, 3]) for (const quiet of [false, true]) {
+    const c = fresh({ stage, where, len, tiny: len === '2', quiet, moment: mo, sessions: 5 });
+    const tag = [where || 'anywhere', len, mo, 'stage ' + stage, quiet ? 'quiet' : ''].join(' ');
+    let fl = []; try { fl = c.flat(); } catch (err) { ok(false, tag + ': threw ' + err.message); continue; }
+    n++; ok(fl.length >= 2, tag + ': at least 2 moves'); if (quiet) ok(fl.every((m) => c.quietOK(m)), tag + ': quiet leaves out loud moves');
+    if (len === '5') ok(c.planSecs(c.plan()) <= 5 * 60 * 1.3, tag + ': about 5 minutes (' + c.planSecs(c.plan()) + ' s)');
+  }
+  console.log('  built ' + n + ' option combinations');
+  for (const stage of [1, 2]) { const c = fresh({ stage, moment: 'evening', sessions: 5 }); const fl = c.flat(); ok(fl.length >= 3 && fl.every((m) => c.pos(c.moveInfo()[m.n]) === 'up'), 'evening at stage ' + stage + ' has no floor moves (' + fl.map((m) => m.n + ':' + c.pos(c.moveInfo()[m.n])).join(', ') + ')'); }
+  // Easier swaps the move for the next easier one in its family, for this session only
+  const c = fresh({ stage: 4, moment: 'main', sessions: 5 }); const m0 = c.flat().find((m) => c.easierOf(m.n));
+  if (m0) { const e = c.easierOf(m0.n); c.state.subs = { [m0.id]: e }; c._pk = null; ok(c.flat().some((m) => m.id === m0.id && m.n === e), 'Easier swaps ' + m0.n + ' for ' + e); }
+  // time of day
+  const t0 = global.Date; const at = (h) => { global.Date = class extends t0 { constructor(...a) { if (a.length) super(...a); else super(2026, 5, 10, h, 0, 0); } }; return fresh({}).moment(); };
+  const r = [at(7), at(12), at(16), at(22), at(3)]; global.Date = t0;
+  ok(r.join() === 'morning,midday,main,evening,evening', 'session by time of day (' + r.join() + ')');
+}
+
 section('7. Report only (does not fail the checks)');
 {
   const byAnim = {}; BK.forEach((m) => { (byAnim[m.anim] = byAnim[m.anim] || new Set()).add(m.fam); });
   const looks = Object.keys(byAnim).filter((a) => byAnim[a].size > 1).map((a) => a + ' (' + [...byAnim[a]].join('+') + ')');
+  { const c = fresh({}); const q = BK.filter((m) => !c.quietOK(m)).map((m) => m.n); console.log('  Quiet option leaves out ' + q.length + ' moves: ' + q.join(', ')); }
   console.log('  Animations shared across families: ' + (looks.length ? looks.length + ' -> ' + looks.join(', ') : 'none'));
   const P = (s) => { const d = {}; (s.match(/[A-Za-z]-?[\d.]+,-?[\d.]+/g) || []).forEach((x) => { const [px, py] = x.slice(1).split(',').map(Number); d[x[0]] = [px, py]; }); return d; };
   const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
