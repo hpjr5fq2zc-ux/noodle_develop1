@@ -1442,9 +1442,9 @@ class Component extends DCLogic {
     const F = this.fams(), MI = this.moveInfo();
     const LVL = ['Foundation', 'Beginner', 'Intermediate', 'Advanced', 'Pro'];
     const go = (screen, color, extra) => () => this.transitionTo(screen, color, extra);
-    const toggleSt = (on, color) => ({
-      track: 'width:52px;height:30px;padding:0;border:3px solid #161616;background:' + (on ? color : '#FFFFFF') + ';position:relative;transition:background .2s',
-      knob: 'position:absolute;top:3px;left:' + (on ? 25 : 3) + 'px;width:18px;height:18px;background:#161616;transition:left .25s cubic-bezier(.3,1.6,.5,1)'
+    const toggleSt = (on) => ({
+      track: 'width:52px;height:30px;padding:0;border:3px solid ' + (on ? '#1556C2' : '#161616') + ';background:' + (on ? '#1556C2' : '#FFFFFF') + ';position:relative;transition:background .2s',
+      knob: 'position:absolute;top:3px;left:' + (on ? 25 : 3) + 'px;width:18px;height:18px;background:' + (on ? '#FFFFFF' : '#161616') + ';transition:left .25s cubic-bezier(.3,1.6,.5,1)'
     });
     const U = this.unlocked(s.levels);
     const LAYOUT = [['push', 0, 0, 170, 150], ['pull', 170, 0, 100, 90], ['freezes', 270, 0, 80, 90], ['dance', 170, 90, 180, 60], ['legs', 0, 150, 110, 150], ['core', 110, 150, 130, 90], ['splits', 240, 150, 110, 90], ['crawls', 110, 240, 90, 60], ['strikes', 200, 240, 150, 60], ['stretch', 0, 300, 150, 170], ['balance', 150, 300, 110, 90], ['flow', 260, 300, 90, 90], ['mobility', 150, 390, 200, 80]];
@@ -1458,8 +1458,8 @@ class Component extends DCLogic {
         box: box + (fm.hidden && !s.seen[k] ? ';animation:flipIn .7s cubic-bezier(.2,.9,.3,1.2) both' : ''),
         fill: 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(frac * 100) + '%;background:' + fm.color + ';transition:height .7s cubic-bezier(.3,1.4,.5,1)',
         shape: 'position:absolute;left:9px;top:9px;' + this.shp(fm.shape, full ? fm.ink : fm.color, 18),
-        name: fm.name,
-        label: 'position:absolute;left:34px;right:6px;top:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.1;color:' + (full ? fm.ink : '#161616'),
+        name: w < 100 ? ({ crawls: 'Crawls', flow: 'Flow' }[k] || fm.name) : fm.name,
+        label: (w < 100 ? 'position:absolute;left:9px;right:4px;top:31px;font-size:10px;letter-spacing:.04em;' : 'position:absolute;left:34px;right:6px;top:10px;font-size:11px;letter-spacing:.08em;') + 'font-weight:800;text-transform:uppercase;line-height:1.1;color:' + (full ? fm.ink : '#161616'),
         lvl: 'position:absolute;left:9px;bottom:7px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:' + ((frac * h) >= 26 ? fm.ink : '#161616') + ';opacity:' + (h > 70 ? 1 : 0),
         lvlName: LVL[lv]
       };
@@ -1478,9 +1478,9 @@ class Component extends DCLogic {
         open: () => this.openMove(n, 'paths'),
         box: 'position:absolute;left:' + sx(i) + '%;top:' + sy(i) + 'px;width:' + sz + 'px;height:' + sz + 'px;margin:-' + sz / 2 + 'px 0 0 -' + sz / 2 + 'px;border:0;padding:0;background:transparent;cursor:pointer',
         shape: 'position:absolute;left:0;top:0;width:' + sz + 'px;height:' + sz + 'px;box-sizing:border-box;border-radius:' + (pf.shape === 'square' || pf.shape === 'diamond' ? '6px' : '50%') + ';' + (done ? 'background:' + pf.color : here ? 'background:' + pf.color + ';box-shadow:0 0 0 5px #FFFFFF,0 0 0 8px ' + pf.color : 'background:#FFFFFF;border:3px solid ' + (first ? '#BDBDBD' : '#E4E4E4')),
-        label: 'position:absolute;top:' + (sz / 2 - (first || here ? 17 : 9)) + 'px;' + (right ? 'left:' + (sz + 12) + 'px;text-align:left' : 'right:' + (sz + 12) + 'px;text-align:right') + ';width:160px;display:flex;flex-direction:column;font:' + (here ? 900 : first ? 800 : 600) + ' ' + (here ? 15 : 14) + 'px Inter Tight,sans-serif;line-height:1.1;color:' + (i > pst ? '#8A8A8A' : '#161616'),
-        sub: 'font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;color:' + (here ? pf.color === '#FFC20E' ? '#8A6A00' : pf.color : '#9A9A9A'),
-        dog: 'position:absolute;left:' + (sz / 2 - 17) + 'px;top:' + (sz / 2 - 48) + 'px;' + this.face('grin', 34)
+        label: 'position:absolute;top:' + (sz / 2 - (first || here ? 17 : 9)) + 'px;' + (right ? 'left:' + (sz + 12) + 'px;text-align:left' : 'right:' + (sz + 12) + 'px;text-align:right') + ';width:160px;display:flex;flex-direction:column;font:' + (here ? 900 : first ? 800 : 600) + ' ' + (here ? 15 : 14) + 'px Inter Tight,sans-serif;line-height:1.1;color:' + (i > pst ? '#595959' : '#161616'),
+        sub: 'font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;color:' + (here ? pf.color === '#FFC20E' ? '#8A6A00' : pf.color : '#595959'),
+        dog: 'position:absolute;top:' + (sz / 2 - 17) + 'px;' + (right ? 'left:-44px' : 'left:' + (sz + 10) + 'px') + ';' + this.face('grin', 34)
       };
     });
     const trailH = TOP0 * 2 + (nS - 1) * ROW;
@@ -1513,7 +1513,7 @@ class Component extends DCLogic {
     const dark = { '#161616': 1, '#1556C2': 1, '#E5282E': 1, '#0B7A3E': 1, '#6B3FA0': 1, '#0E8178': 1 };
     const selD = s.selDay || today;
     const calCells = [];
-    for (let i = 0; i < firstDow; i++) calCells.push({ n: '', aria: 'empty', pick: () => {}, box: 'height:44px;border:0;padding:0;background:#161616', num: 'display:none' });
+    for (let i = 0; i < firstDow; i++) calCells.push({ n: '', aria: 'empty', pick: () => {}, box: 'height:44px;border:0;padding:0;background:#F4F4F4', num: 'display:none' });
     for (let d = 1; d <= dim; d++) {
       const e = this.dayLog(Y + '-' + (Mo + 1) + '-' + d);
       const fs = e ? Object.keys(e.f).filter((k) => F[k]).sort((p, q) => e.f[q] - e.f[p]).slice(0, 3) : [];
@@ -1526,7 +1526,7 @@ class Component extends DCLogic {
         n: d, aria: MONTHS[Mo] + ' ' + d + (fs.length ? ', moved' : ''),
         pick: () => this.setState({ selDay: d }),
         box: 'position:relative;height:44px;border:0;padding:0;background:' + bg + ';cursor:pointer;' + (sel ? 'box-shadow:inset 0 0 0 3px ' + (fs.length ? '#FFFFFF' : '#161616') + ',inset 0 0 0 5px #161616;' : isT ? 'box-shadow:inset 0 0 0 2px #161616;' : ''),
-        num: 'position:absolute;left:4px;top:3px;font-size:9px;font-weight:800;color:' + (fs.length ? (dark[F[fs[0]].color] ? '#FFFFFF' : '#161616') : d > today ? '#B0B0B0' : '#595959')
+        num: 'position:absolute;left:4px;top:3px;font-size:9px;font-weight:800;color:' + (fs.length ? (dark[F[fs[0]].color] ? '#FFFFFF' : '#161616') : d > today ? '#757575' : '#595959')
       });
     }
     const sk = Y + '-' + (Mo + 1) + '-' + selD, se = this.dayLog(sk), selDate = new Date(Y, Mo, selD);
@@ -1596,7 +1596,7 @@ class Component extends DCLogic {
     const tricks = TR.filter((t) => lvSum >= t[1] || t === nextT).map((t) => {
       const on = lvSum >= t[1];
       return { t: on ? t[0] : '?', aria: on ? 'Trick: ' + t[0] : 'Locked trick', isNew: on && t[1] > 0 && !s.seenTricks[t[0]], go: () => (on ? this.doTrick(t[0]) : null),
-        box: 'position:relative;height:26px;min-width:26px;padding:0 7px;border:0;font:800 11px Inter Tight,sans-serif;cursor:pointer;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#EFEFEF;color:#B0B0B0') };
+        box: 'position:relative;height:26px;min-width:26px;padding:0 7px;border:0;font:800 11px Inter Tight,sans-serif;cursor:pointer;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#EFEFEF;color:#757575') };
     });
     const cT = toggleSt(s.calm, '#0E8178'), sT = toggleSt(s.sound, '#FFC20E'), chT = toggleSt(s.chatter, '#E5282E');
     const restLines = ['Water break! Slurp.', 'Shake shake shake.', 'Breathe in... out.', 'Pant pant pant.', 'I am lying down for a sec.', 'I am wiggling my toes.', 'Nice one.', 'Big sigh.', 'Halfway-ish!', 'Was that a squirrel?'];
@@ -1662,8 +1662,8 @@ class Component extends DCLogic {
       pdNextLabel: pst < nS - 1 ? 'Got it! Next stone' : 'Mastered!',
       pdNext: () => { const r = this.moveStone(pk, 1); if (!r.moved) return; clearTimeout(this.ct); if (r.lvChanged) this.sfx('level'); this.setState({ levels: r.levels, stones: r.stones, celebrate: r.lvChanged ? 'LEVEL UP!' : 'NICE!' }); this.ct = setTimeout(() => this.setState({ celebrate: false }), 1600); this.scrollStone(); },
       pdEasier: () => { const r = this.moveStone(pk, -1); if (!r.moved) return; this.setState({ levels: r.levels, stones: r.stones, celebrate: false }); this.scrollStone(); },
-      mvName, mvFam: { name: mf.name },
-      mvStage: 'position:relative;height:340px;flex:none;overflow:hidden;background:' + mf.color + ';color:' + mf.ink,
+      mvName, mvTitleSize: mvName.length > 26 ? 30 : mvName.length > 18 ? 34 : 40, mvFam: { name: mf.name },
+      mvStage: 'position:relative;min-height:340px;flex:none;overflow:hidden;display:flex;flex-direction:column;background:' + mf.color + ';color:' + mf.ink,
       
       mvCues: (mcl ? mcl.slice(1) : mi.cues).map((c) => ({ t: c })),
       mvLike: mcl ? mcl[0] : '', hasLike: !!mcl,
@@ -1694,9 +1694,9 @@ class Component extends DCLogic {
       regionName: pretty[region].replace(/^./, (c) => c.toUpperCase()), regionLine,
       regionGoLabel: 'Give your ' + pretty[region] + ' some love · 15 min',
       regionGo: go('session', '#1556C2', { focus: region, mood: 'Surprise', time: 15, energy: 50, swaps: {}, idx: 0, visited: true }),
-      yTabs: [['Noodle', 'circle', '#E5282E'], ['Month', 'square', '#1556C2'], ['Body', 'peak', '#F26A0F'], ['Moves', 'diamond', '#6B3FA0']].map((t, i) => { const on = (s.yPanel || 0) === i; return { t: t[0], on: on ? 'true' : 'false', shape: this.shp(t[1], on ? t[2] : '#C8C8C8', 12), go: () => { if (!on) this.setState({ yPanel: i, yDir: i > (s.yPanel || 0) ? 'swl' : 'swr' }); }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:6px;font:800 12px Inter Tight,sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:color .3s;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      yTabs: [['Noodle', 'circle', '#E5282E'], ['Month', 'square', '#1556C2'], ['Body', 'peak', '#F26A0F'], ['Moves', 'diamond', '#6B3FA0']].map((t, i) => { const on = (s.yPanel || 0) === i; return { t: t[0], on: on ? 'true' : 'false', shape: this.shp(t[1], on ? t[2] : '#C8C8C8', 12), go: () => { if (!on) this.setState({ yPanel: i, yDir: i > (s.yPanel || 0) ? 'swl' : 'swr' }); }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;gap:6px;font:800 12px Inter Tight,sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:color .3s;color:' + (on ? '#161616' : '#595959') }; }),
       yBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + ((s.yPanel || 0) * 25) + '%',
-      mTabs: ['How', 'Works', 'Level'].map((t, i) => { const on = (s.mCard || 0) === i; return { t, on: on ? 'true' : 'false', go: () => { if (!on) this.setState({ mCard: i, mDir: i > (s.mCard || 0) ? 'swl' : 'swr' }); }, box: 'height:40px;border:0;background:transparent;padding:0;font:800 12px Inter Tight,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      mTabs: ['How', 'Works', 'Level'].map((t, i) => { const on = (s.mCard || 0) === i; return { t, on: on ? 'true' : 'false', go: () => { if (!on) this.setState({ mCard: i, mDir: i > (s.mCard || 0) ? 'swl' : 'swr' }); }, box: 'height:40px;border:0;background:transparent;padding:0;font:800 12px Inter Tight,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:' + (on ? '#161616' : '#595959') }; }),
       mBar: 'position:absolute;bottom:-3px;height:3px;width:33.34%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + ((s.mCard || 0) * 33.33) + '%',
       mc0: (s.mCard || 0) === 0, mc1: s.mCard === 1, mc2: s.mCard === 2, mSlide: s.mDir || 'a-up',
       yp0: (s.yPanel || 0) === 0, yp1: s.yPanel === 1, yp2: s.yPanel === 2, yp3: s.yPanel === 3,
@@ -1742,7 +1742,7 @@ class Component extends DCLogic {
       likeChips: this.likesMap().map((r) => { const on = !!(s.profile.likes || {})[r[0]]; return { t: r[1], on: on ? 'true' : 'false', shape: this.shp(r[4], on ? '#FFFFFF' : r[5], 16), pick: () => { const likes = Object.assign({}, s.profile.likes); if (on) delete likes[r[0]]; else likes[r[0]] = true; this.setState({ profile: Object.assign({}, s.profile, { likes }) }); }, box: 'height:44px;padding:0 12px;display:flex;align-items:center;gap:8px;font:800 14px Inter Tight,sans-serif;border:3px solid #161616;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       activeOpts: [['Just starting', 'New to this, or back after a long break'], ['Sometimes', 'I move a few times a month'], ['Most weeks', 'I work out or play sports regularly'], ['A lot', 'Training is part of my life']].map((o, i) => { const on = s.profile.active === i; return { t: o[0], d: o[1], on: on ? 'true' : 'false', pick: () => this.setState({ profile: Object.assign({}, s.profile, { active: i }) }), box: 'width:100%;min-height:52px;padding:6px 12px;text-align:left;font-family:Inter Tight,sans-serif;border:3px solid #161616;display:flex;flex-direction:column;justify-content:center;' + (on ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616') }; }),
       profileReady: s.profile.active !== null && s.profile.active !== undefined,
-      profileBtn: 'margin-top:16px;width:100%;height:58px;flex:none;border:0;font:900 20px Inter Tight,sans-serif;' + (s.profile.active !== null && s.profile.active !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#8A8A8A'),
+      profileBtn: 'margin-top:16px;width:100%;height:58px;flex:none;border:0;font:900 20px Inter Tight,sans-serif;' + (s.profile.active !== null && s.profile.active !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#595959'),
       profileGo: () => { if (s.profile.active === null || s.profile.active === undefined) return; this.applyProfile(); },
       editProfile: () => this.setState({ profile: Object.assign({}, s.profile, { done: false }), settingsOpen: false }),
       profileSummary: (() => { const lk = this.likesMap().filter((r) => (s.profile.likes || {})[r[0]]).map((r) => r[1].toLowerCase()); return lk.length ? 'Into ' + lk.join(', ') : 'Anything goes'; })(),
@@ -1759,7 +1759,7 @@ class Component extends DCLogic {
       careYesBox: 'flex:1;height:48px;font:800 15px Inter Tight,sans-serif;border:3px solid #161616;' + (s.safe.care === true ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616'),
       careNoBox: 'flex:1;height:48px;font:800 15px Inter Tight,sans-serif;border:3px solid #161616;' + (s.safe.care === false ? 'background:#161616;color:#FFFFFF' : 'background:#FFFFFF;color:#161616'),
       careNote: s.safe.care === true,
-      startBox: 'margin-top:18px;width:100%;height:58px;border:0;font:900 20px Inter Tight,sans-serif;' + (s.safe.care !== null && s.safe.care !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#8A8A8A'),
+      startBox: 'margin-top:18px;width:100%;height:58px;border:0;font:900 20px Inter Tight,sans-serif;' + (s.safe.care !== null && s.safe.care !== undefined ? 'background:#1556C2;color:#FFFFFF' : 'background:#E4E4E4;color:#595959'),
       finishWelcome: () => { if (s.safe.care === null || s.safe.care === undefined) return; this.setState({ safe: Object.assign({}, s.safe, { done: true }), settingsOpen: false }); },
       openSafety: () => this.setState({ safe: Object.assign({}, s.safe, { done: false }) }),
       safetySummary: (() => { const ar = Object.keys(s.safe.areas || {}); const bits = []; if (ar.length) bits.push('Going easy on ' + ar.join(', ')); if (s.safe.care) bits.push('gentle mode on'); return bits.length ? bits.join(' · ') : 'Nothing to avoid'; })(),
@@ -1783,10 +1783,10 @@ class Component extends DCLogic {
       skyFace: (s.skyOn ? 'sky-on ' : '') + (s.skyPop ? (s.skyPop % 2 ? 'sp1' : 'sp2') : ''),
       bounceWord: () => { this.sfx('pop'); this.setState({ wordN: (s.wordN || 0) + 1 }); },
       wordAnim: s.wordN ? (s.wordN % 2 ? 'wb1' : 'wb2') : '',
-      moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: (t[0] === 'evening' ? 'display:block;width:11px;height:11px;border-radius:50%;box-shadow:inset 3px -2px 0 0 ' + (on ? t[3] : '#C8C8C8') : this.shp(t[2], on ? t[3] : '#C8C8C8', 11)), go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#8A8A8A') }; }),
+      moTabs: [['morning', 'Morning', 'half', '#FFC20E'], ['midday', 'Midday', 'circle', '#F26A0F'], ['main', 'Main', 'square', '#E5282E'], ['evening', 'Evening', 'arch', '#1556C2']].map((t) => { const on = this.moment() === t[0]; return { t: t[1], on: on ? 'true' : 'false', shape: (t[0] === 'evening' ? 'display:block;width:11px;height:11px;border-radius:50%;box-shadow:inset 3px -2px 0 0 ' + (on ? t[3] : '#C8C8C8') : this.shp(t[2], on ? t[3] : '#C8C8C8', 11)), go: () => { if (!on) { this._pk = null; this.setState({ moment: t[0], swaps: {} }); } }, box: 'height:42px;border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:800 10px Inter Tight,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:' + (on ? '#161616' : '#595959') }; }),
       moBar: 'position:absolute;bottom:-3px;height:3px;width:25%;background:#161616;transition:left .45s cubic-bezier(.22,.9,.28,1);left:' + (['morning', 'midday', 'main', 'evening'].indexOf(this.moment()) * 25) + '%',
       moCard: (() => {
-        const M = { morning: ['Morning wake-up', 'Gentle joints, a little blood flow, one big stretch.', '#FFC20E', '#161616'], midday: ['Midday reset', 'Unstick from the desk. Neck, back, hips, legs.', '#F26A0F', '#161616'], evening: ['Evening wind-down', 'Slow floor stretches to help you sleep.', '#1556C2', '#FFFFFF'] }[this.moment()] || ['', '', '#FFFFFF', '#161616'];
+        const M = { morning: ['Morning wake-up', 'Gentle joints, a little blood flow, one big stretch.', '#FFC20E', '#161616'], midday: ['Midday reset', 'Unstick from the desk. Neck, back, hips, legs.', '#F26A0F', '#161616'], evening: ['Evening wind-down', 'Slow stretches to wind down.', '#1556C2', '#FFFFFF'] }[this.moment()] || ['', '', '#FFFFFF', '#161616'];
         const fl = this.flat();
         return { tint: { morning: '#FFF8E2', midday: '#FFF0E6', evening: '#E9F0FC' }[this.moment()] || '#F4F4F4', title: M[0], line: this.sessTime() + ' min · ' + fl.length + ' moves', desc: M[1], moves: fl.slice(0, 4).map((m) => ({ n: m.n, shape: this.shp(this.fams()[m.fam].shape, this.fams()[m.fam].color, 9) })).concat(fl.length > 4 ? [{ n: '+' + (fl.length - 4) + ' more', shape: 'display:none' }] : []) };
       })(),
