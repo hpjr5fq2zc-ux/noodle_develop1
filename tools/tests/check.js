@@ -174,6 +174,18 @@ section('8. Move screen options');
   ok(r.join() === 'morning,midday,main,evening,evening', 'session by time of day (' + r.join() + ')');
 }
 
+// ---- 9. Paths and You (batch 4): progress moment, shelf, saved ratings ----
+section('9. Paths and You');
+{
+  const d = (n) => { const t = new Date(Date.now() - n * 864e5); return t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate(); };
+  const c = fresh({ ratings: [{ d: d(15), n: 'Wall sit', k: 'hard' }, { d: d(1), n: 'Wall sit', k: 'easy' }] });
+  ok(/Two weeks ago, Wall sit was Hard\. Lately it feels Easy\./.test(c.progressMoment()), 'progress moment from rating history: ' + c.progressMoment());
+  ok(fresh({ ratings: [{ d: d(2), n: 'Wall sit', k: 'hard' }, { d: d(1), n: 'Wall sit', k: 'easy' }] }).progressMoment() === '', 'no moment when the change is under a week old');
+  ok(fresh({}).progressMoment() === '', 'no moment without data');
+  const s = fresh({ sessions: 5 }); const sh = s.myPaths(); ok(sh.length >= 3 && sh.length <= 4, 'My paths shelf has 3 or 4 paths (' + sh.join(',') + ')');
+  const old = new Comp({}); const k = old.migrateSave({ levels: { push: 1 } }); ok(!k.ratings, 'old saves without ratings load fine');
+}
+
 section('7. Report only (does not fail the checks)');
 {
   const byAnim = {}; BK.forEach((m) => { (byAnim[m.anim] = byAnim[m.anim] || new Set()).add(m.fam); });
