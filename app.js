@@ -1292,7 +1292,7 @@ class Component extends DCLogic {
         { key: 'warm', name: 'Warm up', kind: 'warm', count: [1, 2, 2, 2], grow: 1 },
         { key: 'up', name: 'Upper body', kind: 'upper', count: [1, 2, 3, 4], grow: 3 },
         { key: 'low', name: 'Legs & core', kind: 'lower', count: [1, 2, 3, 4], grow: 3 }
-      ].concat(fin(45)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 2, 2], grow: 1 }]),
+      ].concat(fin(67)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 2, 2], grow: 1 }]),
       Dance: [
         { key: 'warm', name: 'Loosen up', kind: 'danceWarm', count: [1, 2, 2, 2], grow: 1 },
         { key: 'top', name: 'Toprock', kind: 'toprock', count: [2, 2, 3, 4], grow: 3 },
@@ -1304,7 +1304,7 @@ class Component extends DCLogic {
         { key: 'warm', name: 'Get loose', kind: 'fightWarm', count: [1, 2, 2, 2], grow: 1 },
         { key: 'rounds', name: 'Rounds', kind: 'strikes', count: [2, 3, 4, 5], grow: 3 },
         { key: 'core', name: 'Fighter core', kind: 'core', count: [0, 1, 2, 2], grow: 1 }
-      ].concat(fin(34)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 1, 2], grow: 1 }]),
+      ].concat(fin(67)).concat([{ key: 'cool', name: 'Cool down', kind: 'cool', count: [1, 1, 1, 2], grow: 1 }]),
       Stretch: [
         { key: 'wake', name: 'Wake up', kind: 'mobility', count: [1, 1, 2, 2], grow: 1 },
         { key: 'flow', name: 'Yoga flow', kind: 'yogaStand', count: [1, 2, 3, 4], grow: 3 },
@@ -1321,9 +1321,10 @@ class Component extends DCLogic {
   planN(extra) {
     const s = this.state, F = this.fams(), BK = this.bank(), U = this.unlocked(s.levels), MIx = this.moveInfo();
     const R = this.recipe();
-    // Energy changes difficulty, not just length: low energy works one level easier, Chill is always easy.
-    const ease = s.mood === 'Chill' || s.energy < 34 ? 1 : 0;
-    const lv = (k) => Math.max(0, (s.levels[k] || 0) - ease);
+    // Energy picks where in the unlocked range to work: low = the easy end, medium = the middle, high = the top. Few unlocks keep everything easy. Chill is always low.
+    const frac = s.mood === 'Chill' || s.energy < 34 ? 0.3 : s.energy < 67 ? 0.6 : 1;
+    const scale = (n) => (frac >= 1 ? n : frac < 0.5 ? Math.floor(n * frac) : Math.round(n * frac));
+    const lv = (k) => scale(s.levels[k] || 0);
     const used = {};
     const stg = this.stageNow(), hid = this.hiddenNow();
     let prot = false, reach = 0;
@@ -1343,8 +1344,8 @@ class Component extends DCLogic {
       used[m.n] = (used[m.n] || 0) + 1;
       return m;
     };
-    const onLadder = (fam, ahead) => { const Fm = F[fam]; if (!Fm.ladder || !Fm.ladder.length) return null; const st = Math.max(0, this.stone(fam) - ease * 2); const lo = ahead ? st : Math.max(0, st - 1), hi = Math.min(Fm.ladder.length - 1, ahead ? st + 1 : st); const c = []; for (let i = lo; i <= hi; i++) { const m = BK.find((x) => x.n === Fm.ladder[i]); if (m) c.push(m); } if (c.some((m) => this.safeOK(m))) return c; for (let i = lo - 1; i >= 0; i--) { const m = BK.find((x) => x.n === Fm.ladder[i]); if (m && this.safeOK(m)) { c.push(m); if (c.filter((x) => this.safeOK(x)).length >= 2) break; } } return c.length ? c : null; };
-    const atLevel = (fam, ahead) => { const lad = onLadder(fam, ahead); if (lad) return lad; const L = lv(fam); let c = BK.filter((m) => m.fam === fam && m.lvl === L); if (!c.length) c = BK.filter((m) => m.fam === fam && m.lvl <= L); return c; };
+    const onLadder = (fam, ahead) => { const Fm = F[fam]; if (!Fm.ladder || !Fm.ladder.length) return null; const st = scale(this.stone(fam)); const top = Fm.ladder.length - 1, e = s.energy; let lo, hi; if (e < 34) { hi = Math.max(0, ahead ? st : st - 1); lo = Math.max(0, hi - 1); } else if (e >= 67) { lo = ahead ? st : Math.max(0, st - (st > 0 ? 0 : 0)); hi = Math.min(top, st + 1); lo = Math.min(lo, hi); } else { lo = ahead ? st : Math.max(0, st - 1); hi = Math.min(top, ahead ? st + 1 : st); } const c = []; for (let i = lo; i <= hi; i++) { const m = BK.find((x) => x.n === Fm.ladder[i]); if (m) c.push(m); } if (c.some((m) => this.safeOK(m))) return c; for (let i = lo - 1; i >= 0; i--) { const m = BK.find((x) => x.n === Fm.ladder[i]); if (m && this.safeOK(m)) { c.push(m); if (c.filter((x) => this.safeOK(x)).length >= 2) break; } } return c.length ? c : null; };
+    const atLevel = (fam, ahead) => { const lad = onLadder(fam, ahead); if (lad) return lad; const L = Math.min(4, lv(fam) + (s.energy >= 67 ? 1 : 0)); let c = BK.filter((m) => m.fam === fam && m.lvl === L); if (!c.length) c = BK.filter((m) => m.fam === fam && m.lvl <= L); return c; };
     const upTo = (fam) => BK.filter((m) => m.fam === fam && m.lvl <= lv(fam));
     const withAnim = (pool, anims, fallback) => { const p = pool.filter((m) => anims.indexOf(m.anim) >= 0); return p.length ? p : fallback || pool; };
     const off = (s.seed + new Date().getDate()) % 4;

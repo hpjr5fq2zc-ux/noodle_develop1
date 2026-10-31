@@ -182,13 +182,10 @@ body.wide .nav{flex-direction:column!important;top:8px!important}
 .yo-pans>div::-webkit-scrollbar{display:none}
 .yo-pans>div>section{flex:1 0 auto}
 .yo-pans>div>.yo-month{flex:1 1 0}
-.yo-pans section[aria-label="Noodle's park"]{--pp:226px;position:relative;margin:0!important;border:0!important;min-height:0;flex:1 1 0!important}
-.yo-pans .park{position:absolute!important;inset:0;height:auto!important;border-bottom:0!important;background-size:100% auto,auto!important;background-position:center calc(100% - var(--pp)),0 0!important;background-repeat:no-repeat!important}
-.yo-pans .park .park-walk{bottom:calc(var(--pp) + 22px)!important}
-.yo-pans .park>button:first-child{bottom:calc(var(--pp) + 26px)!important}
-.yo-pans .park>span{top:auto!important;bottom:calc(var(--pp) + 125px)!important}
-.yo-pans .park>button[aria-label="Bounce the ball"]{bottom:calc(var(--pp) + 28px)!important}
-.yo-pans section[aria-label="Noodle's park"]>div:last-child{position:absolute;left:0;right:0;bottom:0;height:var(--pp);box-sizing:border-box;background:#FFFFFF;border-top:3px solid #161616;padding:12px 20px!important;overflow-y:auto;scrollbar-width:none}
+.yo-pans section[aria-label="Noodle's park"]{position:relative;margin:0!important;border:0!important;min-height:0;flex:1 1 0!important;display:flex!important;flex-direction:column}
+.yo-pans .park{position:relative!important;flex:1 1 0;min-height:0;height:auto!important;border-bottom:0!important;background-size:100% auto,auto!important;background-position:center bottom,0 0!important;background-repeat:no-repeat!important}
+.yo-pans .park>span{top:auto!important;bottom:125px!important}
+.yo-pans section[aria-label="Noodle's park"]>div:last-child{flex:none;max-height:62%;box-sizing:border-box;background:#FFFFFF;border-top:3px solid #161616;padding:12px 20px!important;overflow-y:auto;scrollbar-width:none}
 .yo-month{display:flex;flex-direction:column;min-height:0}
 .yo-month>div:first-child{flex:0 0 62%;display:flex;flex-direction:column;min-height:0}
 .yo-month>div:last-child{flex:1;overflow-y:auto;padding-bottom:16px;scrollbar-width:none}
@@ -294,9 +291,8 @@ body.wide .yo-back{left:320px!important}
 body.wide .yo-month{display:grid;grid-template-columns:350px 1fr;column-gap:24px;padding-right:24px;grid-template-rows:minmax(0,1fr)}
 body.wide .yo-month>div:first-child{flex:none}
 body.wide .yo-month>div:last-child{padding-bottom:10px}
-body.wide .yo-pans section[aria-label="Noodle's park"]{--pp:0px;margin:0!important}
-body.wide .yo-pans .park{right:300px!important}
-body.wide .yo-pans section[aria-label="Noodle's park"]>div:last-child{left:auto;top:0;width:300px;height:auto;border-top:0;border-left:3px solid #161616;padding:10px 20px 10px 16px!important}
+body.wide .yo-pans section[aria-label="Noodle's park"]{margin:0!important;flex-direction:row}
+body.wide .yo-pans section[aria-label="Noodle's park"]>div:last-child{width:300px;max-height:none;border-top:0;border-left:3px solid #161616;padding:10px 20px 10px 16px!important}
 body.wide .yo-pans section[aria-label="Body this week"]{padding-right:24px}
 body.wide .yo-pans section[aria-label="Body this week"]>p:first-child{display:none}
 body.wide .yo-pans section[aria-label="Body this week"]>div{display:flex!important;margin-top:0!important;gap:28px!important;justify-content:flex-start;align-items:center!important}
@@ -977,8 +973,8 @@ body.wide .yo-cal>button>span{font-size:11px!important;left:4px!important;top:3p
 </div>
 </template>
 <script src="preact.min.js"></script>
-<script src="runtime.js?v=70"></script>
-<script src="app.js?v=70"></script>
+<script src="runtime.js?v=71"></script>
+<script src="app.js?v=71"></script>
 <script>
 (function(){
 var d=document,opt={passive:false};
